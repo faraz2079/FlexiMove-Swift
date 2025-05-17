@@ -1,0 +1,66 @@
+<div class="register-form-flex">
+    <mat-card class="register-card">
+      <mat-card-title>Create Your Instant Mobility Business Account</mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="businessForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Company Name</mat-label>
+            <input matInput formControlName="companyName" />
+            <mat-error *ngIf="businessForm.get('companyName')?.hasError('required')">Required</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Phone Number</mat-label>
+            <input matInput formControlName="phone" />
+            <mat-error *ngIf="businessForm.get('phone')?.hasError('required')">Required</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Business Address</mat-label>
+            <input matInput formControlName="address" />
+            <mat-error *ngIf="businessForm.get('address')?.hasError('required')">Required</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Postal Code</mat-label>
+            <input matInput formControlName="postalCode" />
+            <mat-error *ngIf="businessForm.get('postalCode')?.hasError('required')">Required</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>City</mat-label>
+            <input matInput formControlName="city" />
+            <mat-error *ngIf="businessForm.get('city')?.hasError('required')">Required</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Country</mat-label>
+            <input matInput formControlName="country" />
+            <mat-error *ngIf="businessForm.get('country')?.hasError('required')">Required</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" />
+            <mat-error *ngIf="businessForm.get('email')?.hasError('required')">Email is required</mat-error>
+            <mat-error *ngIf="businessForm.get('email')?.hasError('email')">Enter a valid email</mat-error>
+          </mat-form-field>
+  
+          <mat-form-field appearance="fill" class="full-width-password">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" formControlName="password" />
+            <mat-error *ngIf="businessForm.get('password')?.hasError('required')">Password is required</mat-error>
+            <mat-error *ngIf="businessForm.get('password')?.hasError('minLength')">Must be at least 8 characters</mat-error>
+            <mat-error *ngIf="businessForm.get('password')?.hasError('letter')">Must contain a letter</mat-error>
+            <mat-error *ngIf="businessForm.get('password')?.hasError('number')">Must contain a number</mat-error>
+            <mat-error *ngIf="businessForm.get('password')?.hasError('containsPassword')">Can't contain the word "password"</mat-error>
+          </mat-form-field>
+  
+          <div class="submit-button">
+            <button mat-flat-button color="primary" type="submit">Sign Up</button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+  

@@ -1,0 +1,101 @@
+.login-form-flex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+mat-card {
+    width: 500px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+mat-card-title {
+    font-size: 24px;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.full-width-name {
+    width: 100%;
+    margin-bottom: 16px;
+}
+
+.full-width-password {
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+form{
+    display: flex;
+    flex-direction: column;
+}
+
+.button-flex-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  button {
+    width: 60%;
+    padding: 10px 24px;
+    border-radius: 8px;
+  }
+
+  .sign-up-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 16px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .sign-up-link {
+    color: #3f51b5; 
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 6px;
+  }
+  
+  .sign-up-link:hover {
+    text-decoration: underline;
+  }
+
+  .forgot-password-link{
+    color: #3f51b5; 
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .forgot-password-link:hover {
+    text-decoration: underline;
+  }
+
+  .logo-container {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .logo-img {
+    height: 160px;
+    width: 300px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+    border-radius: 8px;
+  }  
+
+  .login-logo-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px;
+  }
+  

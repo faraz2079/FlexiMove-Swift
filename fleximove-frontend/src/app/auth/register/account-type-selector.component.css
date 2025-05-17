@@ -1,0 +1,33 @@
+.account-type-flex {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .account-type-card {
+    width: 500px;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  mat-card-title {
+    font-size: 22px;
+    margin-bottom: 24px;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+  }
+  
+  button {
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 16px;
+    border-radius: 8px;
+  }
+  

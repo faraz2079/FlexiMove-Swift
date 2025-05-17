@@ -1,0 +1,43 @@
+<div class="login-logo-page">
+  <div class="logo-container">
+    <img src="assets/logo_variant2.png" alt="App Logo" class="logo-img" />
+  </div>
+  <div class="login-form-flex">
+      <mat-card appearance="outlined" class="login-card">
+        <mat-card-title>Login</mat-card-title>
+        <mat-card-content>
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <mat-form-field appearance="fill" class="full-width-name">
+              <mat-label>User Name</mat-label>
+              <input matInput formControlName="username" />
+              <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
+                Username is required
+              </mat-error>
+            </mat-form-field>
+    
+            <mat-form-field appearance="fill" class="full-width-password">
+              <mat-label>Password</mat-label>
+              <input matInput type="password" formControlName="password" />
+              <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+                Password is required
+              </mat-error>
+            </mat-form-field>
+  
+            <div class="forgot-password">
+              <a class="forgot-password-link" [routerLink]="['/changePassword']">Forgot Password?</a>
+            </div>
+    
+            <div class="button-flex-container">
+              <button mat-flat-button color="primary" type="submit">Sign In</button>
+            </div>
+  
+            <div class="sign-up-row">
+              <span>Not a member?</span>
+              <a class="sign-up-link" [routerLink]="['/register']">Sign Up</a>
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    
+</div>
