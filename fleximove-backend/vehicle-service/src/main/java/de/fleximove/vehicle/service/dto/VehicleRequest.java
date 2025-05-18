@@ -9,6 +9,7 @@ public class VehicleRequest {
 
     private String identificationNumber;
     private String vehicleType;
+    private String vehicleName;
     private double priceAmount;
     private String billingModel;
     private String address;

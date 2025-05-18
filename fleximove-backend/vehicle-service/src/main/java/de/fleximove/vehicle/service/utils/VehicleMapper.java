@@ -28,6 +28,7 @@ public class VehicleMapper {
 
         return new Vehicle(
                 new IdentificationNumber(request.getIdentificationNumber()),
+                request.getVehicleName(),
                 type,
                 VehicleStatus.AVAILABLE,
                 currentLocation,
@@ -43,6 +44,7 @@ public class VehicleMapper {
         );
     }
 
+    //TODO: wenn es ein Vehicle mit License ist, dann muss auch minAge angegeben werden
     private static DriverLicenseType resolveLicenseType(VehicleType type, String licenseTypeFromRequest) {
         if (Set.of(VehicleType.MOTORCYCLE, VehicleType.CAR, VehicleType.VAN, VehicleType.TRUCK).contains(type)) {
             return DriverLicenseType.valueOf(licenseTypeFromRequest.toUpperCase());

@@ -14,25 +14,34 @@ public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @Embedded
     private IdentificationNumber identificationNumber;
+
     private Long providerId;
+
+    private String vehicleModel;
+
     @Enumerated(EnumType.STRING)
     private VehicleType vehicleType;
+
     @Enumerated(EnumType.STRING)
     private VehicleStatus status = VehicleStatus.AVAILABLE;
+
     @Embedded
     private VehicleRestrictions restrictions;
+
     @Embedded
     private Price vehiclePrice;
+
     @Embedded
     private Location currentLocation;
 
-    //TODO: validation
-    public Vehicle(IdentificationNumber identNumber, VehicleType type, VehicleStatus status, Location currentLocation,
+    public Vehicle(IdentificationNumber identNumber, String name, VehicleType type, VehicleStatus status, Location currentLocation,
                    Price price,
                    VehicleRestrictions restrictions, Long providerId) {
         this.identificationNumber = Objects.requireNonNull(identNumber, "identNumber must not be null");
+        this.vehicleModel = Objects.requireNonNull(name, "vehicleName must not be null");
         this.vehicleType = Objects.requireNonNull(type, "vehicleType must not be null");
         this.status = Objects.requireNonNull(status, "status must not be null");
         this.currentLocation = Objects.requireNonNull(currentLocation, "currentLocation must not be null");
