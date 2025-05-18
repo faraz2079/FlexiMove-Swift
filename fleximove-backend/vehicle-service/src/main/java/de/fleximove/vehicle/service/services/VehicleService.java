@@ -11,8 +11,8 @@ import java.util.Optional;
 @Service
 public class VehicleService {
 
-    private VehicleRepository vehicleRepository;
-    private VehicleMapper vehicleMapper;
+    private final VehicleRepository vehicleRepository;
+    private final VehicleMapper vehicleMapper;
 
     @Autowired
     VehicleService(VehicleRepository vehicleRepository, VehicleMapper vehicleMapper){
