@@ -1,7 +1,9 @@
 package de.fleximove.vehicle.service.controller;
 
+import de.fleximove.vehicle.service.domain.Vehicle;
 import de.fleximove.vehicle.service.domain.valueobject.Location;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import de.fleximove.vehicle.service.services.VehicleService;
@@ -25,14 +27,19 @@ public class VehicleController {
         return ResponseEntity.ok().build();
     }
 
-    /*@GetMapping("/load/{id}")
-    public ResponseEntity<VehicleResponse> getVehicle(@PathVariable Long id) {
-        return vehicleService.getVehicleById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @GetMapping("/load/{id}")
+    public ResponseEntity<?> getVehicle(@PathVariable Long id) {
+        try {
+            return vehicleService.fetchVehicleById(id)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Fehler beim Abrufen des Fahrzeugs: " + ex.getMessage());
+        }
     }
 
-    @DeleteMapping("/delete/{id}")
+    /*@DeleteMapping("/delete/{id}")
     public ResponseEntity.BodyBuilder deleteVehicle(@PathVariable Long id) {
         vehicleService.deleteVehicle(id);
         return ResponseEntity.ok();

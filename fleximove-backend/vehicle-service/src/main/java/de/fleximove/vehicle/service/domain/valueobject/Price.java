@@ -3,8 +3,12 @@ package de.fleximove.vehicle.service.domain.valueobject;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Embeddable
+@Data
+@NoArgsConstructor
 public class Price {
     private double amount;
     @Enumerated(EnumType.STRING)
@@ -16,17 +20,5 @@ public class Price {
         }
         this.amount = amount;
         this.billingModel = billingModel;
-    }
-
-    public Price() {
-
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public BillingModel getBillingModel() {
-        return billingModel;
     }
 }

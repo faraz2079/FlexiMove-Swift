@@ -4,8 +4,12 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Embeddable
+@Data
+@NoArgsConstructor
 public class VehicleRestrictions {
     private Integer minAge;
     private Integer maxBookingTimeMinutes;
@@ -20,10 +24,6 @@ public class VehicleRestrictions {
         this.maxDistanceKm = maxDistanceKm;
         this.maxPassengers = maxPassengers;
         this.requiredLicense = driverLicenseType;
-    }
-
-    public VehicleRestrictions() {
-
     }
 }
 

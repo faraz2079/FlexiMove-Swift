@@ -6,6 +6,7 @@ import de.fleximove.vehicle.service.repository.VehicleRepository;
 import de.fleximove.vehicle.service.utils.VehicleMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 public class VehicleService {
@@ -22,6 +23,10 @@ public class VehicleService {
     public void registerNewVehicle(VehicleRequest request, Long providerId) {
         Vehicle vehicle = vehicleMapper.mapToVehicle(request, providerId);
         vehicleRepository.save(vehicle);
+    }
+
+    public Optional<Vehicle> fetchVehicleById(Long id) {
+        return vehicleRepository.findById(id);
     }
 
 }

@@ -2,10 +2,14 @@ package de.fleximove.vehicle.service.domain;
 
 import de.fleximove.vehicle.service.domain.valueobject.*;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Vehicle {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,10 +40,4 @@ public class Vehicle {
         this.restrictions = restrictions;
         this.providerId = Objects.requireNonNull(providerId, "providerId must not be null");
     }
-
-    public Vehicle() {
-
-    }
-
-    //TODO: get und set Methoden
 }
