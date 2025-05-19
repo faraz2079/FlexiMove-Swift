@@ -1,17 +1,16 @@
 package de.fleximove.vehicle.service.dto;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @NoArgsConstructor
-public class VehicleRequest {
+public class EditVehicleRequest {
     private String identificationNumber;
+    private String vehicleModel;
     private String vehicleType;
-    private String vehicleName;
-    private double priceAmount;
+    private Double priceAmount;
     private String billingModel;
-    private String address;
     private Integer minAge;
     private Integer maxBookingTimeMinutes;
     private Double maxDistanceKm;

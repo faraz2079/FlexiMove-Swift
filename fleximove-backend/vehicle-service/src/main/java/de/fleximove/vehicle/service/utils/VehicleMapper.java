@@ -26,6 +26,10 @@ public class VehicleMapper {
         DriverLicenseType licenseType = resolveLicenseType(type, request.getRequiredLicenseType());
         Location currentLocation = resolveAddress(request.getAddress());
 
+        if (type.requiresMinAge() && request.getMinAge() == null) {
+            throw new IllegalArgumentException("Minimum age is required for vehicle type: " + type);
+        }
+
         return new Vehicle(
                 new IdentificationNumber(request.getIdentificationNumber()),
                 request.getVehicleName(),
@@ -44,13 +48,17 @@ public class VehicleMapper {
         );
     }
 
-    //TODO: wenn es ein Vehicle mit License ist, dann muss auch minAge angegeben werden
-    private static DriverLicenseType resolveLicenseType(VehicleType type, String licenseTypeFromRequest) {
-        if (Set.of(VehicleType.MOTORCYCLE, VehicleType.CAR, VehicleType.VAN, VehicleType.TRUCK).contains(type)) {
-            return DriverLicenseType.valueOf(licenseTypeFromRequest.toUpperCase());
+    private static DriverLicenseType resolveLicenseType(VehicleType type, String licenseCodeFromRequest) {
+        if (licenseCodeFromRequest == null) {
+            throw new IllegalArgumentException("License type is required for vehicle type: " + type);
         }
 
-        return DriverLicenseType.NONE;
+        DriverLicenseType licenseTypeFromRequest = DriverLicenseType.licenseTypeFromCode(licenseCodeFromRequest);
+
+        if(type.requiresLicense() && licenseTypeFromRequest == DriverLicenseType.NONE){
+            throw new IllegalArgumentException("A valid driver license is required for vehicle type '" + type + "', but 'NONE' was provided.");
+        }
+        return licenseTypeFromRequest;
     }
 
     private Location resolveAddress(String address){

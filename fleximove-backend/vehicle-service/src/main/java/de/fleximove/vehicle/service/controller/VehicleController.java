@@ -2,6 +2,8 @@ package de.fleximove.vehicle.service.controller;
 
 import de.fleximove.vehicle.service.domain.Vehicle;
 import de.fleximove.vehicle.service.domain.valueobject.Location;
+import de.fleximove.vehicle.service.domain.valueobject.VehicleStatus;
+import de.fleximove.vehicle.service.dto.EditVehicleRequest;
 import de.fleximove.vehicle.service.dto.NearestAvailableVehicleResponse;
 import de.fleximove.vehicle.service.services.GeocodingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +15,6 @@ import de.fleximove.vehicle.service.dto.VehicleRequest;
 
 import java.util.List;
 
-//TODO: think about dividing Controller into internal API (e.g. ProviderVehicleController, UserVehicleController)
 //TODO: exception handling
 @RestController
 @RequestMapping("/vehicles")
@@ -51,6 +52,12 @@ public class VehicleController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/deleteAllVehicles")
+    public ResponseEntity<Void> deleteVehiclesByProvider(@RequestParam Long deleteForProviderId) {
+        vehicleService.deleteAllVehiclesByProviderId(deleteForProviderId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/nearby")
     public ResponseEntity<List<NearestAvailableVehicleResponse>> getNearbyVehicles(
             @RequestParam String address,
@@ -60,21 +67,34 @@ public class VehicleController {
         return ResponseEntity.ok(vehicles);
     }
 
+    @GetMapping("/providerVehiclesList")
+    public ResponseEntity<List<Vehicle>> listProviderVehicles(@RequestParam Long forProviderId) {
+        List<Vehicle> vehicles = vehicleService.listVehiclesByProvider(forProviderId);
+        return ResponseEntity.ok(vehicles);
+    }
 
-    /*
-    //TODO: edit vehicle information
-    @PutMapping("/edit/{vehicleId}/by/{providerId}")
-    public ResponseEntity<Void> editVehicle(@PathVariable Long vehicleId, @RequestBody EditVehicleRequest request, @PathVariable Long providerId) {
-        vehicleService.editVehicleInformation(vehicleId, request, providerId);
+    @PatchMapping("/edit/{vehicleId}")
+    public ResponseEntity<Void> editVehicle(@PathVariable Long vehicleId, @RequestBody EditVehicleRequest request) {
+        vehicleService.editVehicleInformation(vehicleId, request);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/providerVehiclesList/{providerId}")
-    public ResponseEntity<List<VehicleResponse>> listProviderVehicles(@PathVariable Long providerId) {
-        var vehicles = vehicleService.listVehiclesByProvider(providerId);
-        return ResponseEntity.ok(vehicles);
-    }*/
+    @PatchMapping("/updateStatus/{vehicleId}")
+    public ResponseEntity<Void> updateVehicleStatus(@PathVariable Long vehicleId, @RequestParam VehicleStatus newStatus
+    ) {
+        vehicleService.updateVehicleStatus(vehicleId, newStatus);
+        return ResponseEntity.ok().build();
+    }
 
-    //TODO: look for vehicles with other status
+    @PatchMapping("/updateLocation/{vehicleId}")
+    public ResponseEntity<Void> updateVehicleLocation(@PathVariable Long vehicleId, @RequestBody Location locationData) {
+        vehicleService.updateVehicleLocation(
+                vehicleId,
+                locationData.getLatitude(),
+                locationData.getLongitude()
+        );
+        return ResponseEntity.ok().build();
+    }
 
+    //TODO: look for vehicles with other status?
 }

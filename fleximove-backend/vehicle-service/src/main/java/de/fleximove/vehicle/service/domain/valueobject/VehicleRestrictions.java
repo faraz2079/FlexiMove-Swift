@@ -6,6 +6,8 @@ import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Embeddable
 @Data
 @NoArgsConstructor
@@ -17,12 +19,13 @@ public class VehicleRestrictions {
     @Enumerated(EnumType.STRING)
     private DriverLicenseType requiredLicense;
 
+    //TODO: klaeren, ob alles logisch ist
     public VehicleRestrictions(Integer minAge, Integer maxBookingTimeMinutes, Double maxDistanceKm, Integer maxPassengers, DriverLicenseType driverLicenseType){
         this.minAge = minAge;
-        this.maxBookingTimeMinutes = maxBookingTimeMinutes;
-        this.maxDistanceKm = maxDistanceKm;
-        this.maxPassengers = maxPassengers;
-        this.requiredLicense = driverLicenseType;
+        this.maxBookingTimeMinutes = Objects.requireNonNull(maxBookingTimeMinutes, "maxBookingTimeMinutes must not be null");
+        this.maxDistanceKm = Objects.requireNonNull(maxDistanceKm, "maxDistanceKm must not be null");
+        this.maxPassengers = Objects.requireNonNull(maxPassengers, "maxPassengers must not be null");
+        this.requiredLicense = Objects.requireNonNull(driverLicenseType, "driverLicenseType must not be null");
     }
 }
 

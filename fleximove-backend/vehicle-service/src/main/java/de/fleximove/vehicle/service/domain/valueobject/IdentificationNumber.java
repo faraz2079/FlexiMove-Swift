@@ -13,7 +13,6 @@ public class IdentificationNumber {
     private String identNumber;
 
     public IdentificationNumber(String value) {
-        //TODO: Maybe, compare with some Regex
         this.identNumber = value;
     }
 }

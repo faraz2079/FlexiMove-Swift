@@ -37,6 +37,7 @@ public class Vehicle {
     @Embedded
     private Location currentLocation;
 
+    //TODO: klaeren mit Team, ob es logisch ist
     public Vehicle(IdentificationNumber identNumber, String name, VehicleType type, VehicleStatus status, Location currentLocation,
                    Price price,
                    VehicleRestrictions restrictions, Long providerId) {
@@ -46,7 +47,7 @@ public class Vehicle {
         this.status = Objects.requireNonNull(status, "status must not be null");
         this.currentLocation = Objects.requireNonNull(currentLocation, "currentLocation must not be null");
         this.vehiclePrice = Objects.requireNonNull(price, "vehiclePrice must not be null");
-        this.restrictions = restrictions;
+        this.restrictions = Objects.requireNonNull(restrictions, "restrictions must not be null");
         this.providerId = Objects.requireNonNull(providerId, "providerId must not be null");
     }
 }
