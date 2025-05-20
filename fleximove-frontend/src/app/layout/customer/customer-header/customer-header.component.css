@@ -5,7 +5,7 @@
     padding: 1rem 2rem;
     color: black;
     font-weight: 500;
-    height: 30px;
+    height: 40px;
 }
 
 img {
@@ -57,6 +57,7 @@ img {
   min-width: 150px;
   display: block;
   list-style: none;
+  z-index: 1;
 }
 
 a{
