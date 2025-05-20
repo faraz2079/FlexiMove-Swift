@@ -64,7 +64,7 @@ public class VehicleService {
 
         return foundAvailableVehicles.filter(vehicleWithDistance -> vehicleWithDistance.distanceInKm() <= radiusInKm).map(vehicleWithDistance -> {
             Vehicle vehicle = vehicleWithDistance.vehicle();
-            //TODO: get provider name and average ration for current vehicle
+            //TODO: get provider name and average rating for current vehicle
             //Double averageRatingForVehicle = ratingServiceClient.getAverageRatingForVehicle(vehicle.getId());
             //String providerName = userServiceClient.getProviderName(vehicle.getProviderId());
             String address = geocodingService.reverseGeocode(vehicle.getCurrentLocation());

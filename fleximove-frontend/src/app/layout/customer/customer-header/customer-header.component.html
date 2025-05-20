@@ -1,0 +1,35 @@
+<header class="customer-header">
+  <img src="assets/logo_variant2.png" alt="Logo" />
+
+  <nav class="nav-links">
+    <div class="home-link">
+        <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="home"></mat-icon>
+        <a [routerLink]="['/customer/home']" routerLinkActive="active">Home</a>
+    </div>
+    <div class="support-link">
+        <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="support_agent"></mat-icon>
+        <a [routerLink]="['/customer/services']" routerLinkActive="active">Support</a>
+    </div>
+    <div class="dropdown" (click)="toggleDropdown()" tabindex="0">
+      <div class="dropdown-toggle">
+        <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="account_circle"></mat-icon>
+        <span>My Profile ⌄</span>
+      </div>
+      <ul class="dropdown-menu" *ngIf="dropdownOpen">
+        <li>
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="manage_accounts"></mat-icon>
+            <a [routerLink]="['/customer/account']">My Account</a>
+        </li>
+        <li>
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="history"></mat-icon>
+            <a [routerLink]="['/customer/bookings']">My Bookings</a>
+        </li>
+        <li>
+            <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="logout"></mat-icon>
+            <a [routerLink]="['/login']">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+

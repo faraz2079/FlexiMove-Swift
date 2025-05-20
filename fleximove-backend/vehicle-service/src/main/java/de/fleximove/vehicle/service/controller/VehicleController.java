@@ -16,6 +16,7 @@ import de.fleximove.vehicle.service.dto.VehicleRequest;
 import java.util.List;
 
 //TODO: exception handling
+//TODO: split controller
 @RestController
 @RequestMapping("/vehicles")
 public class VehicleController {
@@ -86,6 +87,7 @@ public class VehicleController {
         return ResponseEntity.ok().build();
     }
 
+    //TODO: trigger patch-method refreshVehicleInformation on the bookingService
     @PatchMapping("/updateLocation/{vehicleId}")
     public ResponseEntity<Void> updateVehicleLocation(@PathVariable Long vehicleId, @RequestBody Location locationData) {
         vehicleService.updateVehicleLocation(

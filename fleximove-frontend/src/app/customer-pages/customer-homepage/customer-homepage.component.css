@@ -1,0 +1,58 @@
+.slogan-section{
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    margin-bottom: 10rem;
+    z-index: 2;
+}
+
+.slogan{
+    font-size: 50px;
+    margin-bottom: 30px;
+}
+
+.homepage-container{
+    margin-left: 85px;
+    display: flex;
+    flex-direction: column;
+    align-items:flex-start;
+    justify-content: center;
+    position: relative;
+    min-height: 100vh;
+}
+
+.car-image {
+  position: absolute;
+  width: 70%;
+  right: 0;
+  opacity: 0.5;
+  margin-bottom: 20px;
+  pointer-events: none;
+  z-index: 0;
+  filter: drop-shadow(60px 20px 50px rgb(175, 142, 206));
+}
+
+.search-section{
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    z-index: 1;
+}
+
+.description {
+  max-width: 650px;
+  font-size: 1.2rem;
+  margin: 0 auto;
+}
+
+.search-button {
+  height: 56px;
+}
+
+.address-input {
+  width: 600px;
+}
+
+.radius-select {
+  width: 150px; 
+}
+

@@ -2,6 +2,7 @@
 
 
 body { 
+  height: 100%;
   min-height: 100vh;
   margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; 
   background: linear-gradient(120deg, #707dc5, #63d3ec);
@@ -9,4 +10,3 @@ body {
 h1 {
     text-align: center;
   }
-  

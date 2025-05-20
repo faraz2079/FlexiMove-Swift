@@ -1,0 +1,31 @@
+<div class="homepage-container">
+    <div class="slogan-section">
+        <p class="slogan">
+            Mobility when you need it.
+        </p>
+        <div class="description">
+            <p>Discover, book and rate shared vehicles from multiple providers. Whether it’s an e-scooter, bike, or electric car, FlexiMove gets you moving instantly.
+            Fast, flexible and sustainable.
+            </p>
+        </div>
+    </div>
+    <div class="search-section">
+    <mat-form-field appearance="fill" class="address-input">
+        <mat-label>Enter address</mat-label>
+        <input matInput placeholder="Your location" [(ngModel)]="address" name="address">
+    </mat-form-field>
+    <mat-form-field appearance="fill" class="radius-select">
+        <mat-label mat-label>Select radius</mat-label>
+        <mat-select [(value)]="selectedRadius">
+            <mat-option>None</mat-option>
+            <mat-option value="1">1 km</mat-option>
+            <mat-option value="3">3 km</mat-option>
+            <mat-option value="5">5 km</mat-option>
+            <mat-option value="10">10 km</mat-option>
+            <mat-option value="20">20 km</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <button class="search-button" mat-raised-button color="primary" (click)="searchVehicles()">Browse Vehicles</button>
+  </div>
+  <img src="assets/electric-car.png" alt="Electric Car" class="car-image" />
+</div>

@@ -16,7 +16,13 @@ import { RegisterBusinessComponent } from './auth/register/register-business/reg
 import { RouterModule } from '@angular/router';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
+import { CustomerLayoutComponent } from './layout/customer/customer-layout/customer-layout.component';
+import { CustomerHeaderComponent } from './layout/customer/customer-header/customer-header.component';
+import { FooterComponent } from './layout/footer/footer.component';
+import {MatIconModule} from '@angular/material/icon';
+import { CustomerHomepageComponent } from './customer-pages/customer-homepage/customer-homepage.component';
+import {MatSelectModule} from '@angular/material/select';
+import {FormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -24,7 +30,11 @@ import { MatNativeDateModule } from '@angular/material/core';
     LoginComponent,
     AccountTypeSelectorComponent,
     RegisterPrivateComponent,
-    RegisterBusinessComponent
+    RegisterBusinessComponent,
+    CustomerLayoutComponent,
+    CustomerHeaderComponent,
+    FooterComponent,
+    CustomerHomepageComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +47,10 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatInputModule,
     MatButtonModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatIconModule,
+    MatSelectModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
