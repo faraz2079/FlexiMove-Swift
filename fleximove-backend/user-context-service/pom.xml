@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>de.fhdo.spring</groupId>
-	<artifactId>pruefung-anmeldung-service</artifactId>
+	<artifactId>user-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>pruefung-anmeldung-service</name>
-	<description>Microservice fuer Pruefungsanmeldung</description>
+	<name>user-service</name>
+	<description>Microservice fuer User-Context</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
