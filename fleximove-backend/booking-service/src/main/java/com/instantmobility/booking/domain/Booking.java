@@ -2,6 +2,7 @@ package com.instantmobility.booking.domain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.List;
 
 public class Booking {
     private final BookingId id;
@@ -53,7 +54,12 @@ public class Booking {
         trip.recordLocation(endLocation);
         trip.complete();
 
-        timeFrame = new TimeFrame(timeFrame.getStartTime(), endTime);
+        if (timeFrame.getEndTime() == null) {
+            ((TimeFrame)timeFrame).setEndTime(endTime); // Cast to access setter
+        } else {
+            // Create new TimeFrame if we can't modify the existing one
+            timeFrame = new TimeFrame(timeFrame.getStartTime(), endTime);
+        }
         status = BookingStatus.COMPLETED;
 
         dropoffLocation = endLocation;
@@ -91,6 +97,16 @@ public class Booking {
         cost = baseFare + distanceCost + timeCost;
     }
 
+    public GeoLocation getFinalLocation() {
+        if (status == BookingStatus.COMPLETED && dropoffLocation != null) {
+            return dropoffLocation;
+        } else if (trip != null && !trip.getRoute().isEmpty()) {
+            // Return last recorded location in trip
+            List<GeoLocation> route = trip.getRoute();
+            return route.get(route.size() - 1);
+        }
+        return null;
+    }
     // Getters
     public BookingId getId() {
         return id;

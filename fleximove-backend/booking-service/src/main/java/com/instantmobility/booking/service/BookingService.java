@@ -27,7 +27,7 @@ public class BookingService {
     public UUID createBooking(CreateBookingRequest request) {
         // Create booking domain object
         BookingId bookingId = BookingId.generate();
-        TimeFrame timeFrame = new TimeFrame(request.getStartTime(), request.getEstimatedEndTime());
+        TimeFrame timeFrame = new TimeFrame(request.getStartTime());
         GeoLocation pickupLocation = new GeoLocation(request.getPickupLatitude(), request.getPickupLongitude());
 
         Booking booking = new Booking(bookingId, request.getUserId(), request.getVehicleId(), timeFrame, pickupLocation);
@@ -58,6 +58,9 @@ public class BookingService {
 
         booking.endTrip(endLocation, endTime);
 
+        // Update vehicle location when trip ends
+        updateVehicleLocation(booking.getVehicleId(), endLocation);
+
         bookingRepository.save(booking);
     }
 
@@ -67,6 +70,48 @@ public class BookingService {
         booking.cancel();
 
         bookingRepository.save(booking);
+    }
+
+    /**
+     * Updates vehicle location when booking ends
+     */
+    private void updateVehicleLocation(UUID vehicleId, GeoLocation location) {
+        // In a real application, this would call the Vehicle service
+        // For now, we'll just log it
+        System.out.println("Vehicle " + vehicleId + " location updated to: " +
+                location.getLatitude() + ", " + location.getLongitude());
+
+        // If you had a VehicleService client:
+        // vehicleServiceClient.updateLocation(vehicleId, location);
+    }
+
+    /**
+     * Deletes all bookings for a specific user
+     */
+    public void deleteBookingsByUserId(UUID userId) {
+        List<Booking> userBookings = bookingRepository.findByUserId(userId);
+
+        for (Booking booking : userBookings) {
+            // Don't allow deletion of active bookings
+            if (booking.getStatus() == BookingStatus.STARTED ||
+                    booking.getStatus() == BookingStatus.CONFIRMED) {
+                throw new IllegalStateException(
+                        "Cannot delete user with active bookings. Cancel bookings first.");
+            }
+        }
+
+        // Delete all bookings for this user
+        bookingRepository.deleteByUserId(userId);
+    }
+
+    /**
+     * Gets booking history for a user with pagination
+     */
+    public List<BookingDTO> getBookingHistory(UUID userId, int page, int size) {
+        List<Booking> bookings = bookingRepository.findByUserIdOrderByTimeFrameDesc(userId, page, size);
+        return bookings.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
     public BookingDTO getBookingDetails(UUID bookingId) {

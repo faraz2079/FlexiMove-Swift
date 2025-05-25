@@ -53,6 +53,27 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
+    /**
+     * Delete all bookings for a user
+     */
+    @DeleteMapping("/user/{userId}")
+    public ResponseEntity<Void> deleteUserBookings(@PathVariable UUID userId) {
+        bookingService.deleteBookingsByUserId(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Get booking history with pagination
+     */
+    @GetMapping("/history/{userId}")
+    public ResponseEntity<List<BookingDTO>> getBookingHistory(
+            @PathVariable UUID userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        List<BookingDTO> history = bookingService.getBookingHistory(userId, page, size);
+        return ResponseEntity.ok(history);
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BookingDTO>> getUserBookings(@PathVariable UUID userId) {
         List<BookingDTO> bookings = bookingService.getUserBookings(userId);

@@ -6,7 +6,12 @@ import java.util.Objects;
 
 public class TimeFrame {
     private final LocalDateTime startTime;
-    private final LocalDateTime endTime;
+    private LocalDateTime endTime;
+
+    public TimeFrame(LocalDateTime startTime) {
+        this.startTime = Objects.requireNonNull(startTime, "Start time cannot be null");
+        this.endTime = null;
+    }
 
     public TimeFrame(LocalDateTime startTime, LocalDateTime endTime) {
         this.startTime = Objects.requireNonNull(startTime, "Start time cannot be null");
@@ -15,6 +20,13 @@ public class TimeFrame {
         if (endTime != null && startTime.isAfter(endTime)) {
             throw new IllegalArgumentException("Start time cannot be after end time");
         }
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        if (endTime != null && startTime.isAfter(endTime)) {
+            throw new IllegalArgumentException("Start time cannot be after end time");
+        }
+        this.endTime = endTime;
     }
 
     public LocalDateTime getStartTime() {
