@@ -74,7 +74,7 @@ public class UserController {
 		}
 	}
 
-	// Passwort ändern
+	// Change Password
 	@PutMapping("/{id}/password")
 	public void updatePassword(@PathVariable Long id, @RequestBody Password newPassword) {
 		User user = userService.getUserById(id);
@@ -83,7 +83,7 @@ public class UserController {
 		}
 	}
 
-	// Adresse ändern
+	//Change Adress
 	@PutMapping("/{id}/address")
 	public void updateAddress(@PathVariable Long id, @RequestBody Adress newAddress) {
 		User user = userService.getUserById(id);
