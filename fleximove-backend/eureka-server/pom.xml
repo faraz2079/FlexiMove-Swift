@@ -9,10 +9,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>de.fhdo.spring</groupId>
-	<artifactId>config-server</artifactId>
+	<artifactId>eureka-server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>config-server</name>
-	<description>Spring Cloud Config Service</description>
+	<name>eureka-server</name>
+	<description> Service Discovery with Eureka</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -24,7 +24,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-config-server</artifactId>
+			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
 		</dependency>
 	</dependencies>
 
