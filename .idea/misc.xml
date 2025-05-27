@@ -8,6 +8,8 @@
         <option value="$PROJECT_DIR$/fleximove-backend/payment-service/pom.xml" />
         <option value="$PROJECT_DIR$/fleximove-backend/vehicle-service/pom.xml" />
         <option value="$PROJECT_DIR$/fleximove-backend/rating-service/pom.xml" />
+        <option value="$PROJECT_DIR$/fleximove-backend/config-server/pom.xml" />
+        <option value="$PROJECT_DIR$/fleximove-backend/eureka-server/pom.xml" />
       </list>
     </option>
   </component>
