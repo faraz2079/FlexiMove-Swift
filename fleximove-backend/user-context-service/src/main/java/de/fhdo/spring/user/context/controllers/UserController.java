@@ -58,7 +58,11 @@ public class UserController {
 	public User getUserByEmail(@RequestParam Email email) {
 		return userService.getUserByEmail(email);
 	}
-
+	
+	
+	//Provider mit ID suchen und dann Namen wiedergeben
+	
+	
 	// User speichern (z.B. Customer oder Provider)
 	@PostMapping
 	public void createUser(@RequestBody User user) {
@@ -131,4 +135,15 @@ public class UserController {
 	        return ResponseEntity.status(401).body(e.getMessage());
 	    }
 }
+	
+	@GetMapping("/provider/{id}/company-name")
+    public ResponseEntity<String> getProviderCompanyName(@PathVariable Long id) {
+        String companyName = userService.getCompanyNameById(id);
+
+        if (companyName != null) {
+            return ResponseEntity.ok(companyName);
+        } else {
+            return ResponseEntity.status(404).body("Kein Provider mit dieser ID gefunden.");
+        }
+    }
 }

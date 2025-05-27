@@ -14,6 +14,7 @@ import de.fhdo.spring.user.context.domain.Password;
 import de.fhdo.spring.user.context.domain.Provider;
 import de.fhdo.spring.user.context.domain.User;
 import de.fhdo.spring.user.context.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
@@ -71,4 +72,18 @@ public class UserService {
 		provider.setCompanyName(companyName);
 		userRepository.save(provider);
 	}
+	
+	public String getCompanyNameById(Long id) {
+	    Optional<User> optionalUser = userRepository.findById(id);
+	    
+	    if (optionalUser.isPresent() && optionalUser.get() instanceof Provider) {
+	        Provider provider = (Provider) optionalUser.get();
+	        return provider.getCompanyName();
+	    }
+
+	    // Optional: Fehlerbehandlung oder null zurückgeben
+	    return null;
+	}
+
+
 }
