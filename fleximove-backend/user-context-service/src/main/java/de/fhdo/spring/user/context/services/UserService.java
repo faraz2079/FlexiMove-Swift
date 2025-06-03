@@ -4,20 +4,13 @@ import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+import de.fhdo.spring.user.context.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import clients.BookingClient;
-import de.fhdo.spring.user.context.domain.Adress;
-import de.fhdo.spring.user.context.domain.Email;
-import de.fhdo.spring.user.context.domain.Password;
-import de.fhdo.spring.user.context.domain.Provider;
-import de.fhdo.spring.user.context.domain.User;
-import de.fhdo.spring.user.context.dto.BookingDto;
 import de.fhdo.spring.user.context.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
@@ -69,8 +62,8 @@ public class UserService {
 	}
 	
 	//Adresse ändern
-	public void updateadress(User user, Adress adress) {
-		user.setAddress(adress);
+	public void updateAddress(User user, Address address) {
+		user.setAddress(address);
 		userRepository.save(user);
 	}
 	

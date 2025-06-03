@@ -1,8 +1,8 @@
 package de.fhdo.spring.user.context.controllers;
 
 import java.util.List;
-import java.util.UUID;
 
+import de.fhdo.spring.user.context.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,16 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import de.fhdo.spring.user.context.domain.Adress;
-import de.fhdo.spring.user.context.domain.Customer;
-import de.fhdo.spring.user.context.domain.Email;
-import de.fhdo.spring.user.context.domain.Password;
-import de.fhdo.spring.user.context.domain.Provider;
-import de.fhdo.spring.user.context.domain.User;
-import de.fhdo.spring.user.context.dto.BookingDto;
 import de.fhdo.spring.user.context.dto.LoginRequest;
-import de.fhdo.spring.user.context.repository.UserRepository;
 import de.fhdo.spring.user.context.services.LoginService;
 import de.fhdo.spring.user.context.services.RegistrationService;
 import de.fhdo.spring.user.context.services.UserService;
@@ -93,10 +84,10 @@ public class UserController {
 
 	//Change Adress
 	@PutMapping("/{id}/address")
-	public void updateAddress(@PathVariable Long id, @RequestBody Adress newAddress) {
+	public void updateAddress(@PathVariable Long id, @RequestBody Address newAddress) {
 		User user = userService.getUserById(id);
 		if (user != null) {
-			userService.updateadress(user, newAddress);
+			userService.updateAddress(user, newAddress);
 		}
 	}
 
