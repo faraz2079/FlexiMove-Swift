@@ -106,14 +106,14 @@ public class BookingService {
 
     /**
      * Gets booking history for a user with pagination
-     */
+     
     public List<BookingDTO> getBookingHistory(UUID userId, int page, int size) {
         List<Booking> bookings = bookingRepository.findByUserIdOrderByTimeFrameDesc(userId, page, size);
         return bookings.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
-
+*/
     public BookingDTO getBookingDetails(UUID bookingId) {
         Booking booking = getBookingById(bookingId);
         return mapToDTO(booking);

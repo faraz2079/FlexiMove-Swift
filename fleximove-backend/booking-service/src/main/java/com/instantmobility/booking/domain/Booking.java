@@ -2,19 +2,66 @@ package com.instantmobility.booking.domain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import java.util.List;
 
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+
+import java.util.List;
+@Entity
+@Table(name = "BOOKING")
 public class Booking {
-    private final BookingId id;
-    private final UUID userId;
-    private final UUID vehicleId;
+	@Id
+    @Column(name = "id", columnDefinition = "BINARY(16)")
+    private BookingId id;
+
+    @Column(name = "user_id", columnDefinition = "BINARY(16)", nullable = false)
+    private UUID userId;
+
+    @Column(name = "vehicle_id", columnDefinition = "BINARY(16)", nullable = false)
+    private UUID vehicleId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private BookingStatus status;
+    
+    
+    @Embedded
     private TimeFrame timeFrame;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "latitude", column = @Column(name = "pickup_latitude")),
+        @AttributeOverride(name = "longitude", column = @Column(name = "pickup_longitude"))
+    })
     private GeoLocation pickupLocation;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "latitude", column = @Column(name = "dropoff_latitude")),
+        @AttributeOverride(name = "longitude", column = @Column(name = "dropoff_longitude"))
+    })
     private GeoLocation dropoffLocation;
+
+    @Column(name = "cost")
     private double cost;
+
+    @Transient // Trip wird nicht direkt in DB gespeichert (müsstest du anpassen, falls persistiert)
     private Trip trip;
 
+    protected Booking() {
+        // für JPA
+    }
+
+    
     public Booking(BookingId id, UUID userId, UUID vehicleId, TimeFrame timeFrame, GeoLocation pickupLocation) {
         this.id = id;
         this.userId = userId;

@@ -64,7 +64,7 @@ public class BookingController {
 
     /**
      * Get booking history with pagination
-     */
+    
     @GetMapping("/history/{userId}")
     public ResponseEntity<List<BookingDTO>> getBookingHistory(
             @PathVariable UUID userId,
@@ -72,7 +72,7 @@ public class BookingController {
             @RequestParam(defaultValue = "10") int size) {
         List<BookingDTO> history = bookingService.getBookingHistory(userId, page, size);
         return ResponseEntity.ok(history);
-    }
+    } */
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<BookingDTO>> getUserBookings(@PathVariable UUID userId) {

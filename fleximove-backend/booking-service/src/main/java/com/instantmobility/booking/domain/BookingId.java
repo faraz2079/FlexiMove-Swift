@@ -3,8 +3,18 @@ package com.instantmobility.booking.domain;
 import java.util.Objects;
 import java.util.UUID;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class BookingId {
-    private final UUID value;
+
+    @Column(name = "booking_id") // Neuer Spaltenname
+    private UUID value;
+
+    // JPA braucht einen No-Args-Konstruktor
+    protected BookingId() {
+    }
 
     public BookingId(UUID value) {
         this.value = Objects.requireNonNull(value, "BookingId value cannot be null");

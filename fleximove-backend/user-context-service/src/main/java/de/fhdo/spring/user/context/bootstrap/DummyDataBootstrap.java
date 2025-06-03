@@ -31,31 +31,22 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
         initData();
     }
 
-    private void initData() {
-    	 // Adresse erstellen
-        Adress address = new Adress("Musterstraße", "Deutschland", "Berlin", "15", "10115");
+  private void initData() {
+ /*     	    Adress address = new Adress("Musterstraße", "Deutschland", "Berlin", "15", "10115");
+    	    Password password = new Password("sicheresPasswort123");
+    	    Email email = new Email("kunde3@example.com");  // andere Email als zuvor
+    	    PaymentInfo paymentInfo = new PaymentInfo("1234567890123456", "Max Mustermann", "12/27", "123");
 
-        // Passwort erstellen
-        Password password = new Password("sicheresPasswort123");
+    	    Customer customer1 = new Customer(
+    	            password,
+    	            email,
+    	            LocalDate.of(1990, 5, 15),
+    	            address,
+    	            true,
+    	            "0123456789",
+    	            paymentInfo
+    	    );
 
-        // Email erstellen
-        Email email = new Email("kunde1@example.com");
-
-        // Zahlungsinformationen erstellen
-        PaymentInfo paymentInfo = new PaymentInfo("1234567890123456", "Max Mustermann", "12/27", "123");
-
-        // Customer erstellen
-        Customer customer1 = new Customer(
-                password,
-                email,
-                LocalDate.of(1990, 5, 15),
-                address,
-                true,
-                "0123456789",
-                paymentInfo
-        );
-        
-        userRepository.save(customer1);
-        
-    }
+    	    userRepository.save(customer1);*/
+    	}
 }
