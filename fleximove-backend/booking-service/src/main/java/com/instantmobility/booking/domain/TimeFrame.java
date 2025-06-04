@@ -1,12 +1,17 @@
 package com.instantmobility.booking.domain;
 
+import jakarta.persistence.Embeddable;
+import lombok.NoArgsConstructor;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
-
+@Embeddable
+@NoArgsConstructor
 public class TimeFrame {
-    private final LocalDateTime startTime;
+    private  LocalDateTime startTime;
     private LocalDateTime endTime;
+
 
     public TimeFrame(LocalDateTime startTime) {
         this.startTime = Objects.requireNonNull(startTime, "Start time cannot be null");

@@ -4,26 +4,30 @@ import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import clients.BookingClient;
 import de.fhdo.spring.user.context.domain.Adress;
 import de.fhdo.spring.user.context.domain.Email;
 import de.fhdo.spring.user.context.domain.Password;
 import de.fhdo.spring.user.context.domain.Provider;
 import de.fhdo.spring.user.context.domain.User;
+import de.fhdo.spring.user.context.dto.BookingDto;
 import de.fhdo.spring.user.context.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
 	private UserRepository userRepository;
+	private BookingClient bookingClient;
 
 	@Autowired
-	public UserService(UserRepository userRepository) {
-		this.userRepository = userRepository;
-
+	public UserService(UserRepository userRepository, BookingClient bookingClient) {
+	    this.userRepository = userRepository;
+	    this.bookingClient = bookingClient;
 	}
 	//Alle User
 	public List<User> getAlleUser() {
@@ -51,9 +55,12 @@ public class UserService {
 	
 	//User löschen
 	public void deleteUser(User user){
-		userRepository.delete(user);
-		
-	}
+		// 1. Buchungen löschen via Booking-Service
+        bookingClient.deleteUserBookings(user.getId());
+
+        // 2. User löschen
+        userRepository.delete(user);
+    }
 	
 	//User Passwort ändern
 	public void updatepw(User user, Password pw) {

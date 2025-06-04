@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/payments")
+@RequestMapping("/api/payments")
 public class PaymentController {
 
     private final PaymentRepository repository;
@@ -24,12 +24,12 @@ public class PaymentController {
         return repository.save(payment);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{paymentId}")
     public Payment get(@PathVariable UUID id) {
         return repository.findById(id).orElseThrow();
     }
 
-    @PostMapping("/{id}/process")
+    @PostMapping("/process")
     public String process(@PathVariable UUID id) {
         processingService.processPayment(id);
         return "Processed.";

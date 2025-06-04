@@ -1,6 +1,0 @@
-com/fleximove/rating/RatingManagementApplication.class
-com/fleximove/rating/repository/RatingRepository.class
-com/fleximove/rating/controller/RatingController.class
-com/fleximove/rating/service/RatingService.class
-com/fleximove/rating/model/TargetType.class
-com/fleximove/rating/model/Rating.class

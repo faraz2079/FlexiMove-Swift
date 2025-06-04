@@ -23,13 +23,11 @@ public abstract class User {
 	private Adress address;
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "password_value", nullable = false))
-    protected Password password;
+    private Password password;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "email_value", nullable = false, unique = true))
     private Email email;
-
-
 
     private LocalDate dateOfBirth;
    

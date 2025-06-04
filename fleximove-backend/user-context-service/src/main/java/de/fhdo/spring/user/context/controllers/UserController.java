@@ -1,6 +1,7 @@
 package de.fhdo.spring.user.context.controllers;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ import de.fhdo.spring.user.context.domain.Email;
 import de.fhdo.spring.user.context.domain.Password;
 import de.fhdo.spring.user.context.domain.Provider;
 import de.fhdo.spring.user.context.domain.User;
+import de.fhdo.spring.user.context.dto.BookingDto;
 import de.fhdo.spring.user.context.dto.LoginRequest;
 import de.fhdo.spring.user.context.repository.UserRepository;
 import de.fhdo.spring.user.context.services.LoginService;
@@ -71,13 +73,15 @@ public class UserController {
 
 	// User löschen   ==> Ansastasia ansprechen weil auch alle bestehenden Buchungen gelöscht werden müssen
 	@DeleteMapping("/{id}")
-	public void deleteUser(@PathVariable Long id) {
-		User user = userService.getUserById(id);
-		if (user != null) {
-			userService.deleteUser(user);
-		}
-	}
-
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        if (user != null) {
+            userService.deleteUser(user);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 	// Change Password
 	@PutMapping("/{id}/password")
 	public void updatePassword(@PathVariable Long id, @RequestBody Password newPassword) {
@@ -128,15 +132,16 @@ public class UserController {
 	@PostMapping("/login")
 	public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
 	    try {
-	        // Deine bestehende Login-Methode mit DTO-Daten aufrufen
+			//TODO: User zurueckgeben, nicht boolean
 	        boolean success = loginService.login(loginRequest.getEmail(), loginRequest.getPassword());
+			//TODO: LoginResponse zuruecksenden
 	        return ResponseEntity.ok("Login erfolgreich!");
 	    } catch (IllegalStateException e) {
 	        return ResponseEntity.status(401).body(e.getMessage());
 	    }
 }
 	
-	@GetMapping("/provider/{id}/company-name")
+	@GetMapping("/provider/{id}/companyName")
     public ResponseEntity<String> getProviderCompanyName(@PathVariable Long id) {
         String companyName = userService.getCompanyNameById(id);
 
@@ -146,4 +151,6 @@ public class UserController {
             return ResponseEntity.status(404).body("Kein Provider mit dieser ID gefunden.");
         }
     }
+	
+
 }
