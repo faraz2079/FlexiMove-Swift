@@ -1,15 +1,15 @@
 package com.instantmobility.booking.service;
 
+import com.instantmobility.booking.clients.PaymentServiceClient;
 import com.instantmobility.booking.domain.*;
-import com.instantmobility.booking.dto.BookingDTO;
-import com.instantmobility.booking.dto.CreateBookingRequest;
-import com.instantmobility.booking.dto.EndTripRequest;
-import com.instantmobility.booking.dto.StartTripRequest;
+import com.instantmobility.booking.dto.*;
 import com.instantmobility.booking.repository.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -18,11 +18,14 @@ import java.util.stream.Collectors;
 @Service
 public class BookingService {
     private final BookingRepository bookingRepository;
+    private final PaymentServiceClient paymentService;
 
     @Autowired
-    public BookingService(BookingRepository bookingRepository) {
+    public BookingService(BookingRepository bookingRepository, PaymentServiceClient paymentService) {
         this.bookingRepository = bookingRepository;
+        this.paymentService = paymentService;
     }
+
 
     public UUID createBooking(CreateBookingRequest request) {
         // Create booking domain object
@@ -58,6 +61,8 @@ public class BookingService {
 
         booking.endTrip(endLocation, endTime);
 
+        processPaymentForBooking(booking);
+
         // Update vehicle location when trip ends
         updateVehicleLocation(booking.getVehicleId(), endLocation);
 
@@ -83,6 +88,23 @@ public class BookingService {
 
         // If you had a VehicleService client:
         // vehicleServiceClient.updateLocation(vehicleId, location);
+    }
+
+    private void processPaymentForBooking(Booking booking) {
+        PaymentRequestDTO paymentRequest = new PaymentRequestDTO();
+        paymentRequest.setUserId(booking.getUserId());
+        paymentRequest.setBookingId(booking.getId().getValue());
+        paymentRequest.setAmount(BigDecimal.valueOf(booking.getCost()));
+        paymentRequest.setDescription("Ride payment for booking " + booking.getId().getValue());
+
+        try {
+            PaymentResponseDTO response = paymentService.processPayment(paymentRequest);
+            // Store payment reference in booking or handle accordingly
+            System.out.println("Payment processed: " + response.getPaymentId());
+        } catch (Exception e) {
+            // Handle payment failure
+            System.err.println("Payment failed: " + e.getMessage());
+        }
     }
 
     /**

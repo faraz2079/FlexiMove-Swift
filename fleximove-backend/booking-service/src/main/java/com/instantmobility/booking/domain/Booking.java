@@ -3,21 +3,13 @@ package com.instantmobility.booking.domain;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 @Entity
 @Table(name = "BOOKING")
+@NoArgsConstructor
 public class Booking {
 	@Id
     @Column(name = "id", columnDefinition = "BINARY(16)")
@@ -56,10 +48,6 @@ public class Booking {
 
     @Transient // Trip wird nicht direkt in DB gespeichert (müsstest du anpassen, falls persistiert)
     private Trip trip;
-
-    protected Booking() {
-        // für JPA
-    }
 
     
     public Booking(BookingId id, UUID userId, UUID vehicleId, TimeFrame timeFrame, GeoLocation pickupLocation) {
