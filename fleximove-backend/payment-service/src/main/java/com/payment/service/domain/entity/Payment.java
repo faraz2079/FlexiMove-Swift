@@ -6,7 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.Id;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

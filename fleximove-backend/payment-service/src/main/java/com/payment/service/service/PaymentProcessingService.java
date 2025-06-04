@@ -1,4 +1,5 @@
 package com.payment.service.service;
+import com.instantmobility.booking.service.BookingService;
 import com.payment.service.infrastructure.PaymentGatewayClient;
 import com.payment.service.domain.entity.Payment;
 import com.payment.service.domain.repo.PaymentRepository;
@@ -11,13 +12,16 @@ public class PaymentProcessingService {
     private final PaymentRepository paymentRepository;
     private final PaymentGatewayClient gatewayClient;
     private final PaymentEventPublisher eventPublisher;
+//    private final BookingService bookingService;
+
 
     public PaymentProcessingService(PaymentRepository paymentRepository,
                                     PaymentGatewayClient gatewayClient,
-                                    PaymentEventPublisher eventPublisher) {
+                                    PaymentEventPublisher eventPublisher ) {
         this.paymentRepository = paymentRepository;
         this.gatewayClient = gatewayClient;
         this.eventPublisher = eventPublisher;
+//        this.bookingService = bookingService;
     }
 
     public void processPayment(UUID paymentId) {
