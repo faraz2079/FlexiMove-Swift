@@ -6,12 +6,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
-@FeignClient(name = "payment-service", url = "${services.payment.url}")
+@FeignClient(name = "payment-service")
 public interface PaymentServiceClient {
-    @PostMapping("/api/payments")
+    @PostMapping("${paymentService.paymentProcess.endpoint}")
     PaymentResponseDTO processPayment(@RequestBody PaymentRequestDTO request);
 
-    @GetMapping("/api/payments/{paymentId}")
+    @GetMapping("${paymentService.paymentStatus.endpoint}")
     PaymentResponseDTO getPaymentStatus(@PathVariable UUID paymentId);
 
 }
