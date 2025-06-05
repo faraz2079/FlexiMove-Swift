@@ -2,6 +2,7 @@ package com.payment.service.controller;
 
 import com.payment.service.domain.entity.Payment;
 import com.payment.service.domain.repo.PaymentRepository;
+import com.payment.service.service.DTO.PaymentResponseDTO;
 import com.payment.service.service.PaymentProcessingService;
 import com.payment.service.service.DTO.PaymentRequestDTO;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +33,8 @@ public class PaymentController {
 
     // Main endpoint for processing payments from Booking
     @PostMapping("/process")
-    public String processFromBooking(@RequestBody PaymentRequestDTO request) {
-        Payment payment = processingService.processPayment(request);
-        return "Payment " + payment.getPaymentStatus().name().toLowerCase() + ".";
+    public PaymentResponseDTO processFromBooking(@RequestBody PaymentRequestDTO request) {
+        return processingService.processPayment(request);
     }
 
 }

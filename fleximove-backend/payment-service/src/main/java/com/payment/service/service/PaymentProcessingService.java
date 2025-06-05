@@ -5,6 +5,7 @@ import com.payment.service.domain.enums.PaymentStatus;
 import com.payment.service.domain.repo.PaymentRepository;
 import com.payment.service.infrastructure.PaymentGatewayClient;
 import com.payment.service.service.DTO.PaymentRequestDTO;
+import com.payment.service.service.DTO.PaymentResponseDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class PaymentProcessingService {
         this.eventPublisher = eventPublisher;
     }
 
-    public Payment processPayment(PaymentRequestDTO dto) {
+    public PaymentResponseDTO processPayment(PaymentRequestDTO dto) {
         // Build Payment entity from DTO
         Payment payment = new Payment();
         payment.setBookingId(dto.getBookingId());
@@ -48,8 +49,18 @@ public class PaymentProcessingService {
         }
 
         // Save and publish event
-        paymentRepository.save(payment);
-        eventPublisher.publishPaymentProcessed(payment);
-        return payment;
+        Payment saved = paymentRepository.save(payment);
+        eventPublisher.publishPaymentProcessed(saved);
+
+        return new PaymentResponseDTO(
+                saved.getPaymentId(),
+                saved.getPaymentStatus().toString(),
+                saved.getPaymentStatus() == PaymentStatus.COMPLETED ?
+                        "Payment successful" : "Payment failed",
+                saved.getBookingId(),
+                saved.getAmount(),
+                saved.getCurrency(),
+                saved.getDescription()
+        );
     }
 }
