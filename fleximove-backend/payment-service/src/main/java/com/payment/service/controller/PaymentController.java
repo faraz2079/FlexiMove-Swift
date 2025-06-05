@@ -33,7 +33,8 @@ public class PaymentController {
     // Main endpoint for processing payments from Booking
     @PostMapping("/process")
     public String processFromBooking(@RequestBody PaymentRequestDTO request) {
-        processingService.processPayment(request);
-        return "Payment processed.";
+        Payment payment = processingService.processPayment(request);
+        return "Payment " + payment.getPaymentStatus().name().toLowerCase() + ".";
     }
+
 }

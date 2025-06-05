@@ -8,7 +8,6 @@ import com.payment.service.service.DTO.PaymentRequestDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 public class PaymentProcessingService {
@@ -25,7 +24,7 @@ public class PaymentProcessingService {
         this.eventPublisher = eventPublisher;
     }
 
-    public void processPayment(PaymentRequestDTO dto) {
+    public Payment processPayment(PaymentRequestDTO dto) {
         // Build Payment entity from DTO
         Payment payment = new Payment();
         payment.setBookingId(dto.getBookingId());
@@ -51,5 +50,6 @@ public class PaymentProcessingService {
         // Save and publish event
         paymentRepository.save(payment);
         eventPublisher.publishPaymentProcessed(payment);
+        return payment;
     }
 }
