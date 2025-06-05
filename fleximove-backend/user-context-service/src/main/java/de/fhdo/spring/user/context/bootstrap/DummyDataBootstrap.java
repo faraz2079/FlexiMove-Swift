@@ -40,6 +40,8 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
 
         // Customer erstellen
         User customer1 = new Customer(
+                "John",
+                "Wick",
                 password,
                 email,
                 LocalDate.of(1990, 5, 15),

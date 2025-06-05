@@ -88,7 +88,7 @@ public class BookingService {
     /**
      * Deletes all bookings for a specific user
      */
-    public void deleteBookingsByUserId(UUID userId) {
+    public void deleteBookingsByUserId(Long userId) {
         List<Booking> userBookings = bookingRepository.findByUserId(userId);
 
         for (Booking booking : userBookings) {
@@ -119,7 +119,7 @@ public class BookingService {
         return mapToDTO(booking);
     }
 
-    public List<BookingDTO> getUserBookings(UUID userId) {
+    public List<BookingDTO> getUserBookings(Long userId) {
         List<Booking> bookings = bookingRepository.findByUserId(userId);
         return bookings.stream()
                 .map(this::mapToDTO)

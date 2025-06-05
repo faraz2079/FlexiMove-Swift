@@ -1,13 +1,6 @@
 package de.fhdo.spring.user.context.domain;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,7 +26,15 @@ public abstract class User {
     private String phoneNumber;
     @Embedded
     private PaymentInfo paymentinfo;
-    
+
+    @Transient
+    private String role;
+
+    @PostLoad
+    public void setRoleAfterLoad() {
+        this.role = this.getClass().getSimpleName();
+    }
+
     private boolean isRegistered;
 
     public User(Password password, Email email, Address address, String phoneNumber, PaymentInfo paymentinfo) {

@@ -1,5 +1,6 @@
 package de.fhdo.spring.user.context.services;
 
+import de.fhdo.spring.user.context.clients.BookingClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,12 +11,16 @@ import de.fhdo.spring.user.context.repository.UserRepository;
 @Service
 public class LoginService {
 
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public LoginService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
-    public boolean login(Email email, Password password) {
+    public User login(Email email, Password password) {
         User user = userRepository.findByEmail(email);
-
+        //TODO: alle Kommentare und Logs auf Englisch
         if (user == null) {
             throw new IllegalStateException("Benutzer existiert nicht");
         }
@@ -24,10 +29,10 @@ public class LoginService {
             throw new IllegalStateException("Benutzer ist nicht registriert");
         }
 
-        if (!user.getPassword().getValue().equals(password)) {
+        if (!user.getPassword().getValue().equals(password.getValue())) {
             throw new IllegalStateException("Passwort ist falsch");
         }
 
-        return true; // Login erfolgreich
+        return user;
     }
 }

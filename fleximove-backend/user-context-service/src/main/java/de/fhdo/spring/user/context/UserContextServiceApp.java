@@ -7,7 +7,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableFeignClients(basePackages = "clients")
+@EnableFeignClients(basePackages = "de.fhdo.spring.user.context.clients")
  
 public class UserContextServiceApp {
 

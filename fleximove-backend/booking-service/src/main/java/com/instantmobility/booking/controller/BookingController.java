@@ -57,7 +57,7 @@ public class BookingController {
      * Delete all bookings for a user
      */
     @DeleteMapping("/user/{userId}")
-    public ResponseEntity<Void> deleteUserBookings(@PathVariable UUID userId) {
+    public ResponseEntity<Void> deleteUserBookings(@PathVariable Long userId) {
         bookingService.deleteBookingsByUserId(userId);
         return ResponseEntity.noContent().build();
     }
@@ -75,7 +75,7 @@ public class BookingController {
     } */
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BookingDTO>> getUserBookings(@PathVariable UUID userId) {
+    public ResponseEntity<List<BookingDTO>> getUserBookings(@PathVariable Long userId) {
         List<BookingDTO> bookings = bookingService.getUserBookings(userId);
         return ResponseEntity.ok(bookings);
     }

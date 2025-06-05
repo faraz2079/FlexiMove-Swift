@@ -9,19 +9,20 @@ import de.fhdo.spring.user.context.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import clients.BookingClient;
+import de.fhdo.spring.user.context.clients.BookingClient;
 import de.fhdo.spring.user.context.repository.UserRepository;
 
 @Service
 public class UserService {
-	private UserRepository userRepository;
-	private BookingClient bookingClient;
+	private final UserRepository userRepository;
+	private final BookingClient bookingClient;
 
 	@Autowired
 	public UserService(UserRepository userRepository, BookingClient bookingClient) {
 	    this.userRepository = userRepository;
 	    this.bookingClient = bookingClient;
 	}
+
 	//Alle User
 	public List<User> getAlleUser() {
 		List<User> user = new ArrayList<User>();

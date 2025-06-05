@@ -105,7 +105,7 @@ public class UserController {
     public ResponseEntity<String> registerCustomer(@RequestBody Customer customer) {
         try {
             registrationService.registerUser(customer);
-            return ResponseEntity.ok("Registrierung erfolgreich!");
+            return ResponseEntity.ok("Registration successful!");
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -115,22 +115,21 @@ public class UserController {
     public ResponseEntity<String> registerProvider(@RequestBody Provider provider) {
         try {
             registrationService.registerUser(provider);
-            return ResponseEntity.ok("Registrierung erfolgreich!");
+            return ResponseEntity.ok("Registration successful!");
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 	@PostMapping("/login")
-	public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
 	    try {
-			//TODO: User zurueckgeben, nicht boolean
-	        boolean success = loginService.login(loginRequest.getEmail(), loginRequest.getPassword());
-			//TODO: LoginResponse zuruecksenden
-	        return ResponseEntity.ok("Login erfolgreich!");
+	        User loggedUser = loginService.login(loginRequest.getEmail(), loginRequest.getPassword());
+			//TODO: nicht kompletten User mit Password zurueckgeben, sondern LoginResponse
+	        return ResponseEntity.ok(loggedUser);
 	    } catch (IllegalStateException e) {
-	        return ResponseEntity.status(401).body(e.getMessage());
+	        return ResponseEntity.status(401).body("Invalid credentials");
 	    }
-}
+	}
 	
 	@GetMapping("/provider/{id}/companyName")
     public ResponseEntity<String> getProviderCompanyName(@PathVariable Long id) {

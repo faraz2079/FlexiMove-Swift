@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { LoginService } from 'src/app/src/app/services/login.service';
 
 @Component({
   selector: 'app-login',
@@ -10,20 +12,49 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, private loginService: LoginService, private snackBar: MatSnackBar
+  ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required],
     });
   }
 
+  //TODO: alerts anpassen (mit Snackbar ersetzen)
+  //TODO: UserService erstellen
   onSubmit() {
-    if (this.loginForm.valid) {
-      console.log('Login data:', this.loginForm.value);
-      //TODO: Hier kommt später der Auth-Service
-      this.router.navigateByUrl('/customer');
-    } else {
-      this.loginForm.markAllAsTouched();
-    }
+  if (this.loginForm.valid) {
+    const formData = this.loginForm.value;
+    const payload = {
+      email: formData.username.toLowerCase(),
+      password: formData.password
+    };
+
+    this.loginService.login(payload).subscribe({
+      next: user => {
+        console.log('Login erfolgreich', user);
+        if (user.role === 'Customer') {
+          //this.userService.setUser(user);
+          localStorage.setItem('userId', user.id.toString());
+          localStorage.setItem('role', user.role);
+          this.router.navigateByUrl('/customer');
+        } else if (user.role === 'Provider') {
+          //TODO
+          localStorage.setItem('userId', user.id.toString());
+          localStorage.setItem('role', user.role);
+          //this.router.navigateByUrl('/provider');
+        } else {
+          this.snackBar.open('Unbekannte Rolle: Zugriff verweigert', 'OK', { panelClass: 'snackbar-error' });
+        }},
+      error: err => {
+        console.error('Login fehlgeschlagen', err);
+        alert('Login fehlgeschlagen: Ungültige Zugangsdaten');
+      }
+    });
+
+  } else {
+    this.loginForm.markAllAsTouched();
   }
+}
+
 }
