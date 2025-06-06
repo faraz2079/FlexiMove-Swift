@@ -24,7 +24,7 @@ public class Booking {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private BookingStatus status;
-    
+
     
     @Embedded
     private TimeFrame timeFrame;
@@ -46,7 +46,20 @@ public class Booking {
     @Column(name = "cost")
     private double cost;
 
-    @Transient // Trip wird nicht direkt in DB gespeichert (müsstest du anpassen, falls persistiert)
+    @Embedded
+    @AttributeOverrides({
+            // Map all Trip fields to prefixed column names
+            @AttributeOverride(name = "id", column = @Column(name = "trip_id")),
+            @AttributeOverride(name = "startTime", column = @Column(name = "trip_start_time")),
+            @AttributeOverride(name = "endTime", column = @Column(name = "trip_end_time")),
+            @AttributeOverride(name = "startLatitude", column = @Column(name = "trip_start_latitude")),
+            @AttributeOverride(name = "startLongitude", column = @Column(name = "trip_start_longitude")),
+            @AttributeOverride(name = "endLatitude", column = @Column(name = "trip_end_latitude")),
+            @AttributeOverride(name = "endLongitude", column = @Column(name = "trip_end_longitude")),
+            @AttributeOverride(name = "completed", column = @Column(name = "trip_completed"))
+            // If Trip has a status field, add this:
+            // @AttributeOverride(name = "status", column = @Column(name = "trip_status"))
+    })
     private Trip trip;
 
     
