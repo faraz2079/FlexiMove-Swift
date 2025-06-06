@@ -14,4 +14,6 @@ import de.fhdo.spring.user.context.dto.BookingDto;
 public interface BookingClient {
     @DeleteMapping("/bookings/user/{userId}")
     void deleteUserBookings(@PathVariable("userId") Long userId);
+    
+    //Änderungen :
 }
