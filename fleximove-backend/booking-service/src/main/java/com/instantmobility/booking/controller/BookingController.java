@@ -67,7 +67,7 @@ public class BookingController {
     
     @GetMapping("/history/{userId}")
     public ResponseEntity<List<BookingDTO>> getBookingHistory(
-            @PathVariable UUID userId,
+            @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         List<BookingDTO> history = bookingService.getBookingHistory(userId, page, size);
