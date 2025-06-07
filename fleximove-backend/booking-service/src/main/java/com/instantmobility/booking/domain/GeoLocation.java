@@ -1,15 +1,21 @@
 package com.instantmobility.booking.domain;
 
-import java.util.Objects;
+import jakarta.persistence.Embeddable;
+import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+@Embeddable
+@NoArgsConstructor
 public class GeoLocation {
-    private final double latitude;
-    private final double longitude;
+    private double latitude;
+    private double longitude;
+
 
     public GeoLocation(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
 
     public double getLatitude() {
         return latitude;

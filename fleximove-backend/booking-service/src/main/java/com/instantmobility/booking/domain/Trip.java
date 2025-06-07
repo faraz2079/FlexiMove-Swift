@@ -1,25 +1,35 @@
 package com.instantmobility.booking.domain;
 
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Transient;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+@Embeddable
+@NoArgsConstructor
 public class Trip {
-    private final UUID id;
-    private final List<GeoLocation> route;
+    @Transient
+    private  List<GeoLocation> route;
     private double distance;
-    private String status;
+    private String trip_status;
+    private UUID id = UUID.randomUUID();
 
     public Trip(UUID id) {
         this.id = id;
         this.route = new ArrayList<>();
         this.distance = 0.0;
-        this.status = "IN_PROGRESS";
+        this.trip_status = "IN_PROGRESS";
     }
 
     public void recordLocation(GeoLocation location) {
-        if (!"IN_PROGRESS".equals(status)) {
+        if (this.route == null) {
+            this.route = new ArrayList<>();
+        }
+        if (!"IN_PROGRESS".equals(trip_status)) {
             throw new IllegalStateException("Cannot record location when trip is not in progress");
         }
 
@@ -34,13 +44,16 @@ public class Trip {
     }
 
     public void complete() {
-        if (!"IN_PROGRESS".equals(status)) {
+        if (!"IN_PROGRESS".equals(trip_status)) {
             throw new IllegalStateException("Cannot complete a trip that is not in progress");
         }
-        status = "COMPLETED";
+        trip_status = "COMPLETED";
     }
 
     private double calculateDistance(GeoLocation from, GeoLocation to) {
+        if (this.route == null) {
+            this.route = new ArrayList<>();
+        }
         // Simple Haversine formula for distance calculation
         final int R = 6371; // Radius of the earth in km
 
@@ -69,6 +82,6 @@ public class Trip {
     }
 
     public String getStatus() {
-        return status;
+        return trip_status;
     }
 }

@@ -2,11 +2,7 @@ package com.payment.service.domain.entity;
 
 import com.payment.service.domain.enums.BillingModel;
 import com.payment.service.domain.enums.PaymentStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,6 +10,30 @@ import java.util.UUID;
 
 @Entity
 public class Payment {
+
+    @Id
+    @GeneratedValue
+    private UUID paymentId;
+
+    private UUID bookingId;
+    private UUID userId;
+
+    private BigDecimal amount;
+
+    private String currency;
+
+    private String description;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
+
+    @Enumerated(EnumType.STRING)
+    private BillingModel billingModel;
+
+    private LocalDateTime timestamp = LocalDateTime.now();
+
+    // Getters and setters...
+
     public UUID getPaymentId() {
         return paymentId;
     }
@@ -30,21 +50,61 @@ public class Payment {
         this.bookingId = bookingId;
     }
 
-    @Id
-    @GeneratedValue
-    private UUID paymentId;
+    public UUID getUserId() {
+        return userId;
+    }
 
-    private UUID bookingId;
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
 
-    private BigDecimal amount;
+    public BigDecimal getAmount() {
+        return amount;
+    }
 
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus = PaymentStatus.PENDING;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 
-    @Enumerated(EnumType.STRING)
-    private BillingModel billingModel;
+    public String getCurrency() {
+        return currency;
+    }
 
-    private LocalDateTime timestamp = LocalDateTime.now();
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public PaymentStatus getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public BillingModel getBillingModel() {
+        return billingModel;
+    }
+
+    public void setBillingModel(BillingModel billingModel) {
+        this.billingModel = billingModel;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public void markAsCompleted() {
         if (paymentStatus == PaymentStatus.PENDING)
@@ -55,6 +115,5 @@ public class Payment {
         if (paymentStatus == PaymentStatus.PENDING)
             this.paymentStatus = PaymentStatus.FAILED;
     }
-
-
 }
+

@@ -1,9 +1,14 @@
 package com.payment.service.service;
-import com.payment.service.infrastructure.PaymentGatewayClient;
+
 import com.payment.service.domain.entity.Payment;
+import com.payment.service.domain.enums.PaymentStatus;
 import com.payment.service.domain.repo.PaymentRepository;
+import com.payment.service.infrastructure.PaymentGatewayClient;
+import com.payment.service.service.DTO.PaymentRequestDTO;
+import com.payment.service.service.DTO.PaymentResponseDTO;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
+
+import java.time.LocalDateTime;
 
 @Service
 public class PaymentProcessingService {
@@ -20,24 +25,42 @@ public class PaymentProcessingService {
         this.eventPublisher = eventPublisher;
     }
 
-    public void processPayment(UUID paymentId) {
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new RuntimeException("Payment not found"));
+    public PaymentResponseDTO processPayment(PaymentRequestDTO dto) {
+        // Build Payment entity from DTO
+        Payment payment = new Payment();
+        payment.setBookingId(dto.getBookingId());
+        payment.setUserId(dto.getUserId());
+        payment.setAmount(dto.getAmount());
+        payment.setCurrency(dto.getCurrency());
+        payment.setDescription(dto.getDescription());
+        payment.setTimestamp(LocalDateTime.now());
+        payment.setPaymentStatus(PaymentStatus.PENDING); // Initial state
 
+        // Charge using gateway
         try {
             boolean success = gatewayClient.charge(payment);
-
             if (success) {
                 payment.markAsCompleted();
             } else {
                 payment.markAsFailed();
             }
-
         } catch (Exception e) {
             payment.markAsFailed();
         }
 
-        paymentRepository.save(payment);
-        eventPublisher.publishPaymentProcessed(payment);
+        // Save and publish event
+        Payment saved = paymentRepository.save(payment);
+        eventPublisher.publishPaymentProcessed(saved);
+
+        return new PaymentResponseDTO(
+                saved.getPaymentId(),
+                saved.getPaymentStatus().toString(),
+                saved.getPaymentStatus() == PaymentStatus.COMPLETED ?
+                        "Payment successful" : "Payment failed",
+                saved.getBookingId(),
+                saved.getAmount(),
+                saved.getCurrency(),
+                saved.getDescription()
+        );
     }
 }

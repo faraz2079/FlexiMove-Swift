@@ -1,4 +1,4 @@
-package bootstrap;
+package com.instantmobility.booking.bootstrap;
 
 import com.instantmobility.booking.domain.*;
 import com.instantmobility.booking.repository.BookingRepository;
