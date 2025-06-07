@@ -31,7 +31,7 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
         Price vehiclePrice1 = new Price(4, BillingModel.PER_KILOMETER);
         VehicleRestrictions restrictions1 = new VehicleRestrictions(18, 180, 200.0, 4, DriverLicenseType.CAR);
 
-        Vehicle newVehicle1 = new Vehicle(identificationNumber1, "Audi Q8", vehicleType1, vehicleLocation1, vehiclePrice1, restrictions1, 2L);
+        Vehicle newVehicle1 = new Vehicle(identificationNumber1, "Audi Q8", vehicleType1, vehicleLocation1, vehiclePrice1, restrictions1, 4L);
 
         vehicleRepository.save(newVehicle1);
 
@@ -41,7 +41,7 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
         Price vehiclePrice2 = new Price(0.5, BillingModel.PER_HOUR);
         VehicleRestrictions restrictions2 = new VehicleRestrictions(null, 60, 50.0, 1, DriverLicenseType.NONE);
 
-        Vehicle newVehicle2 = new Vehicle(identificationNumber2, "Ultimate CF 7", vehicleType2, vehicleLocation2, vehiclePrice2, restrictions2, 2L);
+        Vehicle newVehicle2 = new Vehicle(identificationNumber2, "Ultimate CF 7", vehicleType2, vehicleLocation2, vehiclePrice2, restrictions2, 4L);
 
         vehicleRepository.save(newVehicle2);
     }

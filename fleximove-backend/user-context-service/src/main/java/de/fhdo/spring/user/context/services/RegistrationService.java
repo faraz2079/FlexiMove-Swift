@@ -8,6 +8,7 @@ import de.fhdo.spring.user.context.domain.Email;
 import de.fhdo.spring.user.context.domain.Password;
 import de.fhdo.spring.user.context.domain.User;
 import de.fhdo.spring.user.context.repository.UserRepository;
+
 @Service
 public class RegistrationService {
 
