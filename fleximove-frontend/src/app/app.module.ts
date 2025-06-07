@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -27,6 +28,7 @@ import { RegistrationService } from './src/app/services/registration.service';
 import { HttpClientModule } from '@angular/common/http';
 import {MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoginService } from './src/app/services/login.service';
+import { GeocodingService } from './src/app/services/geocoding.service';
 
 @NgModule({
   declarations: [
@@ -56,9 +58,10 @@ import { LoginService } from './src/app/services/login.service';
     MatSelectModule,
     FormsModule,
     HttpClientModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatAutocompleteModule
   ],
-  providers: [RegistrationService, LoginService],
+  providers: [RegistrationService, LoginService, GeocodingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

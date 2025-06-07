@@ -8,10 +8,10 @@
         <mat-card-content>
           <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
             <mat-form-field appearance="fill" class="full-width-name">
-              <mat-label>User Name</mat-label>
+              <mat-label>Email</mat-label>
               <input matInput formControlName="username" />
               <mat-error *ngIf="loginForm.get('username')?.hasError('required')">
-                Username is required
+                Email is required
               </mat-error>
             </mat-form-field>
     
