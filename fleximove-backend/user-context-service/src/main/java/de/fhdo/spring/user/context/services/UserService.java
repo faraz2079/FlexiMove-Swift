@@ -53,14 +53,28 @@ public class UserService {
 		userRepository.save(user);
 	}
 	
-	//User löschen
+	/*User löschen
 	public void deleteUser(User user){
 		// 1. Buchungen löschen via Booking-Service
         bookingClient.deleteUserBookings(user.getId());
 
         // 2. User löschen
         userRepository.delete(user);
-    }
+    }*/
+	
+	
+	public void deleteUserById(Long id) {
+	    Optional<User> optionalUser = userRepository.findById(id);
+	    if (optionalUser.isPresent()) {
+	        userRepository.deleteById(id);
+	    } else {
+	        throw new EntityNotFoundException("User mit ID " + id + " nicht gefunden.");
+	    }
+	}
+
+
+	
+	
 	
 	//User Passwort ändern
 	public void updatepw(User user, Password pw) {

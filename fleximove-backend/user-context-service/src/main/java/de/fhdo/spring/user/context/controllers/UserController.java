@@ -1,8 +1,10 @@
 package de.fhdo.spring.user.context.controllers;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import clients.BookingClient;
 import de.fhdo.spring.user.context.domain.Adress;
 import de.fhdo.spring.user.context.domain.Customer;
 import de.fhdo.spring.user.context.domain.Email;
@@ -27,21 +30,25 @@ import de.fhdo.spring.user.context.repository.UserRepository;
 import de.fhdo.spring.user.context.services.LoginService;
 import de.fhdo.spring.user.context.services.RegistrationService;
 import de.fhdo.spring.user.context.services.UserService;
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
 	private final UserService userService;
-	private final LoginService loginService;
-	private final RegistrationService registrationService;
+    private final LoginService loginService;
+    private final RegistrationService registrationService;
+    private final BookingClient bookingClient;  // <-- hier
 
-	@Autowired
-	public UserController(UserService userService, LoginService loginService, RegistrationService registrationService) {
-		this.userService = userService;
-		this.loginService = loginService;
-		this.registrationService = registrationService;
-	}
+    @Autowired
+    public UserController(UserService userService, LoginService loginService, RegistrationService registrationService, BookingClient bookingClient) {
+        this.userService = userService;
+        this.loginService = loginService;
+        this.registrationService = registrationService;
+        this.bookingClient = bookingClient;  // <-- hier
+    }
+
 
 	// Alle User abrufen
 	@GetMapping
@@ -71,7 +78,7 @@ public class UserController {
 		userService.saveUser(user);
 	}
 
-	// User löschen   ==> Ansastasia ansprechen weil auch alle bestehenden Buchungen gelöscht werden müssen
+	/* User löschen   ==> Ansastasia ansprechen weil auch alle bestehenden Buchungen gelöscht werden müssen
 	@DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         User user = userService.getUserById(id);
@@ -81,7 +88,63 @@ public class UserController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }
+    }*/
+	
+	
+/*	
+	@DeleteMapping("/{userId}/bookings")
+	public ResponseEntity<Void> deleteUserBookings(@PathVariable Long userId) {
+	    try {
+	        BookingClient.deleteUserBookings(userId); // ruft den Feign-Client auf
+	        return ResponseEntity.noContent().build();
+	    } catch (Exception e) {
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+	    }
+	}
+*/
+	
+
+	@DeleteMapping("/{userId}")
+	public ResponseEntity<Void> deleteUserWithBookings(@PathVariable Long userId) {
+	    try {
+	        // Zuerst Buchungen löschen
+	        bookingClient.deleteUserBookings(userId);
+
+	        // Wenn erfolgreich, dann Nutzer löschen
+	        User user = userService.getUserById(userId);
+	        if (user != null) {
+	            userService.deleteUserById(userId);
+	            return ResponseEntity.noContent().build(); // 204
+	        } else {
+	            return ResponseEntity.notFound().build(); // 404
+	        }
+
+	    } catch (Exception e) {
+	        // Falls das Löschen der Buchungen oder des Nutzers fehlschlägt
+	        System.err.println("Fehler beim Löschen: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build(); // 500
+	    }
+	}
+
+	
+	
+	
+	
+/*	
+	
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+	    try {
+	        userService.deleteUserById(id); // neue Methode
+	        return ResponseEntity.noContent().build();
+	    } catch (EntityNotFoundException e) {
+	        return ResponseEntity.notFound().build();
+	    }
+	}*/
+
+	
+	
+	
 	// Change Password
 	@PutMapping("/{id}/password")
 	public void updatePassword(@PathVariable Long id, @RequestBody Password newPassword) {

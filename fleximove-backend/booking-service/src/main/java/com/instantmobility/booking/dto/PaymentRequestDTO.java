@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class PaymentRequestDTO {
-    private UUID userId;
+    private long userId;
     private UUID bookingId;
     private BigDecimal amount;
     private String currency = "USD";
@@ -15,7 +15,7 @@ public class PaymentRequestDTO {
     public PaymentRequestDTO() {}
 
     // Constructor with essential fields
-    public PaymentRequestDTO(UUID userId, UUID bookingId, BigDecimal amount, String description) {
+    public PaymentRequestDTO(long userId, UUID bookingId, BigDecimal amount, String description) {
         this.userId = userId;
         this.bookingId = bookingId;
         this.amount = amount;
@@ -23,12 +23,12 @@ public class PaymentRequestDTO {
     }
 
     // Getters and setters
-    public UUID getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUserId(long l) {
+        this.userId = l;
     }
 
     public UUID getBookingId() {

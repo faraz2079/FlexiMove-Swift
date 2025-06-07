@@ -110,20 +110,21 @@ public class BookingService {
     /**
      * Deletes all bookings for a specific user
      */
-    public void deleteBookingsByUserId(UUID userId) {
+    public void deleteBookingsByUserId(Long userId) {
         List<Booking> userBookings = bookingRepository.findByUserId(userId);
 
-        for (Booking booking : userBookings) {
+       /* for (Booking booking : userBookings) 
+        {
             // Don't allow deletion of active bookings
             if (booking.getStatus() == BookingStatus.STARTED ||
                     booking.getStatus() == BookingStatus.CONFIRMED) {
                 throw new IllegalStateException(
                         "Cannot delete user with active bookings. Cancel bookings first.");
             }
-        }
+        }*/
 
         // Delete all bookings for this user
-        bookingRepository.deleteByUserId(userId);
+        bookingRepository.deleteBookingsByUserId(userId);
     }
 
     /**
@@ -141,7 +142,7 @@ public class BookingService {
         return mapToDTO(booking);
     }
 
-    public List<BookingDTO> getUserBookings(UUID userId) {
+    public List<BookingDTO> getUserBookings(Long userId) {
         List<Booking> bookings = bookingRepository.findByUserId(userId);
         return bookings.stream()
                 .map(this::mapToDTO)

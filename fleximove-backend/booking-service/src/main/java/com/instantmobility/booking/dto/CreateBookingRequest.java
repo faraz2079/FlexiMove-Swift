@@ -4,18 +4,18 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class CreateBookingRequest {
-    private UUID userId;
+    private long userId;
     private UUID vehicleId;
     private LocalDateTime startTime;
     private double pickupLatitude;
     private double pickupLongitude;
 
     // Getters and setters
-    public UUID getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
     }
 

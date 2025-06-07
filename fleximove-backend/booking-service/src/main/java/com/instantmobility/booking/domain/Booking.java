@@ -15,8 +15,8 @@ public class Booking {
     @Column(name = "id", columnDefinition = "BINARY(16)")
     private BookingId id;
 
-    @Column(name = "user_id", columnDefinition = "BINARY(16)", nullable = false)
-    private UUID userId;
+    @Column(name = "user_id", nullable = false)
+    private long userId;
 
     @Column(name = "vehicle_id", columnDefinition = "BINARY(16)", nullable = false)
     private UUID vehicleId;
@@ -49,8 +49,10 @@ public class Booking {
     @Transient // Trip wird nicht direkt in DB gespeichert (müsstest du anpassen, falls persistiert)
     private Trip trip;
 
+    public Booking() {
+    }
     
-    public Booking(BookingId id, UUID userId, UUID vehicleId, TimeFrame timeFrame, GeoLocation pickupLocation) {
+    public Booking(BookingId id, long userId, UUID vehicleId, TimeFrame timeFrame, GeoLocation pickupLocation) {
         this.id = id;
         this.userId = userId;
         this.vehicleId = vehicleId;
@@ -147,7 +149,7 @@ public class Booking {
         return id;
     }
 
-    public UUID getUserId() {
+    public long getUserId() {
         return userId;
     }
 

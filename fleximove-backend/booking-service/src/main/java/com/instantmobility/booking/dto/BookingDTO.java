@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class BookingDTO {
     private UUID id;
-    private UUID userId;
+    private long userId;
     private UUID vehicleId;
     private String status;
     private LocalDateTime startTime;
@@ -26,12 +26,12 @@ public class BookingDTO {
         this.id = id;
     }
 
-    public UUID getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public void setUserId(long l) {
+        this.userId = l;
     }
 
     public UUID getVehicleId() {
