@@ -28,12 +28,12 @@ public class RatingService {
         return providerRepository.save(rating);
     }
 
-    public double getAverageRatingForVehicle(UUID vehicleId) {
+    public double getAverageRatingForVehicle(Long vehicleId) {
         return vehicleRepository.findAverageScoreByVehicleId(vehicleId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No ratings found for this vehicle."));
     }
 
-    public double getAverageRatingForProvider(UUID providerId) {
+    public double getAverageRatingForProvider(Long providerId) {
         return providerRepository.findAverageScoreByProviderId(providerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No ratings found for this provider."));
     }

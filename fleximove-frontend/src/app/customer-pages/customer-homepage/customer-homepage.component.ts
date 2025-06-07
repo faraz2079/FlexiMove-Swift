@@ -1,6 +1,25 @@
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { GeocodingService } from 'src/app/src/app/services/geocoding.service';
+import { VehicleService } from 'src/app/src/app/services/vehicle.service';
+
+export interface NearestAvailableVehicleResponse {
+  vehicleId: number;
+  vehicleName: string;
+  providerName: string;
+  vehicleType: string;
+  status: string;
+  priceAmount: number;
+  billingModel: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  distanceInKm: number;
+  averageVehicleRating: number;
+  averageProviderRating: number;
+}
+
 
 @Component({
   selector: 'app-customer-homepage',
@@ -8,10 +27,10 @@ import { GeocodingService } from 'src/app/src/app/services/geocoding.service';
   styleUrls: ['./customer-homepage.component.css']
 })
 export class CustomerHomepageComponent {
-  selectedRadius = 'None';
+  selectedRadius: string = 'None';
   address: string = '';
 
-  constructor(private router: Router, private geocodingService: GeocodingService /*private userService: UserService */) {}
+  constructor(private router: Router, private geocodingService: GeocodingService, private snackBar: MatSnackBar, private vehicleService: VehicleService /*private userService: UserService */) {}
 
   ngOnInit(): void {
     const userId = localStorage.getItem('userId');
@@ -22,7 +41,24 @@ export class CustomerHomepageComponent {
   }
  
   searchVehicles() {
-  console.log(`Searching vehicles at ${this.address} within ${this.selectedRadius} km radius.`);
+    if (!this.address) {
+      this.snackBar.open('Please enter a valid address.', 'OK', { panelClass: 'snackbar-error' });
+      return;
+    }
+
+    const parsedRadius = this.selectedRadius === 'None' ? undefined : parseFloat(this.selectedRadius);
+    
+    this.vehicleService.getNearbyVehicles(this.address, parsedRadius)
+      .subscribe({
+        next: (data) => {
+          this.vehicleService.setResults(data);
+          this.router.navigate(['/customer/search-results']);
+        },
+        error: (err) => {
+          console.error(err);
+          this.snackBar.open('Error fetching vehicles.', 'OK', { panelClass: 'snackbar-error' });
+        }
+      });
   }
 
   useCurrentLocation() {

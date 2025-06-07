@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface RatingVehicleRepository extends JpaRepository<RatingVehicle, UUID> {
 
     @Query("SELECT AVG(r.score) FROM RatingVehicle r WHERE r.vehicleId = :vehicleId")
-    Optional<Double> findAverageScoreByVehicleId(UUID vehicleId);
+    Optional<Double> findAverageScoreByVehicleId(Long vehicleId);
 }

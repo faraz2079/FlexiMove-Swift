@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -29,6 +28,9 @@ import { HttpClientModule } from '@angular/common/http';
 import {MatSnackBarModule } from '@angular/material/snack-bar';
 import { LoginService } from './src/app/services/login.service';
 import { GeocodingService } from './src/app/services/geocoding.service';
+import { VehicleService } from './src/app/services/vehicle.service';
+import { VehicleSearchResultComponent } from './customer-pages/vehicle-search-result/vehicle-search-result.component';
+import { VehicleMapComponent } from './vehicle-map/vehicle-map.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +43,8 @@ import { GeocodingService } from './src/app/services/geocoding.service';
     CustomerHeaderComponent,
     FooterComponent,
     CustomerHomepageComponent,
+    VehicleSearchResultComponent,
+    VehicleMapComponent,
   ],
   imports: [
     BrowserModule,
@@ -59,9 +63,9 @@ import { GeocodingService } from './src/app/services/geocoding.service';
     FormsModule,
     HttpClientModule,
     MatSnackBarModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
   ],
-  providers: [RegistrationService, LoginService, GeocodingService],
+  providers: [RegistrationService, LoginService, GeocodingService, VehicleService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

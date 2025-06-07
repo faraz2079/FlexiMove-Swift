@@ -11,13 +11,13 @@ public class RatingVehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private Long id;
 
     @Column(nullable = false)
-    private UUID vehicleId;
+    private Long vehicleId;
 
     @Column(nullable = false)
-    private UUID userId;
+    private Long userId;
 
     @Min(1)
     @Max(5)
@@ -28,14 +28,14 @@ public class RatingVehicle {
 
     private LocalDateTime timestamp = LocalDateTime.now();
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public UUID getVehicleId() { return vehicleId; }
-    public void setVehicleId(UUID vehicleId) { this.vehicleId = vehicleId; }
+    public Long getVehicleId() { return vehicleId; }
+    public void setVehicleId(Long vehicleId) { this.vehicleId = vehicleId; }
 
-    public UUID getUserId() { return userId; }
-    public void setUserId(UUID userId) { this.userId = userId; }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 
     public double getScore() { return score; }
     public void setScore(double score) { this.score = score; }

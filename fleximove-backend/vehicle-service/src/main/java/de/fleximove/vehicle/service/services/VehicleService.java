@@ -70,8 +70,19 @@ public class VehicleService {
 
         return foundAvailableVehicles.filter(vehicleWithDistance -> vehicleWithDistance.distanceInKm() <= radiusInKm).map(vehicleWithDistance -> {
             Vehicle vehicle = vehicleWithDistance.vehicle();
-            Double averageRatingForVehicle = ratingServiceClient.getAverageRatingForVehicle(vehicle.getId());
-            Double averageRatingForProvider = ratingServiceClient.getAverageRatingForProvider(vehicle.getProviderId());
+            Double avgVehicleRating;
+            Double avgProviderRating;
+            try {
+                avgVehicleRating = ratingServiceClient.getAverageRatingForVehicle(vehicle.getId());
+            } catch (Exception e) {
+                avgVehicleRating = 0.0;
+            }
+
+            try {
+                avgProviderRating = ratingServiceClient.getAverageRatingForProvider(vehicle.getProviderId());
+            } catch (Exception e) {
+                avgProviderRating = 0.0;
+            }
             String providerName = userServiceClient.getProviderCompanyName(vehicle.getProviderId());
             String address = geocodingService.reverseGeocode(vehicle.getCurrentLocation());
             return new NearestAvailableVehicleResponse(
@@ -86,8 +97,8 @@ public class VehicleService {
                     vehicle.getCurrentLocation().getLatitude(),
                     vehicle.getCurrentLocation().getLongitude(),
                     vehicleWithDistance.distanceInKm(),
-                    averageRatingForVehicle,
-                    averageRatingForProvider
+                    avgVehicleRating,
+                    avgProviderRating
                     );
         }).toList();
     }

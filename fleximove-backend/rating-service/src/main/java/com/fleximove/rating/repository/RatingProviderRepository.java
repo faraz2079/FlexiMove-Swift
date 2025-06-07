@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface RatingProviderRepository extends JpaRepository<RatingProvider, UUID> {
 
     @Query("SELECT AVG(r.score) FROM RatingProvider r WHERE r.providerId = :providerId")
-    Optional<Double> findAverageScoreByProviderId(UUID providerId);
+    Optional<Double> findAverageScoreByProviderId(Long providerId);
 }

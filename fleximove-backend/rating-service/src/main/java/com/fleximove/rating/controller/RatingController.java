@@ -27,12 +27,12 @@ public class RatingController {
     }
 
     @GetMapping("/vehicle/{vehicleId}/average")
-    public ResponseEntity<Double> getAverageVehicleRating(@PathVariable UUID vehicleId) {
+    public ResponseEntity<Double> getAverageVehicleRating(@PathVariable Long vehicleId) {
         return ResponseEntity.ok(ratingService.getAverageRatingForVehicle(vehicleId));
     }
 
     @GetMapping("/provider/{providerId}/average")
-    public ResponseEntity<Double> getAverageProviderRating(@PathVariable UUID providerId) {
+    public ResponseEntity<Double> getAverageProviderRating(@PathVariable Long providerId) {
         return ResponseEntity.ok(ratingService.getAverageRatingForProvider(providerId));
     }
 }

@@ -1,0 +1,39 @@
+<div class="vehicle-results-wrapper">
+    <div class="map-container">
+    <app-vehicle-map [vehicles]="vehicles"></app-vehicle-map>
+    </div>
+    <div class="vehicle-list">
+        <mat-card *ngFor="let vehicle of vehicles" class="vehicle-card">
+            <mat-card-title>{{ vehicle.vehicleName }} ({{ vehicle.vehicleType }})</mat-card-title>
+            <mat-card-content>
+                <p><strong>Provider:</strong> {{ vehicle.providerName }}</p>
+                <p><strong>Address:</strong> {{ vehicle.address }}</p>
+                <p><strong>Price:</strong> {{ vehicle.priceAmount }}€ / {{ formatBillingModel(vehicle.billingModel) }}</p>
+                <p><strong>Distance from selected location:</strong> {{ vehicle.distanceInKm | number:'1.1-2' }} km</p>
+            <!--<p>
+                <strong>Vehicle Rating:</strong> 
+                <app-star-rating [rating]="vehicle.averageVehicleRating"></app-star-rating>
+            </p>
+            <p>
+                <strong>Provider Rating:</strong> 
+                <app-star-rating [rating]="vehicle.averageProviderRating"></app-star-rating>
+            </p>-->
+            </mat-card-content>
+            <mat-card-actions class="card-actions">
+                <button mat-button color="primary" (click)="toggleDetails(vehicle)">
+                {{ vehicle.showDetails ? 'Less details' : 'More details' }}
+                </button>
+                <button mat-raised-button color="primary">Book</button>
+            </mat-card-actions>
+            <mat-card-content *ngIf="vehicle.showDetails">
+                <ul *ngIf="vehicle.restrictions" class="vehicle-restrictions">
+                        <li><strong>Max booking time:</strong> {{ vehicle.restrictions.maxBookingTimeMinutes }} min</li>
+                        <li><strong>Max distance:</strong> {{ vehicle.restrictions.maxDistanceKm }} km</li>
+                        <li><strong>Max passengers:</strong> {{ vehicle.restrictions.maxPassengers }}</li>
+                        <li><strong>Minimum age:</strong> {{ formatMinAge(vehicle.restrictions.minAge) }}</li>
+                        <li><strong>Required license:</strong> {{ formatLicense(vehicle.restrictions.requiredLicense) }}</li>
+                </ul>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
