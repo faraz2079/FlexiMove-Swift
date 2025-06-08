@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import clients.BookingClient;
+import clients.VehicleClient;
 import de.fhdo.spring.user.context.domain.Adress;
 import de.fhdo.spring.user.context.domain.Customer;
 import de.fhdo.spring.user.context.domain.Email;
@@ -39,14 +40,17 @@ public class UserController {
 	private final UserService userService;
     private final LoginService loginService;
     private final RegistrationService registrationService;
-    private final BookingClient bookingClient;  // <-- hier
+    private final BookingClient bookingClient;
+    private final VehicleClient vehicleClient;
+
 
     @Autowired
-    public UserController(UserService userService, LoginService loginService, RegistrationService registrationService, BookingClient bookingClient) {
+    public UserController(UserService userService, LoginService loginService, RegistrationService registrationService, BookingClient bookingClient,VehicleClient vehicleClient) {
         this.userService = userService;
         this.loginService = loginService;
         this.registrationService = registrationService;
-        this.bookingClient = bookingClient;  // <-- hier
+        this.bookingClient = bookingClient;
+        this.vehicleClient=vehicleClient;
     }
 
 
@@ -77,33 +81,7 @@ public class UserController {
 	public void createUser(@RequestBody User user) {
 		userService.saveUser(user);
 	}
-
-	/* User löschen   ==> Ansastasia ansprechen weil auch alle bestehenden Buchungen gelöscht werden müssen
-	@DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        if (user != null) {
-            userService.deleteUser(user);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }*/
-	
-	
-/*	
-	@DeleteMapping("/{userId}/bookings")
-	public ResponseEntity<Void> deleteUserBookings(@PathVariable Long userId) {
-	    try {
-	        BookingClient.deleteUserBookings(userId); // ruft den Feign-Client auf
-	        return ResponseEntity.noContent().build();
-	    } catch (Exception e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-	    }
-	}
-*/
-	
-
+/*
 	@DeleteMapping("/{userId}")
 	public ResponseEntity<Void> deleteUserWithBookings(@PathVariable Long userId) {
 	    try {
@@ -125,23 +103,55 @@ public class UserController {
 	        return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build(); // 500
 	    }
 	}
-
+*/
 	
-	
-	
-	
-/*	
-	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+	@DeleteMapping("/{userId}")
+	public ResponseEntity<Void> deleteUserWithDependencies(@PathVariable Long userId) {
 	    try {
-	        userService.deleteUserById(id); // neue Methode
-	        return ResponseEntity.noContent().build();
-	    } catch (EntityNotFoundException e) {
-	        return ResponseEntity.notFound().build();
-	    }
-	}*/
+	        // 1. User holen
+	        User user = userService.getUserById(userId);
+	        if (user == null) {
+	            return ResponseEntity.notFound().build(); // 404
+	        }
 
+	        // 2. Typ über instanceof prüfen
+	        if (user instanceof Customer) {
+	            bookingClient.deleteUserBookings(userId);
+
+	        } else if (user instanceof Provider) {
+	            vehicleClient.deleteVehicle(userId);
+
+	        } else {
+	            // Unbekannter Subtyp – z. B. falls später neue Subklassen hinzukommen
+	            return ResponseEntity.badRequest().build(); // 400
+	        }
+
+	        // 3. Danach den User selbst löschen
+	        userService.deleteUserById(userId);
+	        return ResponseEntity.noContent().build(); // 204
+
+	    } catch (Exception e) {
+	        System.err.println("Fehler beim Löschen: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build(); // 500
+	    }
+	}
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	
