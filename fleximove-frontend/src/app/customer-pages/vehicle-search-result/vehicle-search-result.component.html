@@ -1,9 +1,76 @@
 <div class="vehicle-results-wrapper">
-    <div class="map-container">
-    <app-vehicle-map [vehicles]="vehicles"></app-vehicle-map>
+    <div class="map-container" *ngIf="filteredVehicles.length > 0">
+        <app-vehicle-map [vehicles]="filteredVehicles"></app-vehicle-map>
     </div>
+    <div class="filter-container" *ngIf="vehicles.length > 0">
+        <mat-form-field appearance="fill" class="sort-dropdown">
+        <mat-label>Sort by</mat-label>
+        <mat-select [(value)]="filtersAndSortingOption.selectedSortOption" (selectionChange)="applySorting()">
+            <mat-option value="priceAsc">Price: Low to High</mat-option>
+            <mat-option value="priceDesc">Price: High to Low</mat-option>
+            <mat-option value="distanceAsc">Distance: Closest first</mat-option>
+            <mat-option value="distanceDesc">Distance: Farthest first</mat-option>
+            <!--<mat-option value="providerRatingDesc">Provider Rating: High to Low</mat-option>
+            <mat-option value="vehicleRatingDesc">Vehicle Rating: High to Low</mat-option>-->
+        </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>
+                Vehicle Type
+            </mat-label>
+            <mat-select [(value)]="filtersAndSortingOption.vehicleType" (selectionChange)="applyFilters()">
+                <mat-option value="">All</mat-option>
+                <mat-option value="CAR">Car</mat-option>
+                <mat-option value="TRUCK">Truck</mat-option>
+                <mat-option value="BICYCLE">Bicycle</mat-option>
+                <mat-option value="E_BIKE">E-Bike</mat-option>
+                <mat-option value="E_SCOOTER">E-Scooter</mat-option>
+                <mat-option value="SCOOTER">Scooter</mat-option>
+                <mat-option value="MOTORCYCLE">Motorcycle</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Booking time (min)</mat-label>
+            <input matInput type="number" [(ngModel)]="filtersAndSortingOption.maxBookingTimeMinutes" (input)="applyFilters()">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Distance (km)</mat-label>
+            <input matInput type="number" [(ngModel)]="filtersAndSortingOption.maxDistanceKm" (input)="applyFilters()">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Number of passengers</mat-label>
+            <input matInput type="number" [(ngModel)]="filtersAndSortingOption.maxPassengers" (input)="applyFilters()">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Driver age</mat-label>
+            <input matInput type="number" [(ngModel)]="filtersAndSortingOption.minAge" (input)="applyFilters()">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Required License</mat-label>
+            <mat-select [(value)]="filtersAndSortingOption.requiredLicense" (selectionChange)="applyFilters()">
+            <mat-option value="">Any</mat-option>
+            <mat-option value="CAR">B</mat-option>
+            <mat-option value="MOTORCYCLE">A</mat-option>
+            <mat-option value="TRUCK">C</mat-option>
+            <mat-option value="BUS">D</mat-option>
+            <mat-option value="NONE">No license</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <div class="reset-button-container">
+            <button mat-raised-button color="primary" (click)="resetFiltersAndSorting()">Reset</button>
+        </div>
+
+    </div>
+
     <div class="vehicle-list">
-        <mat-card *ngFor="let vehicle of vehicles" class="vehicle-card">
+        <mat-card *ngFor="let vehicle of filteredVehicles" class="vehicle-card">
             <mat-card-title>{{ vehicle.vehicleName }} ({{ vehicle.vehicleType }})</mat-card-title>
             <mat-card-content>
                 <p><strong>Provider:</strong> {{ vehicle.providerName }}</p>

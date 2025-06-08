@@ -18,6 +18,15 @@ export interface NearestAvailableVehicleResponse {
   distanceInKm: number;
   averageVehicleRating: number;
   averageProviderRating: number;
+  restrictions: VehicleRestrictions
+}
+
+export interface VehicleRestrictions {
+  maxBookingTimeMinutes: number;
+  maxDistanceKm: number;
+  maxPassengers: number;
+  minAge: number;
+  requiredLicense: string;
 }
 
 
@@ -52,7 +61,13 @@ export class CustomerHomepageComponent {
       .subscribe({
         next: (data) => {
           this.vehicleService.setResults(data);
-          this.router.navigate(['/customer/search-results']);
+          this.router.navigate(['/customer/search-results'], {
+              queryParams: {
+                address: this.address,
+                radiusInKm: parsedRadius
+              }
+          });
+
         },
         error: (err) => {
           console.error(err);

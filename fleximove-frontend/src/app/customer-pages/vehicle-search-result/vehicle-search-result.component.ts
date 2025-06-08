@@ -1,18 +1,10 @@
 import { Component } from '@angular/core';
 import { NearestAvailableVehicleResponse } from '../customer-homepage/customer-homepage.component';
 import { VehicleService } from 'src/app/src/app/services/vehicle.service';
+import { ActivatedRoute } from '@angular/router';
 
 interface VehicleWithDetails extends NearestAvailableVehicleResponse {
   showDetails: boolean;
-  restrictions?: VehicleRestrictions;
-}
-
-export interface VehicleRestrictions {
-  maxBookingTimeMinutes: number;
-  maxDistanceKm: number;
-  maxPassengers: number;
-  minAge: number;
-  requiredLicense: string;
 }
 
 @Component({
@@ -22,15 +14,48 @@ export interface VehicleRestrictions {
 })
 export class VehicleSearchResultComponent {
   vehicles: VehicleWithDetails[] = [];
+  filteredVehicles: VehicleWithDetails[] = [];
 
-  constructor(private vehicleSearchService: VehicleService) {}
+  filtersAndSortingOption = {
+    selectedSortOption: '',
+    vehicleType: '',
+    maxBookingTimeMinutes: null,
+    maxDistanceKm: null,
+    maxPassengers: null,
+    minAge: null,
+    requiredLicense: ''
+  };
+
+
+  constructor(private vehicleSearchService: VehicleService, private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.vehicles = this.vehicleSearchService.getResults().map(vehicle => ({
-      ...vehicle,
-      showDetails: false
-    }));
+    const existingResults = this.vehicleSearchService.getResults();
+
+    if (existingResults.length > 0) {
+      this.vehicles = existingResults.map(vehicle => ({
+        ...vehicle,
+        showDetails: false
+      }));
+      this.filteredVehicles = [...this.vehicles];
+    } else {
+      this.route.queryParams.subscribe(params => {
+        const address = params['address'];
+        const radius = +params['radiusInKm'] || undefined;
+
+        if (address) {
+          this.vehicleSearchService.getNearbyVehicles(address, radius).subscribe(data => {
+            this.vehicles = data.map(vehicle => ({
+              ...vehicle,
+              showDetails: false
+            }));
+            this.filteredVehicles = [...this.vehicles];
+          });
+        }
+      });
+    }
   }
+
 
   formatBillingModel(billingModel: string): string {
     switch (billingModel) {
@@ -58,23 +83,96 @@ export class VehicleSearchResultComponent {
     return `${age} years`;
   }
 
+  formatVehicleType(type: string): string {
+    switch (type) {
+      case 'CAR': return 'Car';
+      case 'TRUCK': return 'Truck';
+      case 'BICYCLE': return 'Bicycle';
+      case 'E_BIKE': return 'E-Bike';
+      case 'E_SCOOTER': return 'E-Scooter';
+      case 'SCOOTER': return 'Scooter';
+      case 'MOTORCYCLE': return 'Motorcycle';
+      default: return '';
+    }
+  }
+
+  toggleDetails(vehicle: VehicleWithDetails): void {
+    vehicle.showDetails = !vehicle.showDetails;
+
+    if (vehicle.showDetails && !vehicle.restrictions) {
+      alert('No restriction data available for this vehicle.');
+    }
+  }
 
 
-toggleDetails(vehicle: VehicleWithDetails): void {
-  vehicle.showDetails = !vehicle.showDetails;
+  applyFilters(): void {
+    this.filteredVehicles = [...this.vehicles].filter(vehicle => {
+      const r = vehicle.restrictions;
 
-  if (vehicle.showDetails && vehicle.restrictions === undefined) {
-    this.vehicleSearchService.getVehicleById(vehicle.vehicleId).subscribe({
-      next: (response) => {
-        console.log(response)
-        vehicle.restrictions = response.restrictions; 
-      },
-      error: (err) => {
-        alert('Could not load additional details.');
+      if (!r){
+        return false;
       }
+
+      const matchesType =
+        !this.filtersAndSortingOption.vehicleType || vehicle.vehicleType === this.filtersAndSortingOption.vehicleType;
+      
+      const matchesPassengers =
+        !this.filtersAndSortingOption.maxPassengers || r?.maxPassengers >= this.filtersAndSortingOption.maxPassengers;
+
+      const matchesAge =
+        !this.filtersAndSortingOption.minAge || r?.minAge <= this.filtersAndSortingOption.minAge;
+
+      const matchesLicense =
+        !this.filtersAndSortingOption.requiredLicense || r?.requiredLicense === this.filtersAndSortingOption.requiredLicense;
+
+      const matchesBookingTime =
+        !this.filtersAndSortingOption.maxBookingTimeMinutes || r?.maxBookingTimeMinutes >= this.filtersAndSortingOption.maxBookingTimeMinutes;
+
+      const matchesMaxDistance =
+        !this.filtersAndSortingOption.maxDistanceKm || r?.maxDistanceKm >= this.filtersAndSortingOption.maxDistanceKm;
+
+
+      return matchesType && matchesPassengers && matchesAge && matchesLicense && matchesBookingTime && matchesMaxDistance;
     });
   }
-}
 
+  applySorting(): void {
+    const sort = this.filtersAndSortingOption.selectedSortOption;
+
+    switch (sort) {
+      case 'priceAsc':
+        this.filteredVehicles.sort((a, b) => a.priceAmount - b.priceAmount);
+        break;
+      case 'priceDesc':
+        this.filteredVehicles.sort((a, b) => b.priceAmount - a.priceAmount);
+        break;
+      case 'distanceAsc':
+        this.filteredVehicles.sort((a, b) => a.distanceInKm - b.distanceInKm);
+        break;
+      case 'distanceDesc':
+        this.filteredVehicles.sort((a, b) => b.distanceInKm - a.distanceInKm);
+        break;
+      case 'providerRatingDesc':
+        this.filteredVehicles.sort((a, b) => (b.averageProviderRating ?? 0) - (a.averageProviderRating ?? 0));
+        break;
+      case 'vehicleRatingDesc':
+        this.filteredVehicles.sort((a, b) => (b.averageVehicleRating ?? 0) - (a.averageVehicleRating ?? 0));
+        break;
+    }
+  }
+
+
+  resetFiltersAndSorting(): void {
+    this.filtersAndSortingOption = {
+      selectedSortOption: '',
+      vehicleType: '',
+      maxBookingTimeMinutes: null,
+      maxDistanceKm: null,
+      maxPassengers: null,
+      minAge: null,
+      requiredLicense: ''
+    };
+    this.filteredVehicles = [...this.vehicles];
+  }
 
 }

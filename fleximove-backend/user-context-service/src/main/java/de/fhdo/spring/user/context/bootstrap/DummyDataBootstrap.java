@@ -25,6 +25,10 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
     }
 
     private void initData() {
+        long count = userRepository.count();
+        System.out.println("initData called — users in DB: " + count);
+        if (count > 0) return;
+
         userRepository.deleteAll();
     	 // Adresse erstellen
         Address address = new Address("Musterstraße", "Deutschland", "Berlin", "15", "10115");

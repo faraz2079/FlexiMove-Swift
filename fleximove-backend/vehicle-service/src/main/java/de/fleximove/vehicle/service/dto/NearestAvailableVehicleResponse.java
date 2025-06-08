@@ -1,5 +1,6 @@
 package de.fleximove.vehicle.service.dto;
 
+import de.fleximove.vehicle.service.domain.valueobject.VehicleRestrictions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,5 +22,6 @@ public class NearestAvailableVehicleResponse {
     private double distanceInKm;
     private double averageVehicleRating;
     private double averageProviderRating;
+    private VehicleRestrictions restrictions;
 }
 

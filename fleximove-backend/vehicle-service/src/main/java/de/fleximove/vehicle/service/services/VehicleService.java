@@ -98,7 +98,8 @@ public class VehicleService {
                     vehicle.getCurrentLocation().getLongitude(),
                     vehicleWithDistance.distanceInKm(),
                     avgVehicleRating,
-                    avgProviderRating
+                    avgProviderRating,
+                    vehicle.getRestrictions()
                     );
         }).toList();
     }

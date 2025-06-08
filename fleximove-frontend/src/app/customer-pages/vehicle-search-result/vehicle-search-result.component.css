@@ -1,8 +1,20 @@
 .vehicle-results-wrapper {
-  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  align-items: center;
   margin: 0 auto;
   padding: 1rem;
+  min-height: 100vh;
 }
+
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 
 .map-container {
   border-radius: 16px;
@@ -37,4 +49,14 @@
 .card-actions{
   display: flex;
   justify-content: space-between;
+}
+
+.filter-container {
+  margin-bottom: 24px;
+}
+
+.map-container,
+.filter-container,
+.vehicle-list {
+  width: 90%;
 }
