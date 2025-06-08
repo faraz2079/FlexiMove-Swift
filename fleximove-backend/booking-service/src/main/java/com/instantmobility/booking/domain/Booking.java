@@ -1,15 +1,13 @@
 package com.instantmobility.booking.domain;
-
+import com.instantmobility.booking.domain.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 @Entity
 @Table(name = "BOOKING")
-@NoArgsConstructor
 public class Booking {
 	@Id
     @Column(name = "id", columnDefinition = "BINARY(16)")

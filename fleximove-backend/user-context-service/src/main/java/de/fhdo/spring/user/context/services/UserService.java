@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import clients.BookingClient;
@@ -23,6 +24,8 @@ import jakarta.persistence.EntityNotFoundException;
 public class UserService {
 	private UserRepository userRepository;
 	private BookingClient bookingClient;
+
+
 
 	@Autowired
 	public UserService(UserRepository userRepository, BookingClient bookingClient) {
@@ -53,25 +56,20 @@ public class UserService {
 		userRepository.save(user);
 	}
 	
-	/*User löschen
-	public void deleteUser(User user){
-		// 1. Buchungen löschen via Booking-Service
-        bookingClient.deleteUserBookings(user.getId());
-
-        // 2. User löschen
-        userRepository.delete(user);
-    }*/
 	
 	
-	public void deleteUserById(Long id) {
-	    Optional<User> optionalUser = userRepository.findById(id);
+	public void deleteUserById(Long userId) {
+	    Optional<User> optionalUser = userRepository.findById(userId);
 	    if (optionalUser.isPresent()) {
-	        userRepository.deleteById(id);
+	        // 1. Buchungen löschen
+	        bookingClient.deleteUserBookings(userId);
+
+	        // 2. User löschen
+	        userRepository.deleteById(userId);
 	    } else {
-	        throw new EntityNotFoundException("User mit ID " + id + " nicht gefunden.");
+	        throw new EntityNotFoundException("User mit ID " + userId + " nicht gefunden.");
 	    }
 	}
-
 
 	
 	
