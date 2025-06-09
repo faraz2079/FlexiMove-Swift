@@ -21,6 +21,18 @@ export class LoginComponent {
     });
   }
 
+  ngOnInit(): void {
+  const userId = localStorage.getItem('userId');
+  const role = localStorage.getItem('role');
+
+  if (userId && role === 'Customer') {
+    this.router.navigateByUrl('/customer/home');
+  } else if (userId && role === 'Provider') {
+    this.router.navigateByUrl('/provider');
+  }
+}
+
+
   //TODO: alerts anpassen (mit Snackbar ersetzen)
   //TODO: UserService erstellen
   onSubmit() {
