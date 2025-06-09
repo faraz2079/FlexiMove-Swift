@@ -15,6 +15,8 @@ interface VehicleWithDetails extends NearestAvailableVehicleResponse {
 export class VehicleSearchResultComponent {
   vehicles: VehicleWithDetails[] = [];
   filteredVehicles: VehicleWithDetails[] = [];
+  selectedRadius: number | undefined;
+  address: string = '';
 
   filtersAndSortingOption = {
     selectedSortOption: '',
@@ -40,11 +42,11 @@ export class VehicleSearchResultComponent {
       this.filteredVehicles = [...this.vehicles];
     } else {
       this.route.queryParams.subscribe(params => {
-        const address = params['address'];
-        const radius = +params['radiusInKm'] || undefined;
+        this.address = params['address'];
+        this.selectedRadius = +params['radiusInKm'] || undefined;
 
-        if (address) {
-          this.vehicleSearchService.getNearbyVehicles(address, radius).subscribe(data => {
+        if (this.address) {
+          this.vehicleSearchService.getNearbyVehicles(this.address, this.selectedRadius).subscribe(data => {
             this.vehicles = data.map(vehicle => ({
               ...vehicle,
               showDetails: false

@@ -1,4 +1,9 @@
-<div class="vehicle-results-wrapper">
+<div
+    [ngClass]="{
+        'no-vehicles-found': vehicles.length === 0,
+        'no-filters-match': vehicles.length > 0 && filteredVehicles.length === 0,
+        'vehicle-results-wrapper': filteredVehicles.length > 0
+    }">
     <div class="map-container" *ngIf="filteredVehicles.length > 0">
         <app-vehicle-map [vehicles]="filteredVehicles"></app-vehicle-map>
     </div>
@@ -10,8 +15,8 @@
             <mat-option value="priceDesc">Price: High to Low</mat-option>
             <mat-option value="distanceAsc">Distance: Closest first</mat-option>
             <mat-option value="distanceDesc">Distance: Farthest first</mat-option>
-            <!--<mat-option value="providerRatingDesc">Provider Rating: High to Low</mat-option>
-            <mat-option value="vehicleRatingDesc">Vehicle Rating: High to Low</mat-option>-->
+            <mat-option value="providerRatingDesc">Provider Rating: High to Low</mat-option>
+            <mat-option value="vehicleRatingDesc">Vehicle Rating: High to Low</mat-option>
         </mat-select>
         </mat-form-field>
 
@@ -77,14 +82,18 @@
                 <p><strong>Address:</strong> {{ vehicle.address }}</p>
                 <p><strong>Price:</strong> {{ vehicle.priceAmount }}€ / {{ formatBillingModel(vehicle.billingModel) }}</p>
                 <p><strong>Distance from selected location:</strong> {{ vehicle.distanceInKm | number:'1.1-2' }} km</p>
-            <!--<p>
-                <strong>Vehicle Rating:</strong> 
-                <app-star-rating [rating]="vehicle.averageVehicleRating"></app-star-rating>
-            </p>
-            <p>
-                <strong>Provider Rating:</strong> 
-                <app-star-rating [rating]="vehicle.averageProviderRating"></app-star-rating>
-            </p>-->
+                <p>
+                    <strong>Vehicle Rating: </strong> 
+                    <span matTooltip="{{ vehicle.averageVehicleRating + ' / 5' }}" matTooltipPosition="right">
+                        <p-rating [ngModel]="vehicle.averageVehicleRating" [readonly]="true" [cancel]="false"></p-rating>
+                    </span>
+                </p>
+                <p>
+                    <strong>Provider Rating: </strong> 
+                    <span matTooltip="{{ vehicle.averageProviderRating + ' / 5' }}" matTooltipPosition="right">
+                        <p-rating [ngModel]="vehicle.averageProviderRating" [readonly]="true" [cancel]="false"></p-rating>
+                    </span>
+                </p>
             </mat-card-content>
             <mat-card-actions class="card-actions">
                 <button mat-button color="primary" (click)="toggleDetails(vehicle)">
@@ -103,4 +112,13 @@
             </mat-card-content>
         </mat-card>
     </div>
+    
+    <div *ngIf="vehicles.length === 0" class="no-results-message">
+        <p>No vehicles found within the selected radius of the address "{{ address }}".</p>
+    </div>
+
+    <div *ngIf="vehicles.length > 0 && filteredVehicles.length === 0" class="no-results-message">
+        <p>No vehicles match your selected filters. Please adjust your filter criteria and try again.</p>
+    </div>
+
 </div>

@@ -31,6 +31,8 @@ import { GeocodingService } from './src/app/services/geocoding.service';
 import { VehicleService } from './src/app/services/vehicle.service';
 import { VehicleSearchResultComponent } from './customer-pages/vehicle-search-result/vehicle-search-result.component';
 import { VehicleMapComponent } from './vehicle-map/vehicle-map.component';
+import { RatingModule } from 'primeng/rating';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -64,6 +66,8 @@ import { VehicleMapComponent } from './vehicle-map/vehicle-map.component';
     HttpClientModule,
     MatSnackBarModule,
     MatAutocompleteModule,
+    RatingModule,
+    MatTooltipModule
   ],
   providers: [RegistrationService, LoginService, GeocodingService, VehicleService],
   bootstrap: [AppComponent]

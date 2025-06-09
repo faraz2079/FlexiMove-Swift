@@ -9,6 +9,18 @@
   min-height: 100vh;
 }
 
+.no-vehicles-found {
+  min-height: 100vh;
+  padding-left: 100px;
+  margin-top: 50px;
+}
+
+.no-filters-match {
+  min-height: 100vh;
+  padding-left: 100px;
+  margin-top: 50px;
+}
+
 .filter-container {
   display: flex;
   flex-wrap: wrap;
@@ -60,3 +72,10 @@
 .vehicle-list {
   width: 90%;
 }
+
+.no-results-message {
+  font-size: 1.1rem;
+  color: rgba(0, 0, 0, 0.618);
+  width: 100%;
+}
+
