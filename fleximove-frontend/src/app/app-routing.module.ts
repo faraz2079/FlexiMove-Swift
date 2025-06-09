@@ -7,6 +7,7 @@ import { RegisterBusinessComponent } from './auth/register/register-business/reg
 import { CustomerLayoutComponent } from './layout/customer/customer-layout/customer-layout.component';
 import { CustomerHomepageComponent } from './customer-pages/customer-homepage/customer-homepage.component';
 import { VehicleSearchResultComponent } from './customer-pages/vehicle-search-result/vehicle-search-result.component';
+import { CustomerAccountComponent } from './customer-pages/customer-account/customer-account.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -23,7 +24,8 @@ const routes: Routes = [
     children: [
       { path: '', component: CustomerHomepageComponent },
       { path: 'home', component: CustomerHomepageComponent },
-      { path: 'search-results', component: VehicleSearchResultComponent }
+      { path: 'search-results', component: VehicleSearchResultComponent },
+      { path: 'account', component: CustomerAccountComponent }
     ]
   }
 ];

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { LoginService } from 'src/app/src/app/services/login.service';
+import { UserService } from 'src/app/src/app/services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,7 @@ import { LoginService } from 'src/app/src/app/services/login.service';
 export class LoginComponent {
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router, private loginService: LoginService, private snackBar: MatSnackBar
+  constructor(private fb: FormBuilder, private router: Router, private loginService: LoginService, private snackBar: MatSnackBar, private userService: UserService
   ) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
@@ -32,14 +33,14 @@ export class LoginComponent {
 
     this.loginService.login(payload).subscribe({
       next: user => {
-        console.log('Login erfolgreich', user);
         if (user.role === 'Customer') {
-          //this.userService.setUser(user);
+          this.userService.setCustomer(user);
           localStorage.setItem('userId', user.id.toString());
           localStorage.setItem('role', user.role);
           this.router.navigateByUrl('/customer');
         } else if (user.role === 'Provider') {
           //TODO
+          //setProvider
           localStorage.setItem('userId', user.id.toString());
           localStorage.setItem('role', user.role);
           //this.router.navigateByUrl('/provider');

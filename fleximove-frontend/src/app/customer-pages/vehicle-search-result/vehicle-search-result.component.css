@@ -31,7 +31,7 @@
 .map-container {
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(109, 51, 217, 0.338);
   margin-bottom: 2rem;
 }
 
@@ -45,7 +45,7 @@
   background: whitesmoke;
   border-radius: 12px;
   padding: 1rem 1.5rem;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 12px rgba(109, 51, 217, 0.338);
   transition: transform 0.2s ease;
 }
 

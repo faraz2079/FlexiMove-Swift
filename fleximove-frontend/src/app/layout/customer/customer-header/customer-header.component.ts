@@ -16,7 +16,7 @@ export class CustomerHeaderComponent {
   }
 
   logout(): void {
-  localStorage.clear();
-  this.router.navigateByUrl('/login');
-}
+    localStorage.clear();
+    this.router.navigateByUrl('/login');
+  }
 }

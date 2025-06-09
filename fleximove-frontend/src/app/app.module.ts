@@ -33,6 +33,10 @@ import { VehicleSearchResultComponent } from './customer-pages/vehicle-search-re
 import { VehicleMapComponent } from './vehicle-map/vehicle-map.component';
 import { RatingModule } from 'primeng/rating';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { CustomerAccountComponent } from './customer-pages/customer-account/customer-account.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatDialogModule } from '@angular/material/dialog';
+import { DeleteAccountDialogComponent } from './customer-pages/delete-account-dialog/delete-account-dialog.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +51,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     CustomerHomepageComponent,
     VehicleSearchResultComponent,
     VehicleMapComponent,
+    CustomerAccountComponent,
+    DeleteAccountDialogComponent,
   ],
   imports: [
     BrowserModule,
@@ -67,7 +73,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatSnackBarModule,
     MatAutocompleteModule,
     RatingModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatTabsModule,
+    MatDialogModule
   ],
   providers: [RegistrationService, LoginService, GeocodingService, VehicleService],
   bootstrap: [AppComponent]

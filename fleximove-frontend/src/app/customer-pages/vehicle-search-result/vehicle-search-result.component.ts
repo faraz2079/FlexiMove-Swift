@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NearestAvailableVehicleResponse } from '../customer-homepage/customer-homepage.component';
 import { VehicleService } from 'src/app/src/app/services/vehicle.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 interface VehicleWithDetails extends NearestAvailableVehicleResponse {
   showDetails: boolean;
@@ -29,9 +29,16 @@ export class VehicleSearchResultComponent {
   };
 
 
-  constructor(private vehicleSearchService: VehicleService, private route: ActivatedRoute) {}
+  constructor(private vehicleSearchService: VehicleService, private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      alert('Please log in first!');
+      this.router.navigateByUrl('/login');
+      return;
+    }
+
     const existingResults = this.vehicleSearchService.getResults();
 
     if (existingResults.length > 0) {
