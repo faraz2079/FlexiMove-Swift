@@ -30,7 +30,7 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
     	if (count > 0) return;
         userRepository.deleteAll();
     	 // Adresse erstellen
-        Adress address = new Adress("Musterstraße", "Deutschland", "Berlin", "15", "10115");
+        Address address = new Address("Musterstraße", "Deutschland", "Berlin", "15", "10115");
 
         // Passwort erstellen
         Password password = new Password("sicheresPasswort123");
@@ -43,11 +43,13 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
 
         // Customer erstellen
         User customer1 = new Customer(
+                "John",
+                "Wick",
                 password,
                 email,
                 LocalDate.of(1990, 5, 15),
                 address,
-                true,
+                DriverLicenseType.NONE,
                 "0123456789",
                 paymentInfo
         );
@@ -55,7 +57,7 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
         userRepository.save(customer1);
 
         // Adresse für Provider
-        Adress providerAddress = new Adress("Blumenweg", "Deutschland", "München", "22", "80331");
+        Address providerAddress = new Address("Blumenweg", "Deutschland", "München", "22", "80331");
 
         // Passwort & Email für Provider
         Password providerPassword = new Password("providerPass!2024");

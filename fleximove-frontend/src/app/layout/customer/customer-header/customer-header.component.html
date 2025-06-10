@@ -24,9 +24,9 @@
             <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="history"></mat-icon>
             <a [routerLink]="['/customer/bookings']">My Bookings</a>
         </li>
-        <li>
+        <li (click)="logout()">
             <mat-icon aria-hidden="false" aria-label="Example home icon" fontIcon="logout"></mat-icon>
-            <a [routerLink]="['/login']">Logout</a>
+            <a>Logout</a>
         </li>
       </ul>
     </div>

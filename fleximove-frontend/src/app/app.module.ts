@@ -23,6 +23,10 @@ import {MatIconModule} from '@angular/material/icon';
 import { CustomerHomepageComponent } from './customer-pages/customer-homepage/customer-homepage.component';
 import {MatSelectModule} from '@angular/material/select';
 import {FormsModule} from '@angular/forms';
+import { RegistrationService } from './src/app/services/registration.service';
+import { HttpClientModule } from '@angular/common/http';
+import {MatSnackBarModule } from '@angular/material/snack-bar';
+import { LoginService } from './src/app/services/login.service';
 
 @NgModule({
   declarations: [
@@ -34,7 +38,7 @@ import {FormsModule} from '@angular/forms';
     CustomerLayoutComponent,
     CustomerHeaderComponent,
     FooterComponent,
-    CustomerHomepageComponent
+    CustomerHomepageComponent,
   ],
   imports: [
     BrowserModule,
@@ -50,9 +54,11 @@ import {FormsModule} from '@angular/forms';
     MatNativeDateModule,
     MatIconModule,
     MatSelectModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule,
+    MatSnackBarModule
   ],
-  providers: [],
+  providers: [RegistrationService, LoginService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -2,9 +2,11 @@ package de.fhdo.spring.user.context.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.List;
-import java.util.UUID;
+
 
 import org.apache.hc.core5.http.HttpStatus;
+
+import de.fhdo.spring.user.context.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,8 +28,8 @@ import de.fhdo.spring.user.context.domain.Password;
 import de.fhdo.spring.user.context.domain.Provider;
 import de.fhdo.spring.user.context.domain.User;
 import de.fhdo.spring.user.context.dto.BookingDto;
+
 import de.fhdo.spring.user.context.dto.LoginRequest;
-import de.fhdo.spring.user.context.repository.UserRepository;
 import de.fhdo.spring.user.context.services.LoginService;
 import de.fhdo.spring.user.context.services.RegistrationService;
 import de.fhdo.spring.user.context.services.UserService;
@@ -166,10 +168,10 @@ public class UserController {
 
 	//Change Adress
 	@PutMapping("/{id}/address")
-	public void updateAddress(@PathVariable Long id, @RequestBody Adress newAddress) {
+	public void updateAddress(@PathVariable Long id, @RequestBody Address newAddress) {
 		User user = userService.getUserById(id);
 		if (user != null) {
-			userService.updateadress(user, newAddress);
+			userService.updateAddress(user, newAddress);
 		}
 	}
 
@@ -187,7 +189,7 @@ public class UserController {
     public ResponseEntity<String> registerCustomer(@RequestBody Customer customer) {
         try {
             registrationService.registerUser(customer);
-            return ResponseEntity.ok("Registrierung erfolgreich!");
+            return ResponseEntity.ok("Registration successful!");
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -197,22 +199,21 @@ public class UserController {
     public ResponseEntity<String> registerProvider(@RequestBody Provider provider) {
         try {
             registrationService.registerUser(provider);
-            return ResponseEntity.ok("Registrierung erfolgreich!");
+            return ResponseEntity.ok("Registration successful!");
         } catch (IllegalStateException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 	@PostMapping("/login")
-	public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
 	    try {
-			//TODO: User zurueckgeben, nicht boolean
-	        boolean success = loginService.login(loginRequest.getEmail(), loginRequest.getPassword());
-			//TODO: LoginResponse zuruecksenden
-	        return ResponseEntity.ok("Login erfolgreich!");
+	        User loggedUser = loginService.login(loginRequest.getEmail(), loginRequest.getPassword());
+			//TODO: nicht kompletten User mit Password zurueckgeben, sondern LoginResponse
+	        return ResponseEntity.ok(loggedUser);
 	    } catch (IllegalStateException e) {
-	        return ResponseEntity.status(401).body(e.getMessage());
+	        return ResponseEntity.status(401).body("Invalid credentials");
 	    }
-}
+	}
 	
 	@GetMapping("/provider/{id}/companyName")
     public ResponseEntity<String> getProviderCompanyName(@PathVariable Long id) {

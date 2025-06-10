@@ -130,7 +130,7 @@ public class BookingService {
     /**
      * Gets booking history for a user with pagination
      
-    public List<BookingDTO> getBookingHistory(UUID userId, int page, int size) {
+    public List<BookingDTO> getBookingHistory(Long userId, int page, int size) {
         List<Booking> bookings = bookingRepository.findByUserIdOrderByTimeFrameDesc(userId, page, size);
         return bookings.stream()
                 .map(this::mapToDTO)
