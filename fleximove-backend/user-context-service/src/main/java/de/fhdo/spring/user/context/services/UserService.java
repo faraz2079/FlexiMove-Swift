@@ -2,6 +2,7 @@ package de.fhdo.spring.user.context.services;
 
 import java.util.ArrayList;
 
+
 import java.util.List;
 import java.util.Optional;
 
@@ -9,9 +10,11 @@ import de.fhdo.spring.user.context.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import de.fhdo.spring.user.context.domain.Address;
 
 import de.fhdo.spring.user.context.clients.BookingClient;
 import de.fhdo.spring.user.context.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {

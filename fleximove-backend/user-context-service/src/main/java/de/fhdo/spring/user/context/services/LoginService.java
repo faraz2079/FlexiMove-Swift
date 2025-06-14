@@ -25,7 +25,7 @@ public class LoginService {
             throw new IllegalStateException("Benutzer existiert nicht");
         }
         
-        if (!user.isRegistered()) {
+        if (!user.isRegisterd()) {
             throw new IllegalStateException("Benutzer ist nicht registriert");
         }
 

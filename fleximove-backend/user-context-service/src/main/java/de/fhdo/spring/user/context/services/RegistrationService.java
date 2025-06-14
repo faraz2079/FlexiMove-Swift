@@ -25,7 +25,7 @@ public class RegistrationService {
         }
 
         // Benutzer als registriert markieren
-        user.setRegistered(true);
+        user.setRegisterd(true);
 
         // Benutzer speichern
         userRepository.save(user);

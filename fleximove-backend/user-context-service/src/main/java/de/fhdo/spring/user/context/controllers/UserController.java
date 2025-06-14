@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import clients.BookingClient;
-import clients.VehicleClient;
-import de.fhdo.spring.user.context.domain.Adress;
+import de.fhdo.spring.user.context.clients.BookingClient;
+import de.fhdo.spring.user.context.clients.VehicleClient;
+import de.fhdo.spring.user.context.domain.Address;
 import de.fhdo.spring.user.context.domain.Customer;
 import de.fhdo.spring.user.context.domain.Email;
 import de.fhdo.spring.user.context.domain.Password;

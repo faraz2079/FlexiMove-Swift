@@ -24,7 +24,8 @@ public class Customer extends User {
 
     public Customer(String firstName, String lastName, Password password, Email email, LocalDate dateOfBirth,
             Address address, DriverLicenseType driverLicenseType, String phoneNumber, PaymentInfo paymentInfo) {
-        super(password, email, address, phoneNumber,paymentInfo);
+    	super();
+    	//super(password, email, address, phoneNumber,paymentInfo);
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
