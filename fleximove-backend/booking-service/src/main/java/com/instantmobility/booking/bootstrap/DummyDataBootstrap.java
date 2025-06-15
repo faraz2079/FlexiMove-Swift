@@ -27,9 +27,12 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
     public void onApplicationEvent(ContextRefreshedEvent event) {
         initData();
     }
-    private static final UUID TEST_USER_ID = UUID.fromString("123e4567-e89b-12d3-a456-556642440000");
+    private static final Long TEST_USER_ID = 1L;
 
     private void initData() {
+    	long count = bookingRepository.count();
+    	System.out.println("initData called — booking in DB: " + count);
+    	if (count > 0) return;
         Booking booking1 = new Booking(
             BookingId.generate(),
             TEST_USER_ID,

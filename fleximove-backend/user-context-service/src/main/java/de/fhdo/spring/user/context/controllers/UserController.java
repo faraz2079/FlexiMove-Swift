@@ -1,6 +1,10 @@
 package de.fhdo.spring.user.context.controllers;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
+
+
+import org.apache.hc.core5.http.HttpStatus;
 
 import de.fhdo.spring.user.context.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,25 +18,43 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import de.fhdo.spring.user.context.clients.BookingClient;
+import de.fhdo.spring.user.context.clients.VehicleClient;
+import de.fhdo.spring.user.context.domain.Address;
+import de.fhdo.spring.user.context.domain.Customer;
+import de.fhdo.spring.user.context.domain.Email;
+import de.fhdo.spring.user.context.domain.Password;
+import de.fhdo.spring.user.context.domain.Provider;
+import de.fhdo.spring.user.context.domain.User;
+import de.fhdo.spring.user.context.dto.BookingDto;
+
 import de.fhdo.spring.user.context.dto.LoginRequest;
 import de.fhdo.spring.user.context.services.LoginService;
 import de.fhdo.spring.user.context.services.RegistrationService;
 import de.fhdo.spring.user.context.services.UserService;
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
 	private final UserService userService;
-	private final LoginService loginService;
-	private final RegistrationService registrationService;
+    private final LoginService loginService;
+    private final RegistrationService registrationService;
+    private final BookingClient bookingClient;
+    private final VehicleClient vehicleClient;
 
-	@Autowired
-	public UserController(UserService userService, LoginService loginService, RegistrationService registrationService) {
-		this.userService = userService;
-		this.loginService = loginService;
-		this.registrationService = registrationService;
-	}
+
+    @Autowired
+    public UserController(UserService userService, LoginService loginService, RegistrationService registrationService, BookingClient bookingClient,VehicleClient vehicleClient) {
+        this.userService = userService;
+        this.loginService = loginService;
+        this.registrationService = registrationService;
+        this.bookingClient = bookingClient;
+        this.vehicleClient=vehicleClient;
+    }
+
 
 	// Alle User abrufen
 	@GetMapping
@@ -61,18 +83,80 @@ public class UserController {
 	public void createUser(@RequestBody User user) {
 		userService.saveUser(user);
 	}
+/*
+	@DeleteMapping("/{userId}")
+	public ResponseEntity<Void> deleteUserWithBookings(@PathVariable Long userId) {
+	    try {
+	        // Zuerst Buchungen löschen
+	        bookingClient.deleteUserBookings(userId);
 
-	// User löschen   ==> Ansastasia ansprechen weil auch alle bestehenden Buchungen gelöscht werden müssen
-	@DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        User user = userService.getUserById(id);
-        if (user != null) {
-            userService.deleteUser(user);
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+	        // Wenn erfolgreich, dann Nutzer löschen
+	        User user = userService.getUserById(userId);
+	        if (user != null) {
+	            userService.deleteUserById(userId);
+	            return ResponseEntity.noContent().build(); // 204
+	        } else {
+	            return ResponseEntity.notFound().build(); // 404
+	        }
+
+	    } catch (Exception e) {
+	        // Falls das Löschen der Buchungen oder des Nutzers fehlschlägt
+	        System.err.println("Fehler beim Löschen: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build(); // 500
+	    }
+	}
+*/
+	
+	@DeleteMapping("/{userId}")
+	public ResponseEntity<Void> deleteUserWithDependencies(@PathVariable Long userId) {
+	    try {
+	        // 1. User holen
+	        User user = userService.getUserById(userId);
+	        if (user == null) {
+	            return ResponseEntity.notFound().build(); // 404
+	        }
+
+	        // 2. Typ über instanceof prüfen
+	        if (user instanceof Customer) {
+	            bookingClient.deleteUserBookings(userId);
+
+	        } else if (user instanceof Provider) {
+	            vehicleClient.deleteVehicle(userId);
+
+	        } else {
+	            // Unbekannter Subtyp – z. B. falls später neue Subklassen hinzukommen
+	            return ResponseEntity.badRequest().build(); // 400
+	        }
+
+	        // 3. Danach den User selbst löschen
+	        userService.deleteUserById(userId);
+	        return ResponseEntity.noContent().build(); // 204
+
+	    } catch (Exception e) {
+	        System.err.println("Fehler beim Löschen: " + e.getMessage());
+	        return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build(); // 500
+	    }
+	}
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	// Change Password
 	@PutMapping("/{id}/password")
 	public void updatePassword(@PathVariable Long id, @RequestBody Password newPassword) {

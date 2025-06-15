@@ -113,17 +113,18 @@ public class BookingService {
     public void deleteBookingsByUserId(Long userId) {
         List<Booking> userBookings = bookingRepository.findByUserId(userId);
 
-        for (Booking booking : userBookings) {
+       /* for (Booking booking : userBookings) 
+        {
             // Don't allow deletion of active bookings
             if (booking.getStatus() == BookingStatus.STARTED ||
                     booking.getStatus() == BookingStatus.CONFIRMED) {
                 throw new IllegalStateException(
                         "Cannot delete user with active bookings. Cancel bookings first.");
             }
-        }
+        }*/
 
         // Delete all bookings for this user
-        bookingRepository.deleteByUserId(userId);
+        bookingRepository.deleteBookingsByUserId(userId);
     }
 
     /**

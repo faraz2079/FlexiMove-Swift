@@ -2,20 +2,26 @@ package de.fhdo.spring.user.context.services;
 
 import java.util.ArrayList;
 
+
 import java.util.List;
 import java.util.Optional;
 
 import de.fhdo.spring.user.context.domain.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import de.fhdo.spring.user.context.domain.Address;
 
 import de.fhdo.spring.user.context.clients.BookingClient;
 import de.fhdo.spring.user.context.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
 	private final UserRepository userRepository;
 	private final BookingClient bookingClient;
+
+
 
 	@Autowired
 	public UserService(UserRepository userRepository, BookingClient bookingClient) {
@@ -47,14 +53,23 @@ public class UserService {
 		userRepository.save(user);
 	}
 	
-	//User löschen
-	public void deleteUser(User user){
-		// 1. Buchungen löschen via Booking-Service
-        bookingClient.deleteUserBookings(user.getId());
+	
+	
+	public void deleteUserById(Long userId) {
+	    Optional<User> optionalUser = userRepository.findById(userId);
+	    if (optionalUser.isPresent()) {
+	        // 1. Buchungen löschen
+	        bookingClient.deleteUserBookings(userId);
 
-        // 2. User löschen
-        userRepository.delete(user);
-    }
+	        // 2. User löschen
+	        userRepository.deleteById(userId);
+	    } else {
+	        throw new EntityNotFoundException("User mit ID " + userId + " nicht gefunden.");
+	    }
+	}
+
+	
+	
 	
 	//User Passwort ändern
 	public void updatepw(User user, Password pw) {
