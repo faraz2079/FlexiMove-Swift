@@ -107,7 +107,7 @@ public class UserController {
 	}
 */
 	
-	@DeleteMapping("/{userId}")
+	@DeleteMapping("/deleteAccount/{userId}")
 	public ResponseEntity<Void> deleteUserWithDependencies(@PathVariable Long userId) {
 	    try {
 	        // 1. User holen
@@ -119,10 +119,8 @@ public class UserController {
 	        // 2. Typ über instanceof prüfen
 	        if (user instanceof Customer) {
 	            bookingClient.deleteUserBookings(userId);
-
 	        } else if (user instanceof Provider) {
 	            vehicleClient.deleteVehicle(userId);
-
 	        } else {
 	            // Unbekannter Subtyp – z. B. falls später neue Subklassen hinzukommen
 	            return ResponseEntity.badRequest().build(); // 400
@@ -133,7 +131,7 @@ public class UserController {
 	        return ResponseEntity.noContent().build(); // 204
 
 	    } catch (Exception e) {
-	        System.err.println("Fehler beim Löschen: " + e.getMessage());
+	        System.err.println("Error during deletion of account: " + e.getMessage());
 	        return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build(); // 500
 	    }
 	}

@@ -49,11 +49,13 @@ public class VehicleService {
     public void deleteVehicle(Long id) {
         Vehicle vehicle = fetchVehicleById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle with ID " + id + " not found"));
-
+        //delete only if the vehicle is not in use and is not booked
         vehicleRepository.delete(vehicle);
     }
 
     public void deleteAllVehiclesByProviderId(Long providerId) {
+        //delete only if all vehicles are not in use
+        //for available vehicles change the status to RETIRED
         vehicleRepository.deleteAllByProviderId(providerId);
     }
 

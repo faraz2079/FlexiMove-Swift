@@ -87,7 +87,7 @@ public class VehicleController {
         return ResponseEntity.ok().build();
     }
 
-    //Request kommt aus Frontend, wird von Provider oder waehrend Booking getriggered
+    //Request kommt aus dem Frontend oder aus dem BookingService, wird von Provider oder waehrend Booking getriggered
     @PatchMapping("/updateStatus/{vehicleId}")
     public ResponseEntity<Void> updateVehicleStatus(@PathVariable Long vehicleId, @RequestParam VehicleStatus newStatus
     ) {
@@ -95,7 +95,7 @@ public class VehicleController {
         return ResponseEntity.ok().build();
     }
 
-    //TODO: trigger patch-method refreshVehicleInformation on the bookingService
+    //Request kommt aus dem BookingService oder aus dem Frontend wenn Provider das triggered
     @PatchMapping("/updateLocation/{vehicleId}")
     public ResponseEntity<Void> updateVehicleLocation(@PathVariable Long vehicleId, @RequestBody Location locationData) {
         vehicleService.updateVehicleLocation(

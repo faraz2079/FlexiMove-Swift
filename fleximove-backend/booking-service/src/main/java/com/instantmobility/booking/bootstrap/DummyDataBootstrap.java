@@ -28,43 +28,24 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
         initData();
     }
     private static final Long TEST_USER_ID = 1L;
+    private static final Long TEST_VEHICLE_ID = 2L;
 
     private void initData() {
     	long count = bookingRepository.count();
     	System.out.println("initData called — booking in DB: " + count);
     	if (count > 0) return;
+
         Booking booking1 = new Booking(
             BookingId.generate(),
-            TEST_USER_ID,
-            UUID.randomUUID(),
+            TEST_USER_ID, TEST_VEHICLE_ID,
             new TimeFrame(LocalDateTime.now().minusDays(2), LocalDateTime.now().minusDays(1)),
-            new GeoLocation(52.5200, 13.4050)
+            new GeoLocation(51.482615100000004, 7.409649777443613)
         );
         booking1.confirm();
-        booking1.startTrip(new GeoLocation(52.5200, 13.4050), LocalDateTime.now().minusDays(2));
+        booking1.startTrip(booking1.getPickupLocation(), LocalDateTime.now().minusDays(2));
         booking1.endTrip(new GeoLocation(52.5150, 13.4100), LocalDateTime.now().minusDays(1));
 
-        Booking booking2 = new Booking(
-            BookingId.generate(),
-            TEST_USER_ID,
-            UUID.randomUUID(),
-            new TimeFrame(LocalDateTime.now().plusDays(1)),
-            new GeoLocation(48.1351, 11.5820)
-        );
-
-        Booking booking3 = new Booking(
-            BookingId.generate(),
-            TEST_USER_ID,
-            UUID.randomUUID(),
-            new TimeFrame(LocalDateTime.now().minusHours(5), LocalDateTime.now().minusHours(3)),
-            new GeoLocation(50.1109, 8.6821)
-        );
-        booking3.confirm();
-        booking3.cancel();
-
         bookingRepository.save(booking1);
-        bookingRepository.save(booking2);
-        bookingRepository.save(booking3);
 
         // Jetzt die Buchungen abfragen und ausgeben:
         List<Booking> bookings = bookingRepository.findByUserIdOrderByTimeFrame_StartTimeDesc(TEST_USER_ID);

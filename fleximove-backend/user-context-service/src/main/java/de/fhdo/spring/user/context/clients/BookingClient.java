@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name = "bookingService")
 public interface BookingClient {
-    @DeleteMapping("${bookingService.deleteAllBookings.endpoint}")
+    @DeleteMapping("${bookingService.deleteUserBookings.endpoint}")
     void deleteUserBookings(@PathVariable("userId") Long userId);
 }
 

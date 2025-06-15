@@ -1,12 +1,15 @@
 package com.instantmobility.booking.domain;
-import com.instantmobility.booking.domain.*;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 @Entity
+@Data
+@NoArgsConstructor
 @Table(name = "BOOKING")
 public class Booking {
 	@Id
@@ -14,16 +17,15 @@ public class Booking {
     private BookingId id;
 
     @Column(name = "user_id", nullable = false)
-    private long userId;
+    private Long userId;
 
-    @Column(name = "vehicle_id", columnDefinition = "BINARY(16)", nullable = false)
-    private UUID vehicleId;
+    @Column(name = "vehicle_id", nullable = false)
+    private Long vehicleId;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private BookingStatus status;
 
-    
     @Embedded
     private TimeFrame timeFrame;
 
@@ -59,11 +61,8 @@ public class Booking {
             // @AttributeOverride(name = "status", column = @Column(name = "trip_status"))
     })
     private Trip trip;
-
-    public Booking() {
-    }
     
-    public Booking(BookingId id, long userId, UUID vehicleId, TimeFrame timeFrame, GeoLocation pickupLocation) {
+    public Booking(BookingId id, Long userId, Long vehicleId, TimeFrame timeFrame, GeoLocation pickupLocation) {
         this.id = id;
         this.userId = userId;
         this.vehicleId = vehicleId;
@@ -103,7 +102,7 @@ public class Booking {
         trip.complete();
 
         if (timeFrame.getEndTime() == null) {
-            ((TimeFrame)timeFrame).setEndTime(endTime); // Cast to access setter
+            timeFrame.setEndTime(endTime);
         } else {
             // Create new TimeFrame if we can't modify the existing one
             timeFrame = new TimeFrame(timeFrame.getStartTime(), endTime);
@@ -113,7 +112,7 @@ public class Booking {
         dropoffLocation = endLocation;
 
         // Calculate cost based on distance and duration
-        calculateCost();
+        //calculateCost();
     }
 
     public void cancel() {
@@ -154,41 +153,5 @@ public class Booking {
             return route.get(route.size() - 1);
         }
         return null;
-    }
-    // Getters
-    public BookingId getId() {
-        return id;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public UUID getVehicleId() {
-        return vehicleId;
-    }
-
-    public BookingStatus getStatus() {
-        return status;
-    }
-
-    public TimeFrame getTimeFrame() {
-        return timeFrame;
-    }
-
-    public GeoLocation getPickupLocation() {
-        return pickupLocation;
-    }
-
-    public GeoLocation getDropoffLocation() {
-        return dropoffLocation;
-    }
-
-    public double getCost() {
-        return cost;
-    }
-
-    public Trip getTrip() {
-        return trip;
     }
 }

@@ -1,5 +1,6 @@
 package com.instantmobility.booking.domain;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -9,9 +10,9 @@ import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor
-public class BookingId {
+public class BookingId implements Serializable {
 
-    @Column(name = "booking_id") // Neuer Spaltenname
+    @Column(name = "booking_id")
     private UUID value;
 
     public BookingId(UUID value) {
