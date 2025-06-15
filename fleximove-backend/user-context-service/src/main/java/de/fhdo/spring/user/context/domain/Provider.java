@@ -18,18 +18,7 @@ public class Provider extends User {
 	private String companyName;
 
     public Provider(Password password, Email email, Address address, String phoneNumber, String companyName, PaymentInfo paymentInfo) {
-        super();
-        //super(password, email, address, phoneNumber, paymentInfo);
-        this.companyName = companyName;
-    }
-
-    // Getter
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    // Setter
-    public void setCompanyName(String companyName) {
+        super(password, email, address, phoneNumber, paymentInfo);
         this.companyName = companyName;
     }
 }

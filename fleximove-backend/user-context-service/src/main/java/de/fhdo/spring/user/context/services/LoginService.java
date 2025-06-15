@@ -1,6 +1,5 @@
 package de.fhdo.spring.user.context.services;
 
-import de.fhdo.spring.user.context.clients.BookingClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,7 @@ public class LoginService {
             throw new IllegalStateException("Benutzer existiert nicht");
         }
         
-        if (!user.isRegisterd()) {
+        if (!user.isRegistered()) {
             throw new IllegalStateException("Benutzer ist nicht registriert");
         }
 
