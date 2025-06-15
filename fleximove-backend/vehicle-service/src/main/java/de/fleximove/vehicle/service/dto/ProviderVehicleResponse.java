@@ -8,10 +8,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NearestAvailableVehicleResponse {
+public class ProviderVehicleResponse {
     private Long vehicleId ;
+    private String identNumber;
     private String vehicleModel;
-    private String providerName;
     private String vehicleType;
     private String status;
     private double priceAmount;
@@ -19,9 +19,6 @@ public class NearestAvailableVehicleResponse {
     private String address;
     private double latitude;
     private double longitude;
-    private double distanceInKm;
     private double averageVehicleRating;
-    private double averageProviderRating;
     private VehicleRestrictions restrictions;
 }
-

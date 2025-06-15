@@ -37,6 +37,11 @@ import { CustomerAccountComponent } from './customer-pages/customer-account/cust
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DeleteAccountDialogComponent } from './customer-pages/delete-account-dialog/delete-account-dialog.component';
+import { ProviderLayoutComponent } from './layout/provider/provider-layout/provider-layout.component';
+import { ProviderHeaderComponent } from './layout/provider/provider-header/provider-header.component';
+import { ProviderHomepageComponent } from './provider-pages/provider-homepage/provider-homepage.component';
+import { NgChartsModule } from 'ng2-charts';
+import { VehicleStatusChartComponent } from './provider-pages/vehicle-status-chart/vehicle-status-chart.component';
 
 @NgModule({
   declarations: [
@@ -53,6 +58,10 @@ import { DeleteAccountDialogComponent } from './customer-pages/delete-account-di
     VehicleMapComponent,
     CustomerAccountComponent,
     DeleteAccountDialogComponent,
+    ProviderLayoutComponent,
+    ProviderHeaderComponent,
+    ProviderHomepageComponent,
+    VehicleStatusChartComponent
   ],
   imports: [
     BrowserModule,
@@ -75,7 +84,8 @@ import { DeleteAccountDialogComponent } from './customer-pages/delete-account-di
     RatingModule,
     MatTooltipModule,
     MatTabsModule,
-    MatDialogModule
+    MatDialogModule,
+    NgChartsModule
   ],
   providers: [RegistrationService, LoginService, GeocodingService, VehicleService],
   bootstrap: [AppComponent]

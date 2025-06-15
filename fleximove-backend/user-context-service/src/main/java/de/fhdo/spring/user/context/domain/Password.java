@@ -35,6 +35,6 @@ public class Password {
 
     @Override
     public String toString() {
-        return "****";  // Passwort nicht im Klartext ausgeben!
+        return "****";
     }
 }

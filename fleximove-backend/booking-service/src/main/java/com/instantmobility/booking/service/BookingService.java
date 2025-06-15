@@ -39,10 +39,13 @@ public class BookingService {
         GeoLocation pickupLocation = new GeoLocation(request.getPickupLatitude(), request.getPickupLongitude());
 
         Booking booking = new Booking(bookingId, request.getUserId(), request.getVehicleId(), timeFrame, pickupLocation);
-        //TODO: check whether user fulfills the vehicle restrictions; request to the vehicleServiceClient
+        //TODO in real application: check whether user fulfills the vehicle restrictions; request to the vehicleServiceClient
+        //TODO for now: only check whether the user has neccessary license and his age
         booking.confirm();
 
-        // Save booking
+        if (booking.getStatus() == BookingStatus.CONFIRMED) {
+            vehicleServiceClient.updateVehicleStatus(booking.getVehicleId(), VehicleStatus.BOOKED);
+        }
         bookingRepository.save(booking);
 
         return bookingId.getValue();
@@ -55,7 +58,9 @@ public class BookingService {
         LocalDateTime startTime = request.getStartTime() != null ? request.getStartTime() : LocalDateTime.now();
 
         booking.startTrip(startLocation, startTime);
-
+        if (booking.getStatus() == BookingStatus.STARTED) {
+            vehicleServiceClient.updateVehicleStatus(booking.getVehicleId(), VehicleStatus.IN_USE);
+        }
         bookingRepository.save(booking);
     }
 
@@ -68,32 +73,39 @@ public class BookingService {
         booking.endTrip(endLocation, endTime);
 
         try {
+            //TODO: create separate Payment API in controller where it will trigger payment Service then. Payment service should also receive provider's billing model, price, duration and distance
+            //TODO: create updateBookingStatus method in order to change booking status to PAID
             processPaymentForBooking(booking);
         } catch (Exception e) {
             throw new RuntimeException("Payment failed for booking " + bookingId + ": " + e.getMessage(), e);
         }
 
-        try {
-            updateVehicleLocation(booking.getVehicleId(), endLocation);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to update vehicle location for booking " + bookingId + ": " + e.getMessage(), e);
+        if (booking.getStatus() == BookingStatus.COMPLETED) {
+            try {
+                updateVehicleLocationAndStatus(booking.getVehicleId(), endLocation);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to update vehicle location or status for booking " + bookingId + ": " + e.getMessage(), e);
+            }
         }
+
         bookingRepository.save(booking);
     }
 
     public void cancelBooking(UUID bookingId) {
         Booking booking = getBookingById(bookingId);
-
         booking.cancel();
-
+        if (booking.getStatus() == BookingStatus.CANCELLED) {
+            vehicleServiceClient.updateVehicleStatus(booking.getVehicleId(), VehicleStatus.AVAILABLE);
+        }
         bookingRepository.save(booking);
     }
 
     /**
      * Updates vehicle location when booking ends
      */
-    private void updateVehicleLocation(Long vehicleId, GeoLocation location) {
+    private void updateVehicleLocationAndStatus(Long vehicleId, GeoLocation location) {
         vehicleServiceClient.updateVehicleLocation(vehicleId, location);
+        vehicleServiceClient.updateVehicleStatus(vehicleId, VehicleStatus.AVAILABLE);
         System.out.println("Vehicle " + vehicleId + " location updated to: " +
                 location.getLatitude() + ", " + location.getLongitude());
     }
@@ -121,35 +133,21 @@ public class BookingService {
     public void deleteBookingsByUserId(Long userId) {
         List<Booking> userBookings = bookingRepository.findByUserId(userId);
 
-        if (userBookings.isEmpty()) {
-            throw new IllegalStateException("No bookings found for user with ID " + userId);
-        }
-
-        Set<Long> affectedVehicleIds = userBookings.stream()
-                .map(Booking::getVehicleId)
-                .collect(Collectors.toSet());
-
-       /* for (Booking booking : userBookings) 
-        {
-            // Don't allow deletion of active bookings
-            if (booking.getStatus() == BookingStatus.STARTED ||
-                    booking.getStatus() == BookingStatus.CONFIRMED) {
-                throw new IllegalStateException(
-                        "Cannot delete user with active bookings. Cancel bookings first.");
+        if (!userBookings.isEmpty()) {
+           for (Booking booking : userBookings)
+            {
+                // Don't allow deletion of active bookings
+                if (booking.getStatus() != BookingStatus.PAID &&
+                        booking.getStatus() != BookingStatus.CANCELLED) {
+                    throw new IllegalStateException(
+                            "Cannot delete user with active bookings. Either bookings have to be canceled or trips have to be finished first.");
+                }
             }
-        }*/
 
-        try {
-            bookingRepository.deleteBookingsByUserId(userId);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to delete bookings for user " + userId, e);
-        }
-
-        for (Long vehicleId : affectedVehicleIds) {
             try {
-                vehicleServiceClient.updateVehicleStatus(vehicleId, VehicleStatus.AVAILABLE);
+                bookingRepository.deleteBookingsByUserId(userId);
             } catch (Exception e) {
-                throw new RuntimeException("Failed to update status for vehicle " + vehicleId, e);
+                throw new RuntimeException("Failed to delete bookings for user " + userId, e);
             }
         }
     }

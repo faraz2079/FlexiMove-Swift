@@ -1,0 +1,65 @@
+<div class="homepage-container">
+     <div class="slogan-section">
+        <p class="slogan">
+            Welcome, {{provider?.companyName}}!
+        </p>
+        <!--<p>
+         <strong>Provider Rating: </strong> 
+            <span matTooltip="{{ vehicle.averageProviderRating + ' / 5' }}" matTooltipPosition="right">
+                <p-rating [ngModel]="vehicle.averageProviderRating" [readonly]="true" [cancel]="false"></p-rating>
+            </span>
+        </p>-->
+    </div>
+    <button class="register-button" mat-raised-button color="primary">Register Vehicle</button>
+</div>   
+
+<div
+    [ngClass]="{
+        'no-vehicles-found': foundVehicles.length === 0,
+        'vehicle-results-wrapper': foundVehicles.length > 0
+    }">
+    <div class="map-chart-wrapper" *ngIf="foundVehicles.length > 0">
+        <div class="map-container">
+            <app-vehicle-map [vehicles]="foundVehicles"></app-vehicle-map>
+        </div>
+        <div class="chart-container">
+            <app-vehicle-status-chart [vehicles]="foundVehicles"></app-vehicle-status-chart>
+        </div>
+    </div>
+
+    <div class="vehicle-list">
+        <mat-card *ngFor="let vehicle of foundVehicles" class="vehicle-card">
+            <mat-card-title>{{ vehicle.vehicleModel }} ({{ vehicle.vehicleType }})</mat-card-title>
+            <mat-card-content>
+                <p><strong>Address:</strong> {{ vehicle.address }}</p>
+                <p><strong>Price:</strong> {{ vehicle.priceAmount }}€ / {{ formatBillingModel(vehicle.billingModel) }}</p>
+                <p>
+                    <strong>Vehicle Rating: </strong> 
+                    <span matTooltip="{{ vehicle.averageVehicleRating + ' / 5' }}" matTooltipPosition="right">
+                        <p-rating [ngModel]="vehicle.averageVehicleRating" [readonly]="true" [cancel]="false"></p-rating>
+                    </span>
+                </p>
+            </mat-card-content>
+            <mat-card-actions class="card-actions">
+                <button mat-button color="primary" (click)="toggleDetails(vehicle)">
+                {{ vehicle.showDetails ? 'Less details' : 'More details' }}
+                </button>
+                <button mat-raised-button color="primary">Edit</button>
+            </mat-card-actions>
+            <mat-card-content *ngIf="vehicle.showDetails">
+                <ul *ngIf="vehicle.restrictions" class="vehicle-restrictions">
+                        <li><strong>Max booking time:</strong> {{ vehicle.restrictions.maxBookingTimeMinutes }} min</li>
+                        <li><strong>Max distance:</strong> {{ vehicle.restrictions.maxDistanceKm }} km</li>
+                        <li><strong>Max passengers:</strong> {{ vehicle.restrictions.maxPassengers }}</li>
+                        <li><strong>Minimum age:</strong> {{ formatMinAge(vehicle.restrictions.minAge) }}</li>
+                        <li><strong>Required license:</strong> {{ formatLicense(vehicle.restrictions.requiredLicense) }}</li>
+                </ul>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    
+    <div *ngIf="foundVehicles.length === 0" class="no-results-message">
+        <p>No vehicles registered yet.</p>
+    </div>
+
+</div>

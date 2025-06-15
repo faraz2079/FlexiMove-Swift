@@ -51,17 +51,16 @@ export class LoginComponent {
           localStorage.setItem('role', user.role);
           this.router.navigateByUrl('/customer');
         } else if (user.role === 'Provider') {
-          //TODO
-          //setProvider
+          this.userService.setProvider(user);
           localStorage.setItem('userId', user.id.toString());
           localStorage.setItem('role', user.role);
-          //this.router.navigateByUrl('/provider');
+          this.router.navigateByUrl('/provider');
         } else {
           this.snackBar.open('Unbekannte Rolle: Zugriff verweigert', 'OK', { panelClass: 'snackbar-error' });
         }},
       error: err => {
-        console.error('Login fehlgeschlagen', err);
-        alert('Login fehlgeschlagen: Ungültige Zugangsdaten');
+        console.error('Login failed', err);
+        alert('Login failed: Invalid credentials');
       }
     });
 

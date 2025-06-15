@@ -5,6 +5,7 @@ import de.fleximove.vehicle.service.domain.valueobject.Location;
 import de.fleximove.vehicle.service.domain.valueobject.VehicleStatus;
 import de.fleximove.vehicle.service.dto.EditVehicleRequest;
 import de.fleximove.vehicle.service.dto.NearestAvailableVehicleResponse;
+import de.fleximove.vehicle.service.dto.ProviderVehicleResponse;
 import de.fleximove.vehicle.service.services.GeocodingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -75,8 +76,8 @@ public class VehicleController {
 
     //Request kommt aus Frontend, wird beim Laden von Provider-Profile getriggered
     @GetMapping("/providerVehiclesList")
-    public ResponseEntity<List<Vehicle>> listProviderVehicles(@RequestParam Long forProviderId) {
-        List<Vehicle> vehicles = vehicleService.listVehiclesByProvider(forProviderId);
+    public ResponseEntity<List<ProviderVehicleResponse>> listProviderVehicles(@RequestParam Long forProviderId) {
+        List<ProviderVehicleResponse> vehicles = vehicleService.listProviderVehiclesWithRatings(forProviderId);
         return ResponseEntity.ok(vehicles);
     }
 
@@ -95,7 +96,7 @@ public class VehicleController {
         return ResponseEntity.ok().build();
     }
 
-    //Request kommt aus dem BookingService oder aus dem Frontend wenn Provider das triggered
+    //Request kommt aus dem BookingService
     @PatchMapping("/updateLocation/{vehicleId}")
     public ResponseEntity<Void> updateVehicleLocation(@PathVariable Long vehicleId, @RequestBody Location locationData) {
         vehicleService.updateVehicleLocation(

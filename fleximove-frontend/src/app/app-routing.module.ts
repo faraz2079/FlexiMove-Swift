@@ -8,6 +8,8 @@ import { CustomerLayoutComponent } from './layout/customer/customer-layout/custo
 import { CustomerHomepageComponent } from './customer-pages/customer-homepage/customer-homepage.component';
 import { VehicleSearchResultComponent } from './customer-pages/vehicle-search-result/vehicle-search-result.component';
 import { CustomerAccountComponent } from './customer-pages/customer-account/customer-account.component';
+import { ProviderLayoutComponent } from './layout/provider/provider-layout/provider-layout.component';
+import { ProviderHomepageComponent } from './provider-pages/provider-homepage/provider-homepage.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -26,6 +28,13 @@ const routes: Routes = [
       { path: 'home', component: CustomerHomepageComponent },
       { path: 'search-results', component: VehicleSearchResultComponent },
       { path: 'account', component: CustomerAccountComponent }
+    ]
+  },
+  {path: 'provider', component: ProviderLayoutComponent,
+    children: [
+      { path: '', component: ProviderHomepageComponent },
+      { path: 'home', component: ProviderHomepageComponent },
+      //{ path: 'account', component: CustomerAccountComponent }
     ]
   }
 ];

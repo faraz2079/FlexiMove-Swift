@@ -12,7 +12,6 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableFeignClients(basePackages = "de.fhdo.spring.user.context.clients")
  public class UserContextServiceApp {
 
-    
 	public static void main(String[] args) {
 		SpringApplication.run(UserContextServiceApp.class, args);
 	}

@@ -16,8 +16,10 @@ public abstract class User {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 	@Embedded
 	private Address address;
+
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "password_value", nullable = false))
     private Password password;
@@ -27,6 +29,7 @@ public abstract class User {
     private Email email;
 
     private String phoneNumber;
+
     @Embedded
     private PaymentInfo paymentinfo;
 

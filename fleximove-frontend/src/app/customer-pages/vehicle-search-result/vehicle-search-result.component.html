@@ -76,7 +76,7 @@
 
     <div class="vehicle-list">
         <mat-card *ngFor="let vehicle of filteredVehicles" class="vehicle-card">
-            <mat-card-title>{{ vehicle.vehicleName }} ({{ vehicle.vehicleType }})</mat-card-title>
+            <mat-card-title>{{ vehicle.vehicleModel }} ({{ vehicle.vehicleType }})</mat-card-title>
             <mat-card-content>
                 <p><strong>Provider:</strong> {{ vehicle.providerName }}</p>
                 <p><strong>Address:</strong> {{ vehicle.address }}</p>

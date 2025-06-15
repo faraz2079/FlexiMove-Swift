@@ -120,6 +120,10 @@ public class Booking {
             throw new IllegalStateException("Completed booking cannot be cancelled");
         }
 
+        if (status == BookingStatus.STARTED) {
+            throw new IllegalStateException("Booking cannot be cancelled. Trip hast to be finished and payed first.");
+        }
+
         status = BookingStatus.CANCELLED;
     }
 

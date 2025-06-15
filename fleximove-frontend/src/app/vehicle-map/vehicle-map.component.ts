@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
 import { NearestAvailableVehicleResponse } from '../customer-pages/customer-homepage/customer-homepage.component';
 import * as L from 'leaflet';
+import { ProviderVehicle } from '../provider-pages/provider-homepage/provider-homepage.component';
 
 // Leaflet Marker-Fix (Pfad zu Icons setzen)
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -18,7 +19,7 @@ L.Icon.Default.mergeOptions({
   styleUrls: ['./vehicle-map.component.css']
 })
 export class VehicleMapComponent implements AfterViewInit{
-  @Input() vehicles: NearestAvailableVehicleResponse[] = [];
+  @Input() vehicles: NearestAvailableVehicleResponse[] | ProviderVehicle[] = [];
   private map!: L.Map;
   @ViewChild('mapContainer') mapContainer!: ElementRef;
 
@@ -29,6 +30,7 @@ export class VehicleMapComponent implements AfterViewInit{
         this.addMarkers();
       }
     }, 0);
+    console.log("Map Loaded")
   }
 
   private initMap(): void {
@@ -46,7 +48,7 @@ export class VehicleMapComponent implements AfterViewInit{
     this.vehicles.forEach(vehicle => {
       L.marker([vehicle.latitude, vehicle.longitude])
         .addTo(this.map)
-        .bindPopup(`<b>${vehicle.vehicleName}</b><br>${vehicle.address}`).openPopup();
+        .bindPopup(`<b>${vehicle.vehicleModel}</b><br>${vehicle.address}`).openPopup();
     });
   }
 }

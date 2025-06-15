@@ -18,7 +18,7 @@ import com.instantmobility.booking.domain.BookingId;
 public interface BookingRepository extends JpaRepository<Booking, BookingId> {
 
     List<Booking> findByUserId(Long userId);
-    List<Booking> findByVehicleId(UUID vehicleId);
+    List<Booking> findByVehicleId(Long vehicleId);
     List<Booking> findByUserIdOrderByTimeFrame_StartTimeDesc(Long testUserId);
 	//List<Booking> findByUserIdOrderByTimeFrameDesc(UUID userId, int page, int size);
 	void deleteByUserId(Long userId);

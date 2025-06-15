@@ -1,37 +1,38 @@
 package de.fhdo.spring.user.context.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import de.fhdo.spring.user.context.domain.Email;
-import de.fhdo.spring.user.context.domain.Password;
 import de.fhdo.spring.user.context.domain.User;
 import de.fhdo.spring.user.context.repository.UserRepository;
 @Service
 public class LoginService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Autowired
-    public LoginService(UserRepository userRepository) {
+    public LoginService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public User login(Email email, Password password) {
-        User user = userRepository.findByEmail(email);
-        //TODO: alle Kommentare und Logs auf Englisch
+    public User login(String email, String password) {
+        User user = userRepository.findByEmail(new Email(email));
         if (user == null) {
-            throw new IllegalStateException("Benutzer existiert nicht");
+            throw new IllegalStateException("User doesn't exist");
         }
         
         if (!user.isRegistered()) {
-            throw new IllegalStateException("Benutzer ist nicht registriert");
+            throw new IllegalStateException("User is not registered");
         }
 
-        if (!user.getPassword().getValue().equals(password.getValue())) {
-            throw new IllegalStateException("Passwort ist falsch");
+        if (!passwordEncoder.matches(password, user.getPassword().getValue())) {
+            throw new IllegalStateException("Invalid password");
         }
-
         return user;
     }
 }

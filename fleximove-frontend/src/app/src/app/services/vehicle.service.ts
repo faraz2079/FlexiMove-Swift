@@ -2,6 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { NearestAvailableVehicleResponse } from 'src/app/customer-pages/customer-homepage/customer-homepage.component';
+import { ProviderVehicle} from 'src/app/provider-pages/provider-homepage/provider-homepage.component';
 
 @Injectable({ providedIn: 'root' })
 export class VehicleService {
@@ -19,8 +20,13 @@ export class VehicleService {
   }
 
   getVehicleById(id: number): Observable<any> {
-      return this.http.get<any[]>(`${this.baseUrl}/load/${id}`);}
+      return this.http.get<any[]>(`${this.baseUrl}/load/${id}`);
+  }
 
+  getVehiclesByProvider(providerId: number): Observable<ProviderVehicle[]> {
+    const params = new HttpParams().set('forProviderId', providerId);
+    return this.http.get<ProviderVehicle[]>(`${this.baseUrl}/providerVehiclesList`, { params });
+  }
 
   setResults(vehicles: NearestAvailableVehicleResponse[]) {
     this.results = vehicles;

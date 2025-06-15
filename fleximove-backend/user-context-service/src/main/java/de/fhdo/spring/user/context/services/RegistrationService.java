@@ -2,6 +2,7 @@ package de.fhdo.spring.user.context.services;
 
 import de.fhdo.spring.user.context.clients.BookingClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import de.fhdo.spring.user.context.domain.Email;
@@ -14,21 +15,24 @@ public class RegistrationService {
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public RegistrationService(UserRepository userRepository) {
+    public RegistrationService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
 	public void registerUser(User user) {
-        // Prüfen, ob der Benutzer bereits existiert
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new IllegalStateException("Benutzer existiert bereits!");
         }
 
-        // Benutzer als registriert markieren
+        String hashed = passwordEncoder.encode(user.getPassword().getValue());
+        user.setPassword(new Password(hashed));
+
         user.setRegistered(true);
 
-        // Benutzer speichern
         userRepository.save(user);
     }
 }

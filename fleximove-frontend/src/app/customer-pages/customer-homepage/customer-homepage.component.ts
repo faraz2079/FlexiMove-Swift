@@ -6,7 +6,7 @@ import { VehicleService } from 'src/app/src/app/services/vehicle.service';
 
 export interface NearestAvailableVehicleResponse {
   vehicleId: number;
-  vehicleName: string;
+  vehicleModel: string;
   providerName: string;
   vehicleType: string;
   status: string;
@@ -39,7 +39,7 @@ export class CustomerHomepageComponent {
   selectedRadius: string = 'None';
   address: string = '';
 
-  constructor(private router: Router, private geocodingService: GeocodingService, private snackBar: MatSnackBar, private vehicleService: VehicleService /*private userService: UserService */) {}
+  constructor(private router: Router, private geocodingService: GeocodingService, private snackBar: MatSnackBar, private vehicleService: VehicleService) {}
 
   ngOnInit(): void {
     const userId = localStorage.getItem('userId');
