@@ -42,6 +42,7 @@ import { ProviderHeaderComponent } from './layout/provider/provider-header/provi
 import { ProviderHomepageComponent } from './provider-pages/provider-homepage/provider-homepage.component';
 import { NgChartsModule } from 'ng2-charts';
 import { VehicleStatusChartComponent } from './provider-pages/vehicle-status-chart/vehicle-status-chart.component';
+import { RegisterVehicleDialogComponent } from './provider-pages/register-vehicle-dialog/register-vehicle-dialog.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,8 @@ import { VehicleStatusChartComponent } from './provider-pages/vehicle-status-cha
     ProviderLayoutComponent,
     ProviderHeaderComponent,
     ProviderHomepageComponent,
-    VehicleStatusChartComponent
+    VehicleStatusChartComponent,
+    RegisterVehicleDialogComponent
   ],
   imports: [
     BrowserModule,

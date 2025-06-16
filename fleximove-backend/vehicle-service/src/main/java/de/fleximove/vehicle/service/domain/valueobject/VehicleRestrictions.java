@@ -20,7 +20,7 @@ public class VehicleRestrictions {
     private DriverLicenseType requiredLicense;
 
     public VehicleRestrictions(Integer minAge, Integer maxBookingTimeMinutes, Double maxDistanceKm, Integer maxPassengers, DriverLicenseType driverLicenseType){
-        this.minAge = minAge;
+        this.minAge = Objects.requireNonNull(minAge, "minAge must not be null");;
         this.maxBookingTimeMinutes = Objects.requireNonNull(maxBookingTimeMinutes, "maxBookingTimeMinutes must not be null");
         this.maxDistanceKm = Objects.requireNonNull(maxDistanceKm, "maxDistanceKm must not be null");
         this.maxPassengers = Objects.requireNonNull(maxPassengers, "maxPassengers must not be null");

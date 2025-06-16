@@ -37,7 +37,6 @@ public class Vehicle {
     @Embedded
     private Location currentLocation;
 
-    //TODO: klaeren mit Team, ob es logisch ist
     public Vehicle(IdentificationNumber identNumber, String vehicleModel, VehicleType type, Location currentLocation,
                    Price price,
                    VehicleRestrictions restrictions, Long providerId) {

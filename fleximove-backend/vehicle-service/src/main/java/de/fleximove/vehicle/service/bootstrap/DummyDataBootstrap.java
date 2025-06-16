@@ -43,7 +43,7 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
         VehicleType vehicleType2 = VehicleType.BICYCLE;
         Location vehicleLocation2 = new Location(51.482615100000004,7.409649777443613);
         Price vehiclePrice2 = new Price(0.5, BillingModel.PER_HOUR);
-        VehicleRestrictions restrictions2 = new VehicleRestrictions(null, 60, 50.0, 1, DriverLicenseType.NONE);
+        VehicleRestrictions restrictions2 = new VehicleRestrictions(0, 60, 50.0, 1, DriverLicenseType.NONE);
 
         Vehicle newVehicle2 = new Vehicle(identificationNumber2, "Ultimate CF 7", vehicleType2, vehicleLocation2, vehiclePrice2, restrictions2, 2L);
 

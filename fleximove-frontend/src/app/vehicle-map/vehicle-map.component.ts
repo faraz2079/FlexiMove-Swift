@@ -18,10 +18,11 @@ L.Icon.Default.mergeOptions({
   templateUrl: './vehicle-map.component.html',
   styleUrls: ['./vehicle-map.component.css']
 })
-export class VehicleMapComponent implements AfterViewInit{
+export class VehicleMapComponent implements AfterViewInit, OnChanges {
   @Input() vehicles: NearestAvailableVehicleResponse[] | ProviderVehicle[] = [];
   private map!: L.Map;
   @ViewChild('mapContainer') mapContainer!: ElementRef;
+   private markerGroup: L.LayerGroup = L.layerGroup();
 
   ngAfterViewInit(): void {
     setTimeout(() => {
@@ -33,6 +34,17 @@ export class VehicleMapComponent implements AfterViewInit{
     console.log("Map Loaded")
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['vehicles'] && this.map) {
+      this.clearMarkers();
+      this.addMarkers();
+    }
+  }
+
+  private clearMarkers(): void {
+    this.markerGroup.clearLayers();
+  }
+
   private initMap(): void {
     this.map = L.map('map').setView([51.5136, 7.4653], 13);
 
@@ -40,6 +52,8 @@ export class VehicleMapComponent implements AfterViewInit{
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(this.map);
+
+    this.markerGroup.addTo(this.map);
   }
 
   private addMarkers(): void {
@@ -48,7 +62,7 @@ export class VehicleMapComponent implements AfterViewInit{
     this.vehicles.forEach(vehicle => {
       L.marker([vehicle.latitude, vehicle.longitude])
         .addTo(this.map)
-        .bindPopup(`<b>${vehicle.vehicleModel}</b><br>${vehicle.address}`).openPopup();
+        .bindPopup(`<b>${vehicle.vehicleModel}</b><br>${vehicle.address}`).addTo(this.markerGroup).openPopup();
     });
   }
 }

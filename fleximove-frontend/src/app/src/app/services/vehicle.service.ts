@@ -28,6 +28,10 @@ export class VehicleService {
     return this.http.get<ProviderVehicle[]>(`${this.baseUrl}/providerVehiclesList`, { params });
   }
 
+  registerVehicle(request: any, providerId: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/registeredBy?providerId=${providerId}`, request);
+  }
+
   setResults(vehicles: NearestAvailableVehicleResponse[]) {
     this.results = vehicles;
   }

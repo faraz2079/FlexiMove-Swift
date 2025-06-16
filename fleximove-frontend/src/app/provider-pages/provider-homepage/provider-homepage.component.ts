@@ -3,6 +3,8 @@ import { Router } from '@angular/router';
 import { UserService } from 'src/app/src/app/services/user.service';
 import { VehicleService } from 'src/app/src/app/services/vehicle.service';
 import { Provider as FlexiProvider} from 'src/app/models/provider.model';
+import { MatDialog } from '@angular/material/dialog';
+import { RegisterVehicleDialogComponent } from '../register-vehicle-dialog/register-vehicle-dialog.component';
 
 export interface ProviderVehicle {
   vehicleId: number;
@@ -40,7 +42,7 @@ export class ProviderHomepageComponent {
   provider: FlexiProvider | null = null;
   foundVehicles: ProviderVehicleWithDetails[] = [];
 
-  constructor(private router: Router, private vehicleService: VehicleService, private userService: UserService) {}
+  constructor(private router: Router, private vehicleService: VehicleService, private userService: UserService, private dialog: MatDialog) {}
   
 
   ngOnInit(): void {
@@ -121,6 +123,7 @@ export class ProviderHomepageComponent {
       case 'E_SCOOTER': return 'E-Scooter';
       case 'SCOOTER': return 'Scooter';
       case 'MOTORCYCLE': return 'Motorcycle';
+      case 'BUS': return 'Bus';
       default: return '';
     }
   }
@@ -131,5 +134,25 @@ export class ProviderHomepageComponent {
     if (vehicle.showDetails && !vehicle.restrictions) {
       alert('No restriction data available for this vehicle.');
     }
+  }
+
+  openRegisterDialog(): void {
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) {
+      alert('User ID not found.');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(RegisterVehicleDialogComponent, {
+      width: '600px',
+      data: { providerId: userId }
+    });
+
+    dialogRef.afterClosed().subscribe((refresh) => {
+      if (refresh) {
+        this.loadProviderVehicles(+userId!);
+      }
+    });
   }
 }

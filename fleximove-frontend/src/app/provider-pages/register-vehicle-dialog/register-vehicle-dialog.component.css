@@ -1,0 +1,22 @@
+mat-form-field {
+    width: 100%;
+    margin-bottom: 16px;
+    border-radius: 4px;
+}
+
+mat-dialog-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+mat-dialog-title {
+  font-size: 24px;
+  font-weight: bold;
+  background-color: green;
+}
+
+mat-dialog-actions {
+  margin-top: 24px;
+}

@@ -32,7 +32,7 @@ public class VehicleMapper {
 
         return new Vehicle(
                 new IdentificationNumber(request.getIdentificationNumber()),
-                request.getVehicleName(),
+                request.getVehicleModel(),
                 type,
                 currentLocation,
                 new Price(request.getPriceAmount(), billingModel),
@@ -49,7 +49,7 @@ public class VehicleMapper {
 
     private static DriverLicenseType resolveLicenseType(VehicleType type, String licenseCodeFromRequest) {
         if (licenseCodeFromRequest == null) {
-            throw new IllegalArgumentException("License type is required for vehicle type: " + type);
+            throw new IllegalArgumentException("No license type was provided");
         }
 
         DriverLicenseType licenseTypeFromRequest = DriverLicenseType.licenseTypeFromCode(licenseCodeFromRequest);

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class VehicleRequest {
     private String identificationNumber;
     private String vehicleType;
-    private String vehicleName;
+    private String vehicleModel;
     private double priceAmount;
     private String billingModel;
     private String address;

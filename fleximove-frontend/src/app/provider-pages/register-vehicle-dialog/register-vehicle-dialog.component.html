@@ -1,0 +1,85 @@
+<div class="register-window">
+    <h2 mat-dialog-title>Register a new vehicle</h2>
+    <mat-dialog-content>
+    <form [formGroup]="vehicleForm">
+        <mat-form-field appearance="fill">
+            <mat-label>Vehicle Model</mat-label>
+            <input matInput formControlName="vehicleModel" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Identification Number</mat-label>
+            <input matInput formControlName="identificationNumber" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Vehicle Type</mat-label>
+            <mat-select formControlName="vehicleType">
+                <mat-option value="CAR">Car</mat-option>
+                <mat-option value="SCOOTER">Scooter</mat-option>
+                <mat-option value="BICYCLE">Bicycle</mat-option>
+                <mat-option value="E_BIKE">E-Bike</mat-option>
+                <mat-option value="E_SCOOTER">E-Scooter</mat-option>
+                <mat-option value="MOTORCYCLE">Motorcycle</mat-option>
+                <mat-option value="BUS">Bus</mat-option>
+                <mat-option value="TRUCK">Truck</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Billing Model</mat-label>
+            <mat-select formControlName="billingModel">
+                <mat-option value="PER_HOUR">Per Hour</mat-option>
+                <mat-option value="PER_KM">Per Kilometer</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Price (€)</mat-label>
+            <input matInput type="number" formControlName="priceAmount" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Address</mat-label>
+            <input matInput formControlName="address" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Minimum Age</mat-label>
+            <input matInput type="number" formControlName="minAge" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Max Booking Time (min)</mat-label>
+            <input matInput type="number" formControlName="maxBookingTimeMinutes" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Max Distance (km)</mat-label>
+            <input matInput type="number" formControlName="maxDistanceKm" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Max Passengers</mat-label>
+            <input matInput type="number" formControlName="maxPassengers" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+            <mat-label>Required License</mat-label>
+            <mat-select formControlName="requiredLicenseType">
+                <mat-option value="A">A</mat-option>
+                <mat-option value="B">B</mat-option>
+                <mat-option value="C">C</mat-option>
+                <mat-option value="D">D</mat-option>
+                <mat-option value="NONE">None</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+    </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button (click)="cancel()">Cancel</button>
+        <button mat-raised-button color="primary" (click)="submit()">Register</button>
+    </mat-dialog-actions>
+</div>
