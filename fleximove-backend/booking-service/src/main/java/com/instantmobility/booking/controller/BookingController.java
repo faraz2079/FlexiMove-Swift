@@ -36,6 +36,7 @@ public class BookingController {
     }
 
     @PostMapping("/{bookingId}/end")
+    //TODO: dont send Void back, but some DTO with distance, duration and totalCost to show in the frontend
     public ResponseEntity<Void> endTrip(@PathVariable UUID bookingId, @RequestBody EndTripRequest request) {
         bookingService.endTrip(bookingId, request);
         return ResponseEntity.ok().build();

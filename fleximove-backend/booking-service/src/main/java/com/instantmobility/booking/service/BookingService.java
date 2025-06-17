@@ -72,10 +72,11 @@ public class BookingService {
 
         booking.endTrip(endLocation, endTime);
 
+        //TODO: trigger Vehicle Service to get data about billing model and price
+        //TODO: totalCost = trigger Payment Service and send to it duration, distance, price and bbilling model
+
         try {
-            //TODO: create separate Payment API in controller where it will trigger payment Service then. Payment service should also receive provider's billing model, price, duration and distance
-            //TODO: create updateBookingStatus method in order to change booking status to PAID
-            processPaymentForBooking(booking);
+            //processPaymentForBooking(booking);
         } catch (Exception e) {
             throw new RuntimeException("Payment failed for booking " + bookingId + ": " + e.getMessage(), e);
         }

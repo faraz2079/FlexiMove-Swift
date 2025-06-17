@@ -1,6 +1,5 @@
 package de.fleximove.vehicle.service.controller;
 
-import de.fleximove.vehicle.service.domain.Vehicle;
 import de.fleximove.vehicle.service.domain.valueobject.Location;
 import de.fleximove.vehicle.service.domain.valueobject.VehicleStatus;
 import de.fleximove.vehicle.service.dto.EditVehicleRequest;
