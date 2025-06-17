@@ -1,0 +1,75 @@
+context VehicleContext {
+
+    structure Vehicle<entity, aggregate> {
+        //GeneratedValue
+        long id<identifier>,
+        IdentificationNumber identificationNumber<part>,
+        long providerId<neverEmpty>,
+        string vehicleModel<neverEmpty>,
+        VehicleType vehicleType<neverEmpty>,
+        //Dafault-value is VehicleStatus.AVAILABLE
+        VehicleStatus status<neverEmpty>,
+        VehicleRestrictions restrictions,
+        Price vehiclePrice,
+        Location currentLocation
+    }
+
+    structure IdentificationNumber<valueObject> {
+        //@Column(name = "identification_number", unique = true, nullable = false)
+        //TODO: fragen, wieso immutable und bzgl. neverEmpty
+        immutable string identNumber<neverEmpty>
+    }
+
+    enum BillingModel {
+        PER_HOUR,
+        PER_KILOMETER
+    }
+
+    enum DriverLicenseType {
+        MOTORCYCLE,
+        CAR,
+        TRUCK,
+        BUS,
+        NONE
+    }
+
+    enum VehicleStatus {
+        AVAILABLE,
+        BOOKED,
+        IN_USE,
+        MAINTENANCE,
+        RETIRED
+    }
+
+    enum VehicleType {
+        BICYCLE,
+        E_BIKE,
+        E_SCOOTER,
+        SCOOTER,
+        MOTORCYCLE,
+        CAR,
+        TRUCK,
+        BUS
+        //function boolean requiresLicense<sideEffectFree>,
+        //function boolean requiresMinAge<sideEffectFree>
+
+    }
+
+    structure Location <valueObject> {
+        double latitude,
+        double longitude
+    }
+
+    structure Price <valueObject> {
+        double amount,
+        BillingModel billingModel
+    }
+
+    structure VehicleRestrictions <valueObject> {
+        int minAge,
+        int maxBookingTimeMinutes,
+        double maxDistanceKm,
+        int maxPassengers,
+        DriverLicenseType requiredLicense
+    }
+}
