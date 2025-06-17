@@ -1,34 +1,28 @@
-Context Rating {
-
-// Entity 
-// Table(name = „rating“) 
-
-    Structure RatingProvider <entity> {
-    
-// GeneratedValue 
-// Id 
-        RatingId id <identifier>
-        String providerId
-        String userId     
-        Score score
-        String comment
-        String timestamp 
-    }
-
-    Structure RatingVehicle <entity> {
-        RatingId id <identifier>
-        String vehicleId // UUID als String
-        String userId    // UUID als String
-        Score score
-        String comment
-        String timestamp
-    }
+context Rating {
 
     structure RatingId <valueObject> {
-        String value // UUID
+        string value // UUID
     }
 
     structure Score <valueObject> {
-        Double value 
+        double value
+    }
+
+    structure RatingProvider <entity> {
+        RatingId id <identifier>,
+        string providerId,
+        string userId,
+        Score score,
+        string comment,
+        string timestamp
+    }
+
+    structure RatingVehicle <entity> {
+        RatingId id <identifier>,
+        string vehicleId, // UUID als String
+        string userId,    // UUID als String
+        Score score,
+        string comment,
+        string timestamp
     }
 }

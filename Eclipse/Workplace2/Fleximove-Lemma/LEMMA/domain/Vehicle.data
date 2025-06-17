@@ -1,29 +1,11 @@
-Context vehicle {
+context Vehicle {
 
-
-//Entity 
-//Table(name = „Vehicle“) 
-    Entity Vehicle {
-    
-// GeneratedValue 
-// Id 
-        id : String
-        identificationNumber : IdentificationNumber
-        providerId : String
-        vehicleModel : String
-        vehicleType : VehicleType
-        status : VehicleStatus
-        restrictions : VehicleRestrictions
-        vehiclePrice : Price
-        currentLocation : Location
-    }
-
-    Enumeration BillingModel {
+    enum BillingModel {
         PER_HOUR,
         PER_KILOMETER
     }
 
-    Enumeration DriverLicenseType {
+    enum DriverLicenseType {
         MOTORCYCLE,
         CAR,
         TRUCK,
@@ -31,7 +13,7 @@ Context vehicle {
         NONE
     }
 
-    Enumeration VehicleStatus {
+    enum VehicleStatus {
         AVAILABLE,
         BOOKED,
         IN_USE,
@@ -39,7 +21,7 @@ Context vehicle {
         RETIRED
     }
 
-    Enumeration VehicleType {
+    enum VehicleType {
         BICYCLE,
         E_BIKE,
         E_SCOOTER,
@@ -49,27 +31,37 @@ Context vehicle {
         TRUCK
     }
 
-
-    ValueObject IdentificationNumber {
-        identNumber : String
+    structure Vehicle <entity> {
+        string id,
+        IdentificationNumber identificationNumber,
+        string providerId,
+        string vehicleModel,
+        VehicleType vehicleType,
+        VehicleStatus status,
+        VehicleRestrictions restrictions,
+        Price vehiclePrice,
+        Location currentLocation
     }
 
-    ValueObject Location {
-        latitude : Decimal
-        longitude : Decimal
+    structure IdentificationNumber <valueObject> {
+        string identNumber
     }
 
-    ValueObject Price {
-        amount : Decimal
-        billingModel : BillingModel
+    structure Location <valueObject> {
+        double latitude,
+        double longitude
     }
 
-    ValueObject VehicleRestrictions {
-        minAge : Integer
-        maxBookingTimeMinutes : Integer
-        maxDistanceKm : Decimal
-        maxPassengers : Integer
-        requiredLicense : DriverLicenseType
+    structure Price <valueObject> {
+        double amount,
+        BillingModel billingModel
     }
 
+    structure VehicleRestrictions <valueObject> {
+        int minAge,
+        int maxBookingTimeMinutes,
+        double maxDistanceKm,
+        int maxPassengers,
+        DriverLicenseType requiredLicense
+    }
 }

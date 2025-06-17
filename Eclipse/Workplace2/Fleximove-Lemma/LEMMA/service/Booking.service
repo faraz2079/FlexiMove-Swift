@@ -1,10 +1,8 @@
-import datatypes from "../TechnologyModels/Java.technology" as Java
-import datatypes from "../TechnologyModels/Spring.technology" as Spring
-import datatypes from "BookingDomain.data" as BookingDomain
+
 
 @technology(Java)
 @technology(Spring)
-functional microservice com.instantmobility.BookingService {
+functional microservice BookingService {
 
     @sync(Spring::_protocols.rest)
     @endpoints(Spring::_protocols.rest: "/api/bookings";)

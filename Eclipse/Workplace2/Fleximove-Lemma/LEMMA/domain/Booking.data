@@ -1,57 +1,52 @@
-Context Booking {
 
+context Booking {
 
-// Entity 
-// Table(name = „Booking“)
-
-
-    structure Booking <entity> {
-    
-// GeneratedValue 
-// Id     
-        BookingId id <identifier>
-        Long userId
-        String vehicleId 
-        BookingStatus status
-        TimeFrame timeFrame
-        GeoLocation pickupLocation
-        GeoLocation dropoffLocation
-        Double cost
-        Trip trip
-    }
-
-    structure BookingId <valueObject> {
-        String value
-    }
-
-    structure GeoLocation <valueObject> {
-        Double latitude
-        Double longitude
-    }
-
-    structure TimeFrame <valueObject> {
-        String startTime
-        String endTime
-    }
-
-    structure Trip <valueObject> {
-        String id
-        Double distance
-        String status
-
-    Enumeration BookingStatus {
+    enum BookingStatus {
         CREATED,
         CONFIRMED,
         STARTED,
         COMPLETED,
         CANCELLED
     }
-    
-    procedure confirm(),
-        procedure startTrip(GeoLocation startLocation, datetime startTime),
-        procedure endTrip(GeoLocation endLocation, datetime endTime),
-        procedure cancel(),
 
-        function GeoLocation getFinalLocation()
+    structure Booking <entity> {
+        BookingId id <identifier>,
+        long userId,
+        string vehicleId,
+        BookingStatus status,
+        TimeFrame timeFrame,
+        GeoLocation pickupLocation,
+        GeoLocation dropoffLocation,
+        double cost,
+        Trip trip,
+        
+    procedure confirm(),
+    procedure startTrip(GeoLocation startLocation, datetime startTime),
+    procedure endTrip(GeoLocation endLocation, datetime endTime),
+    procedure cancel(),
+
+    function GeoLocation getFinalLocation()
     }
+
+    structure BookingId <valueObject> {
+        string value
+    }
+
+    structure GeoLocation <valueObject> {
+        double latitude,
+        double longitude
+    }
+
+    structure TimeFrame <valueObject> {
+        string startTime,
+        string endTime
+    }
+
+    structure Trip <valueObject> {
+        string id,
+        double distance,
+        string status
+    }
+
+    
 }

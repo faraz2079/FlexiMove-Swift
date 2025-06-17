@@ -1,16 +1,18 @@
-import datatypes from "../TechnologyModels/Java.technology" as Java
-import datatypes from "../TechnologyModels/Spring.technology" as Spring
-import datatypes from "PaymentDomain.data" as PaymentDomain
+import technology from "../technology/java.technology" as java
+
+//import datatypes from "../TechnologyModels/Spring.technology" as Spring
+import datatypes from "../domain/Payment.data" as payment
+
 
 @technology(Java)
 @technology(Spring)
-functional microservice com.payment.PaymentService {
+functional microservice PaymentService {
 
     @sync(Spring::_protocols.rest)
-    @endpoints(Spring::_protocols.rest: "/api/payments";)
+    @endpoints(Spring::_protocols.rest: "/api/payments")
     interface Payments {
 
-        // Create a new payment
+        //new payment
         @Spring::_aspects.Post
         create(
             @Spring::_aspects.RequestBody

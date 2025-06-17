@@ -1,38 +1,38 @@
-Context Payment {
+context Payment {
 // Entity
 // Table(name = "payment")
 
     structure Payment <entity> {
 // GeneratedValue 
 // Id 
-        PaymentId paymentId <identifier>
-        String bookingId 
-        String userId  
-        Amount amount
-        String currency
-        String description
-        PaymentStatus paymentStatus
-        BillingModel billingModel
-        String timestamp 
+        PaymentId paymentId <identifier>,
+        string bookingId, 
+        string userId,
+        Amount amount,
+        string currency,
+        string description,
+        PaymentStatus paymentStatus,
+        BillingModel billingModel,
+        string timestamp 
     }
 
 
     structure PaymentId <valueObject> {
-        String value
+        string value
     }
 
     structure Amount <valueObject> {
-        Double value
+        double value
     }
 
 
-    Enumeration PaymentStatus {
+    enum PaymentStatus {
         PENDING,
         COMPLETED,
         FAILED
     }
 
-    Enumeration BillingModel {
+    enum BillingModel {
         PER_BOOKING,
         PER_KM,
         SUBSCRIPTION
