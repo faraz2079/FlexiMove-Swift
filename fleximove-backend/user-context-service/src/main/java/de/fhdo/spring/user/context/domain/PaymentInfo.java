@@ -3,16 +3,18 @@ package de.fhdo.spring.user.context.domain;
 import java.util.Objects;
 
 import jakarta.persistence.Embeddable;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 @Embeddable
+@Data
+@NoArgsConstructor
 public class PaymentInfo {
     private  String creditCardNumber;
     private  String cardHolderName;
     private  String expiryDate;  // z.B. "12/25"
     private  String cvv;
 
-    protected PaymentInfo() {
-    	
-    }
     public PaymentInfo(String creditCardNumber, String cardHolderName, String expiryDate, String cvv) {
         if (creditCardNumber == null || creditCardNumber.trim().isEmpty()) {
             throw new IllegalArgumentException("Kreditkartennummer darf nicht leer sein");
@@ -26,27 +28,10 @@ public class PaymentInfo {
         if (cvv == null || cvv.trim().isEmpty()) {
             throw new IllegalArgumentException("CVV darf nicht leer sein");
         }
-        // Weitere Validierung z.B. Formatprüfung möglich
         this.creditCardNumber = creditCardNumber;
         this.cardHolderName = cardHolderName;
         this.expiryDate = expiryDate;
         this.cvv = cvv;
-    }
-
-    public String getCreditCardNumber() {
-        return creditCardNumber;
-    }
-
-    public String getCardHolderName() {
-        return cardHolderName;
-    }
-
-    public String getExpiryDate() {
-        return expiryDate;
-    }
-
-    public String getCvv() {
-        return cvv;
     }
 
     @Override
@@ -67,6 +52,6 @@ public class PaymentInfo {
 
     @Override
     public String toString() {
-        return "PaymentInfo{****}"; // Nicht sensible Daten ausgeben!
+        return "PaymentInfo{****}";
     }
 }

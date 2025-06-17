@@ -2,35 +2,32 @@ package de.fhdo.spring.user.context.domain;
 
 import java.time.LocalDate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Customer extends User {
 
-    private String username;
+    private String firstName;
 
-    public Customer() {
-        super();
-    }
+    private String lastName;
 
-    public Customer(Password password, Email email, LocalDate dateOfBirth,
-            Adress address, Boolean hasDrivingLicense, String phoneNumber, PaymentInfo paymentInfo) {
-        super(password, email, dateOfBirth, address, hasDrivingLicense, phoneNumber,paymentInfo);
-        this.username = username;
-    }
+    private LocalDate dateOfBirth;
 
-    public String getUsername() {
-        return username;
-    }
+    @Enumerated(EnumType.STRING)
+    private DriverLicenseType driverLicenseType;
 
-    public void setUsername(String username) {
-        this.username = username;
+    public Customer(String firstName, String lastName, Password password, Email email, LocalDate dateOfBirth,
+            Address address, DriverLicenseType driverLicenseType, String phoneNumber, PaymentInfo paymentInfo) {
+    	super(password, email, address, phoneNumber,paymentInfo);
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
+        this.driverLicenseType = driverLicenseType;
     }
 }

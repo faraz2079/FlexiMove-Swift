@@ -2,28 +2,34 @@ package de.fhdo.spring.user.context.services;
 
 import java.util.ArrayList;
 
+
 import java.util.List;
 import java.util.Optional;
 
+import de.fhdo.spring.user.context.domain.*;
+import de.fhdo.spring.user.context.dto.PersonalInfoUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import de.fhdo.spring.user.context.domain.Address;
 
-import de.fhdo.spring.user.context.domain.Adress;
-import de.fhdo.spring.user.context.domain.Email;
-import de.fhdo.spring.user.context.domain.Password;
-import de.fhdo.spring.user.context.domain.Provider;
-import de.fhdo.spring.user.context.domain.User;
+import de.fhdo.spring.user.context.clients.BookingClient;
 import de.fhdo.spring.user.context.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
+	private final BookingClient bookingClient;
+	private final PasswordEncoder passwordEncoder;
 
 	@Autowired
-	public UserService(UserRepository userRepository) {
-		this.userRepository = userRepository;
-
+	public UserService(UserRepository userRepository, BookingClient bookingClient, PasswordEncoder passwordEncoder) {
+	    this.userRepository = userRepository;
+	    this.bookingClient = bookingClient;
+		this.passwordEncoder = passwordEncoder;
 	}
+
 	//Alle User
 	public List<User> getAlleUser() {
 		List<User> user = new ArrayList<User>();
@@ -37,8 +43,8 @@ public class UserService {
 		 return user.isPresent() ? user.get() : null; 
 	}
 	
-	public User getUserByEmail(Email email) {
-	    User user = this.userRepository.findByEmail(email);
+	public User getUserByEmail(String email) {
+	    User user = this.userRepository.findByEmail(new Email(email));
 	    return user != null ? user : null;
 	}
 
@@ -48,21 +54,55 @@ public class UserService {
 		userRepository.save(user);
 	}
 	
-	//User löschen
-	public void deleteUser(User user){
-		userRepository.delete(user);
-		
-	}
 	
-	//User Passwort ändern
-	public void updatepw(User user, Password pw) {
+	
+	public void deleteUserById(Long userId) {
+	    Optional<User> optionalUser = userRepository.findById(userId);
+	    if (optionalUser.isPresent()) {
+	        userRepository.deleteById(userId);
+	    } else {
+	        throw new EntityNotFoundException("User mit ID " + userId + " nicht gefunden.");
+	    }
+	}
+
+	public void updatepw(User user, String newPasswordPlaintext) {
+		String hashed = passwordEncoder.encode(newPasswordPlaintext);
+		Password pw = new Password(hashed);
 		user.setPassword(pw);
 		userRepository.save(user);
 	}
-	
-	//Adresse ändern
-	public void updateadress(User user, Adress adress) {
-		user.setAddress(adress);
+
+	public void updateEmail(User user, String newEmail) {
+		Email email = new Email(newEmail);
+		user.setEmail(email);
+		userRepository.save(user);
+	}
+
+	public boolean emailExists(String newEmail) {
+		Email newUserEmail = new Email(newEmail);
+		return userRepository.findByEmail(newUserEmail) != null;
+	}
+
+	public void updatePersonalInfo(User user, PersonalInfoUpdateRequest request) {
+		user.setPhoneNumber(request.getPhoneNumber());
+
+		if (user instanceof Customer) {
+			((Customer) user).setDriverLicenseType(request.getDriverLicenseType());
+			((Customer) user).setFirstName(request.getFirstName());
+			((Customer) user).setLastName(request.getLastName());
+			((Customer) user).setDateOfBirth(request.getDateOfBirth());
+		}
+
+		userRepository.save(user);
+	}
+
+	public void updatePaymentInfo(User user, PaymentInfo newInfo) {
+		user.setPaymentinfo(newInfo);
+		userRepository.save(user);
+	}
+
+	public void updateAddress(User user, Address address) {
+		user.setAddress(address);
 		userRepository.save(user);
 	}
 	
@@ -71,4 +111,21 @@ public class UserService {
 		provider.setCompanyName(companyName);
 		userRepository.save(provider);
 	}
+	
+	public String getCompanyNameById(Long id) {
+	    Optional<User> optionalUser = userRepository.findById(id);
+	    
+	    if (optionalUser.isPresent() && optionalUser.get() instanceof Provider) {
+	        Provider provider = (Provider) optionalUser.get();
+	        return provider.getCompanyName();
+	    }
+
+	    // Optional: Fehlerbehandlung oder null zurückgeben
+	    return null;
+	}
+
+	public boolean isPasswordCorrect(User user, String inputPassword) {
+		return passwordEncoder.matches(inputPassword, user.getPassword().getValue());
+	}
+
 }

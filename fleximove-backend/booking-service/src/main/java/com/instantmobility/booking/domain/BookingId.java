@@ -1,10 +1,19 @@
 package com.instantmobility.booking.domain;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
 
-public class BookingId {
-    private final UUID value;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.NoArgsConstructor;
+
+@Embeddable
+@NoArgsConstructor
+public class BookingId implements Serializable {
+
+    @Column(name = "booking_id")
+    private UUID value;
 
     public BookingId(UUID value) {
         this.value = Objects.requireNonNull(value, "BookingId value cannot be null");

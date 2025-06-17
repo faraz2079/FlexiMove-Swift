@@ -1,0 +1,81 @@
+.vehicle-results-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  align-items: center;
+  margin: 0 auto;
+  padding: 1rem;
+  min-height: 100vh;
+}
+
+.no-vehicles-found {
+  min-height: 100vh;
+  padding-left: 100px;
+  margin-top: 50px;
+}
+
+.no-filters-match {
+  min-height: 100vh;
+  padding-left: 100px;
+  margin-top: 50px;
+}
+
+.filter-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+
+.map-container {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(109, 51, 217, 0.338);
+  margin-bottom: 2rem;
+}
+
+.vehicle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.vehicle-card {
+  background: whitesmoke;
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 12px rgba(109, 51, 217, 0.338);
+  transition: transform 0.2s ease;
+}
+
+.vehicle-card:hover {
+  transform: translateY(-5px);
+}
+
+.vehicle-card p {
+  margin: 0.25rem 0;
+  color: #555;
+}
+
+.card-actions{
+  display: flex;
+  justify-content: space-between;
+}
+
+.filter-container {
+  margin-bottom: 24px;
+}
+
+.map-container,
+.filter-container,
+.vehicle-list {
+  width: 90%;
+}
+
+.no-results-message {
+  font-size: 1.1rem;
+  color: rgba(0, 0, 0, 0.618);
+  width: 100%;
+}
+

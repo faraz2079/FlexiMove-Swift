@@ -2,20 +2,67 @@ package com.instantmobility.booking.domain;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
-
+@Entity
+@Data
+@NoArgsConstructor
+@Table(name = "BOOKING")
 public class Booking {
-    private final BookingId id;
-    private final UUID userId;
-    private final UUID vehicleId;
-    private BookingStatus status;
-    private TimeFrame timeFrame;
-    private GeoLocation pickupLocation;
-    private GeoLocation dropoffLocation;
-    private double cost;
-    private Trip trip;
+	@Id
+    @Column(name = "id", columnDefinition = "BINARY(16)")
+    private BookingId id;
 
-    public Booking(BookingId id, UUID userId, UUID vehicleId, TimeFrame timeFrame, GeoLocation pickupLocation) {
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
+    @Column(name = "vehicle_id", nullable = false)
+    private Long vehicleId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private BookingStatus status;
+
+    @Embedded
+    private TimeFrame timeFrame;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "latitude", column = @Column(name = "pickup_latitude")),
+        @AttributeOverride(name = "longitude", column = @Column(name = "pickup_longitude"))
+    })
+    private GeoLocation pickupLocation;
+
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "latitude", column = @Column(name = "dropoff_latitude")),
+        @AttributeOverride(name = "longitude", column = @Column(name = "dropoff_longitude"))
+    })
+    private GeoLocation dropoffLocation;
+
+    @Column(name = "cost")
+    private double cost;
+
+    @Embedded
+    @AttributeOverrides({
+            // Map all Trip fields to prefixed column names
+            @AttributeOverride(name = "id", column = @Column(name = "trip_id")),
+            @AttributeOverride(name = "startTime", column = @Column(name = "trip_start_time")),
+            @AttributeOverride(name = "endTime", column = @Column(name = "trip_end_time")),
+            @AttributeOverride(name = "startLatitude", column = @Column(name = "trip_start_latitude")),
+            @AttributeOverride(name = "startLongitude", column = @Column(name = "trip_start_longitude")),
+            @AttributeOverride(name = "endLatitude", column = @Column(name = "trip_end_latitude")),
+            @AttributeOverride(name = "endLongitude", column = @Column(name = "trip_end_longitude")),
+            @AttributeOverride(name = "completed", column = @Column(name = "trip_completed"))
+            // If Trip has a status field, add this:
+            // @AttributeOverride(name = "status", column = @Column(name = "trip_status"))
+    })
+    private Trip trip;
+    
+    public Booking(BookingId id, Long userId, Long vehicleId, TimeFrame timeFrame, GeoLocation pickupLocation) {
         this.id = id;
         this.userId = userId;
         this.vehicleId = vehicleId;
@@ -55,7 +102,7 @@ public class Booking {
         trip.complete();
 
         if (timeFrame.getEndTime() == null) {
-            ((TimeFrame)timeFrame).setEndTime(endTime); // Cast to access setter
+            timeFrame.setEndTime(endTime);
         } else {
             // Create new TimeFrame if we can't modify the existing one
             timeFrame = new TimeFrame(timeFrame.getStartTime(), endTime);
@@ -65,12 +112,16 @@ public class Booking {
         dropoffLocation = endLocation;
 
         // Calculate cost based on distance and duration
-        calculateCost();
+        //calculateCost();
     }
 
     public void cancel() {
         if (status == BookingStatus.COMPLETED) {
             throw new IllegalStateException("Completed booking cannot be cancelled");
+        }
+
+        if (status == BookingStatus.STARTED) {
+            throw new IllegalStateException("Booking cannot be cancelled. Trip hast to be finished and payed first.");
         }
 
         status = BookingStatus.CANCELLED;
@@ -106,41 +157,5 @@ public class Booking {
             return route.get(route.size() - 1);
         }
         return null;
-    }
-    // Getters
-    public BookingId getId() {
-        return id;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public UUID getVehicleId() {
-        return vehicleId;
-    }
-
-    public BookingStatus getStatus() {
-        return status;
-    }
-
-    public TimeFrame getTimeFrame() {
-        return timeFrame;
-    }
-
-    public GeoLocation getPickupLocation() {
-        return pickupLocation;
-    }
-
-    public GeoLocation getDropoffLocation() {
-        return dropoffLocation;
-    }
-
-    public double getCost() {
-        return cost;
-    }
-
-    public Trip getTrip() {
-        return trip;
     }
 }

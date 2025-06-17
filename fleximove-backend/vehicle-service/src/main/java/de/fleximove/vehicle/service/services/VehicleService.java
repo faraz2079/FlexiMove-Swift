@@ -1,11 +1,10 @@
 package de.fleximove.vehicle.service.services;
 
+import de.fleximove.vehicle.service.clients.RatingServiceClient;
+import de.fleximove.vehicle.service.clients.UserServiceClient;
 import de.fleximove.vehicle.service.domain.Vehicle;
 import de.fleximove.vehicle.service.domain.valueobject.*;
-import de.fleximove.vehicle.service.dto.EditVehicleRequest;
-import de.fleximove.vehicle.service.dto.NearestAvailableVehicleResponse;
-import de.fleximove.vehicle.service.dto.VehicleRequest;
-import de.fleximove.vehicle.service.dto.VehicleWithDistance;
+import de.fleximove.vehicle.service.dto.*;
 import de.fleximove.vehicle.service.repository.VehicleRepository;
 import de.fleximove.vehicle.service.utils.DistanceUtils;
 import de.fleximove.vehicle.service.utils.VehicleMapper;
@@ -23,12 +22,16 @@ public class VehicleService {
     private final VehicleRepository vehicleRepository;
     private final VehicleMapper vehicleMapper;
     private final GeocodingService geocodingService;
+    private final UserServiceClient userServiceClient;
+    private final RatingServiceClient ratingServiceClient;
 
     @Autowired
-    VehicleService(VehicleRepository vehicleRepository, VehicleMapper vehicleMapper, GeocodingService geocodingService){
+    VehicleService(VehicleRepository vehicleRepository, VehicleMapper vehicleMapper, GeocodingService geocodingService, UserServiceClient userServiceClient, RatingServiceClient ratingServiceClient){
         this.vehicleRepository = vehicleRepository;
         this.vehicleMapper = vehicleMapper;
         this.geocodingService = geocodingService;
+        this.userServiceClient = userServiceClient;
+        this.ratingServiceClient = ratingServiceClient;
     }
 
     public void registerNewVehicle(VehicleRequest request, Long providerId) {
@@ -41,13 +44,15 @@ public class VehicleService {
     }
 
     public void deleteVehicle(Long id) {
+        //TODO: löschen nur dann möglich, wenn es weder IN_USE noch BOOKED ist
         Vehicle vehicle = fetchVehicleById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle with ID " + id + " not found"));
-
         vehicleRepository.delete(vehicle);
     }
 
     public void deleteAllVehiclesByProviderId(Long providerId) {
+        //delete only if all vehicles are not in use
+        //for available vehicles change the status to RETIRED
         vehicleRepository.deleteAllByProviderId(providerId);
     }
 
@@ -64,14 +69,25 @@ public class VehicleService {
 
         return foundAvailableVehicles.filter(vehicleWithDistance -> vehicleWithDistance.distanceInKm() <= radiusInKm).map(vehicleWithDistance -> {
             Vehicle vehicle = vehicleWithDistance.vehicle();
-            //TODO: get provider name and average rating for current vehicle
-            //Double averageRatingForVehicle = ratingServiceClient.getAverageRatingForVehicle(vehicle.getId());
-            //String providerName = userServiceClient.getProviderName(vehicle.getProviderId());
+            Double avgVehicleRating;
+            Double avgProviderRating;
+            try {
+                avgVehicleRating = ratingServiceClient.getAverageRatingForVehicle(vehicle.getId());
+            } catch (Exception e) {
+                avgVehicleRating = 0.0;
+            }
+
+            try {
+                avgProviderRating = ratingServiceClient.getAverageRatingForProvider(vehicle.getProviderId());
+            } catch (Exception e) {
+                avgProviderRating = 0.0;
+            }
+            String providerName = userServiceClient.getProviderCompanyName(vehicle.getProviderId());
             String address = geocodingService.reverseGeocode(vehicle.getCurrentLocation());
             return new NearestAvailableVehicleResponse(
                     vehicle.getId(),
                     vehicle.getVehicleModel(),
-                    "Bolt",
+                    providerName,
                     vehicle.getVehicleType().toString(),
                     vehicle.getStatus().toString(),
                     vehicle.getVehiclePrice().getAmount(),
@@ -80,16 +96,44 @@ public class VehicleService {
                     vehicle.getCurrentLocation().getLatitude(),
                     vehicle.getCurrentLocation().getLongitude(),
                     vehicleWithDistance.distanceInKm(),
-                    4.5
+                    avgVehicleRating,
+                    avgProviderRating,
+                    vehicle.getRestrictions()
                     );
         }).toList();
     }
 
-    public List<Vehicle> listVehiclesByProvider(Long providerId){
-        return vehicleRepository.findAllByProviderId(providerId);
+    public List<ProviderVehicleResponse> listProviderVehiclesWithRatings(Long providerId) {
+        List<Vehicle> vehicles = vehicleRepository.findAllByProviderId(providerId);
+
+        return vehicles.stream().map(vehicle -> {
+            Double avgVehicleRating;
+            try {
+                avgVehicleRating = ratingServiceClient.getAverageRatingForVehicle(vehicle.getId());
+            } catch (Exception e) {
+                avgVehicleRating = 0.0;
+            }
+            String address = geocodingService.reverseGeocode(vehicle.getCurrentLocation());
+            return new ProviderVehicleResponse(
+                    vehicle.getId(),
+                    vehicle.getIdentificationNumber().getIdentNumber(),
+                    vehicle.getVehicleModel(),
+                    vehicle.getVehicleType().toString(),
+                    vehicle.getStatus().toString(),
+                    vehicle.getVehiclePrice().getAmount(),
+                    vehicle.getVehiclePrice().getBillingModel().toString(),
+                    address,
+                    vehicle.getCurrentLocation().getLatitude(),
+                    vehicle.getCurrentLocation().getLongitude(),
+                    avgVehicleRating,
+                    vehicle.getRestrictions()
+            );
+        }).toList();
     }
 
+
     public void updateVehicleStatus(Long vehicleId, VehicleStatus newStatus) {
+        //TODO: update nur dann möglich, wenn es weder IN_USE noch BOOKED ist
         Vehicle vehicle = fetchVehicleById(vehicleId)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with ID: " + vehicleId));
         vehicle.setStatus(newStatus);
@@ -104,6 +148,7 @@ public class VehicleService {
     }
 
     public void editVehicleInformation(Long vehicleId, EditVehicleRequest request) {
+        //TODO: update nur dann möglich machen, wenn der Status vom Vehicle weder BOOKED noch IN_USE ist
         Vehicle vehicleToUpdate = fetchVehicleById(vehicleId)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with ID: " + vehicleId));
 

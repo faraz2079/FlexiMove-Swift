@@ -1,14 +1,16 @@
 package com.payment.service.controller;
 
 import com.payment.service.domain.entity.Payment;
-import com.payment.service.service.PaymentProcessingService;
 import com.payment.service.domain.repo.PaymentRepository;
+import com.payment.service.service.DTO.PaymentResponseDTO;
+import com.payment.service.service.PaymentProcessingService;
+import com.payment.service.service.DTO.PaymentRequestDTO;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/payments")
+@RequestMapping("/api/payments")
 public class PaymentController {
 
     private final PaymentRepository repository;
@@ -24,14 +26,15 @@ public class PaymentController {
         return repository.save(payment);
     }
 
-    @GetMapping("/{id}")
-    public Payment get(@PathVariable UUID id) {
-        return repository.findById(id).orElseThrow();
+    @GetMapping("/{paymentId}")
+    public Payment get(@PathVariable("paymentId") UUID paymentId) {
+        return repository.findById(paymentId).orElseThrow();
     }
 
-    @PostMapping("/{id}/process")
-    public String process(@PathVariable UUID id) {
-        processingService.processPayment(id);
-        return "Processed.";
+    // Main endpoint for processing payments from Booking
+    @PostMapping("/process")
+    public PaymentResponseDTO processFromBooking(@RequestBody PaymentRequestDTO request) {
+        return processingService.processPayment(request);
     }
+
 }

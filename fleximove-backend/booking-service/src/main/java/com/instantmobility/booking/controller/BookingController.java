@@ -36,6 +36,7 @@ public class BookingController {
     }
 
     @PostMapping("/{bookingId}/end")
+    //TODO: dont send Void back, but some DTO with distance, duration and totalCost to show in the frontend
     public ResponseEntity<Void> endTrip(@PathVariable UUID bookingId, @RequestBody EndTripRequest request) {
         bookingService.endTrip(bookingId, request);
         return ResponseEntity.ok().build();
@@ -57,25 +58,25 @@ public class BookingController {
      * Delete all bookings for a user
      */
     @DeleteMapping("/user/{userId}")
-    public ResponseEntity<Void> deleteUserBookings(@PathVariable UUID userId) {
+    public ResponseEntity<Void> deleteUserBookings(@PathVariable Long userId) {
         bookingService.deleteBookingsByUserId(userId);
         return ResponseEntity.noContent().build();
     }
 
     /**
      * Get booking history with pagination
-     */
+    
     @GetMapping("/history/{userId}")
     public ResponseEntity<List<BookingDTO>> getBookingHistory(
-            @PathVariable UUID userId,
+            @PathVariable Long userId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         List<BookingDTO> history = bookingService.getBookingHistory(userId, page, size);
         return ResponseEntity.ok(history);
-    }
+    } */
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<BookingDTO>> getUserBookings(@PathVariable UUID userId) {
+    public ResponseEntity<List<BookingDTO>> getUserBookings(@PathVariable Long userId) {
         List<BookingDTO> bookings = bookingService.getUserBookings(userId);
         return ResponseEntity.ok(bookings);
     }

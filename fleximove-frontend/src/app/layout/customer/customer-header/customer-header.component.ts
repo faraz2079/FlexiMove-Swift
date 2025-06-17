@@ -15,4 +15,8 @@ export class CustomerHeaderComponent {
     this.dropdownOpen = !this.dropdownOpen;
   }
 
+  logout(): void {
+    localStorage.clear();
+    this.router.navigateByUrl('/login');
+  }
 }

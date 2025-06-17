@@ -1,0 +1,129 @@
+<div class="customer-account">
+    <mat-card>
+        <div class="account-header">
+            <h1>Account</h1>
+            <p>One place to manage your account 🪄</p>
+        </div>
+
+        <mat-tab-group>
+            <mat-tab label="Personal information">
+                <div class="tab-content">
+                    <mat-form-field appearance="fill">
+                        <mat-label>First Name</mat-label>
+                        <input matInput [(ngModel)]="user.firstName">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Last Name</mat-label>
+                        <input matInput [(ngModel)]="user.lastName">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Date of Birth</mat-label>
+                        <input matInput type="date" [(ngModel)]="user.dateOfBirth">
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Driver License</mat-label>
+                        <mat-select [(ngModel)]="user.driverLicenseType">
+                            <mat-option value="A">A</mat-option>
+                            <mat-option value="B">B</mat-option>
+                            <mat-option value="C">C</mat-option>
+                            <mat-option value="D">D</mat-option>
+                            <mat-option value="NONE">None</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="fill">
+                        <mat-label>Phone Number (optional)</mat-label>
+                        <input matInput [(ngModel)]="user.phoneNumber">
+                    </mat-form-field>
+
+                    <button mat-raised-button color="primary" (click)="savePersonalInfo()">Save</button>
+
+                    <button mat-raised-button color="warn" class="delete-button" (click)="openDeleteDialog()">
+                        <mat-icon>delete</mat-icon> Delete account
+                    </button>
+                </div>
+            </mat-tab>
+
+            <mat-tab label="Email">
+            <div class="tab-content">
+                <mat-form-field appearance="fill">
+                <mat-label>Email</mat-label>
+                <input matInput [(ngModel)]="user.email.value">
+                </mat-form-field>
+                <button mat-raised-button color="primary" (click)="changeEmail()">Save</button>
+            </div>
+            </mat-tab>
+
+            <mat-tab label="Password">
+            <div class="tab-content">
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>Current Password</mat-label>
+                    <input matInput type="password" [(ngModel)]="passwordData.oldPassword">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" class="full-width">
+                    <mat-label>New Password</mat-label>
+                    <input matInput type="password" [(ngModel)]="passwordData.newPassword">
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" (click)="changePassword()">Change Password</button>
+            </div>
+            </mat-tab>
+
+            <mat-tab label="Address (optional)">
+            <div class="tab-content">
+                <mat-form-field appearance="fill">
+                <mat-label>Street</mat-label>
+                <input matInput [(ngModel)]="user.address.street">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                <mat-label>City</mat-label>
+                <input matInput [(ngModel)]="user.address.city">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                <mat-label>Postal Code</mat-label>
+                <input matInput [(ngModel)]="user.address.postcode">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                <mat-label>Country</mat-label>
+                <input matInput [(ngModel)]="user.address.country">
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" (click)="saveAddress()">Save Address</button>
+            </div>
+            </mat-tab>
+
+            <mat-tab label="Payment Info">
+            <div class="tab-content">
+                <mat-form-field appearance="fill">
+                <mat-label>Cardholder Name</mat-label>
+                <input matInput [(ngModel)]="user.paymentinfo.cardHolderName">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                <mat-label>Credit Card Number</mat-label>
+                <input matInput [(ngModel)]="user.paymentinfo.creditCardNumber">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                <mat-label>CVV</mat-label>
+                <input matInput [(ngModel)]="user.paymentinfo.cvv">
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                <mat-label>Expiry Date</mat-label>
+                <input matInput [(ngModel)]="user.paymentinfo.expiryDate">
+                </mat-form-field>
+
+                <button mat-raised-button color="primary" (click)="savePaymentInfo()">Save Payment Info</button>
+            </div>
+            </mat-tab>
+        </mat-tab-group>
+    </mat-card>
+</div>
