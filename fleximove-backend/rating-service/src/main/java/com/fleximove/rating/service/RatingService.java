@@ -14,11 +14,15 @@ import java.util.UUID;
 @Service
 public class RatingService {
 
-    @Autowired
-    private RatingVehicleRepository vehicleRepository;
+    private final RatingVehicleRepository vehicleRepository;
+
+    private final RatingProviderRepository providerRepository;
 
     @Autowired
-    private RatingProviderRepository providerRepository;
+    RatingService(RatingProviderRepository providerRepository, RatingVehicleRepository vehicleRepository){
+        this.providerRepository = providerRepository;
+        this.vehicleRepository = vehicleRepository;
+    }
 
     public RatingVehicle rateVehicle(RatingVehicle rating) {
         return vehicleRepository.save(rating);

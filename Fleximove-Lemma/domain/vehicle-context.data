@@ -1,14 +1,12 @@
 context VehicleContext {
 
     structure Vehicle<entity, aggregate> {
-        //GeneratedValue
-        long id<identifier>,
+        long id<identifier>, //GeneratedValue
         IdentificationNumber identificationNumber<part>,
         long providerId<neverEmpty>,
         string vehicleModel<neverEmpty>,
         VehicleType vehicleType<neverEmpty>,
-        //Dafault-value is VehicleStatus.AVAILABLE
-        VehicleStatus status<neverEmpty>,
+        VehicleStatus status<neverEmpty>, //Default-value is VehicleStatus.AVAILABLE
         VehicleRestrictions restrictions<part>,
         Price vehiclePrice<part>,
         Location currentLocation<part>

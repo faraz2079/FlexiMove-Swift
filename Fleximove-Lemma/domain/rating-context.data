@@ -1,0 +1,37 @@
+context Rating {
+    structure RatingProvider<entity> {
+        long id<identifier>, //GeneratedValue
+        long providerId<neverEmpty>,
+        long userId<neverEmpty>,
+        double score<neverEmpty>, //Must be between 1 and 5
+        string comment,
+        date timestamp //initialized with current time on creation
+    }
+
+    structure RatingVehicle<entity> {
+        long id<identifier>, //GeneratedValue
+        long vehicleId<neverEmpty>,
+        long userId<neverEmpty>,
+        double score<neverEmpty>, //Must be between 1 and 5
+        string comment,
+        date timestamp //initialized with current time
+    }
+
+    structure RatingProviderRepository<repository> {
+        //function Optional<Double> findAverageScoreByProviderId(long providerId)
+        function double findAverageScoreByProviderId(long providerId)
+    }
+
+    structure RatingVehicleRepository<repository> {
+        //function Optional<Double> findAverageScoreByVehicleId(long vehicleId)
+        function double findAverageScoreByVehicleId(long vehicleId)
+    }
+
+    structure RatingService<applicationService> {
+        function RatingVehicle rateVehicle(RatingVehicle rating),
+        function RatingProvider rateProvider(RatingProvider rating),
+        function double getAverageRatingForVehicle(long vehicleId),
+        function double getAverageRatingForProvider(long providerId)
+    }
+
+}
