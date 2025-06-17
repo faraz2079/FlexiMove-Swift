@@ -9,9 +9,9 @@ context VehicleContext {
         VehicleType vehicleType<neverEmpty>,
         //Dafault-value is VehicleStatus.AVAILABLE
         VehicleStatus status<neverEmpty>,
-        VehicleRestrictions restrictions,
-        Price vehiclePrice,
-        Location currentLocation
+        VehicleRestrictions restrictions<part>,
+        Price vehiclePrice<part>,
+        Location currentLocation<part>
     }
 
     structure IdentificationNumber<valueObject> {
@@ -20,17 +20,36 @@ context VehicleContext {
         immutable string identNumber<neverEmpty>
     }
 
+    structure VehicleRestrictions<valueObject> {
+        immutable int minAge<neverEmpty>,
+        immutable int maxBookingTimeMinutes<neverEmpty>,
+        immutable double maxDistanceKm<neverEmpty>,
+        immutable int maxPassengers<neverEmpty>,
+        immutable DriverLicenseType requiredLicense<neverEmpty>
+    }
+
+    structure Location<valueObject> {
+        immutable double latitude,
+        immutable double longitude
+    }
+
+    structure Price<valueObject> {
+        immutable double amount<neverEmpty>,
+        immutable BillingModel billingModel<neverEmpty>
+    }
+
     enum BillingModel {
         PER_HOUR,
         PER_KILOMETER
     }
 
     enum DriverLicenseType {
-        MOTORCYCLE,
-        CAR,
-        TRUCK,
-        BUS,
-        NONE
+        MOTORCYCLE("A"),
+        CAR("B"),
+        TRUCK("C"),
+        BUS("D"),
+        NONE("NONE")
+        //function DriverLicenseType licenseTypeFromCode(string code)<sideEffectFree>
     }
 
     enum VehicleStatus {
@@ -52,24 +71,141 @@ context VehicleContext {
         BUS
         //function boolean requiresLicense<sideEffectFree>,
         //function boolean requiresMinAge<sideEffectFree>
-
     }
 
-    structure Location <valueObject> {
-        double latitude,
-        double longitude
+    collection VehicleList {Vehicle vehicle}
+
+    structure VehicleRepository<repository> {
+        //function VehicleList findByStatus(VehicleStatus status);
+        function VehicleList findAllByProviderId(long providerId),
+        //function Optional<Vehicle> findByIdentificationNumberIdentNumber(string identificationNumber),
+        procedure deleteAllByProviderId(long providerId)
     }
 
-    structure Price <valueObject> {
-        double amount,
-        BillingModel billingModel
+    //DTO
+    structure EditVehicleRequest<valueObject> {
+        immutable string identificationNumber,
+        immutable string vehicleModel,
+        immutable string vehicleType,
+        immutable double priceAmount,
+        immutable string billingModel,
+        immutable int minAge,
+        immutable int maxBookingTimeMinutes,
+        immutable double maxDistanceKm,
+        immutable int maxPassengers,
+        immutable string requiredLicenseType
     }
 
-    structure VehicleRestrictions <valueObject> {
-        int minAge,
-        int maxBookingTimeMinutes,
-        double maxDistanceKm,
-        int maxPassengers,
-        DriverLicenseType requiredLicense
+    //DTO
+    structure GeoResult<valueObject> {
+        immutable string lat,
+        immutable string lon
+    }
+
+    //DTO
+    structure NearestAvailableVehicleResponse<valueObject> {
+        immutable long vehicleId,
+        immutable string vehicleModel,
+        immutable string providerName,
+        immutable string vehicleType,
+        immutable string status,
+        immutable double priceAmount,
+        immutable string billingModel,
+        immutable string address,
+        immutable double latitude,
+        immutable double longitude,
+        immutable double distanceInKm,
+        immutable double averageVehicleRating,
+        immutable double averageProviderRating,
+        immutable VehicleRestrictions restrictions
+    }
+
+    //DTO
+    structure ProviderVehicleResponse<valueObject> {
+        immutable long vehicleId,
+        immutable string identNumber,
+        immutable string vehicleModel,
+        immutable string vehicleType,
+        immutable string status,
+        immutable double priceAmount,
+        immutable string billingModel,
+        immutable string address,
+        immutable double latitude,
+        immutable double longitude,
+        immutable double averageVehicleRating,
+        immutable VehicleRestrictions restrictions
+    }
+
+    //DTO
+    structure ReverseGeoResponse<valueObject> {
+        immutable string display_name
+    }
+
+    //DTO
+    structure VehicleRequest<valueObject> {
+        immutable string identificationNumber,
+        immutable string vehicleType,
+        immutable string vehicleModel,
+        immutable double priceAmount,
+        immutable string billingModel,
+        immutable string address,
+        immutable int minAge,
+        immutable int maxBookingTimeMinutes,
+        immutable double maxDistanceKm,
+        immutable int maxPassengers,
+        immutable string requiredLicenseType
+    }
+
+    //DTO
+    structure VehicleWithDistance<valueObject> {
+        immutable Vehicle vehicle,
+        immutable double distanceInKm
+    }
+
+    structure VehicleService<applicationService> {
+        //hide immutable VehicleRepository vehicleRepository,
+        //hide immutable VehicleMapper vehicleMapper,
+        //hide immutable GeocodingService geocodingService,
+        //hide immutable UserServiceClient userServiceClient,
+        //hide immutable RatingServiceClient ratingServiceClient,
+        procedure registerNewVehicle(VehicleRequest request, long providerId),
+        //function Optional<Vehicle> fetchVehicleById(long id),
+        procedure deleteVehicle(long id),
+        procedure deleteAllVehiclesByProviderId(long providerId),
+        function NearestAvailableVehicleResponseList findAvailableNearbyVehicles(Location neededLocationWithAvailableVehicles, double radiusInKm),
+        function ProviderVehicleResponseList listProviderVehiclesWithRatings(long providerId),
+        procedure updateVehicleStatus(long vehicleId, VehicleStatus newStatus),
+        procedure updateVehicleLocation(long vehicleId, double latitude, double longitude),
+        procedure editVehicleInformation(long vehicleId, EditVehicleRequest request)
+    }
+
+    collection NearestAvailableVehicleResponseList {
+        NearestAvailableVehicleResponse response
+    }
+
+    collection ProviderVehicleResponseList {
+        ProviderVehicleResponse response
+    }
+
+    structure GeocodingService<infrastructureService> {
+        function Location geocodeAddress(string address),
+        function string reverseGeocode(Location location)
+    }
+
+    structure VehicleMapper<infrastructureService> {
+        function Vehicle mapToVehicle(VehicleRequest request, long providerId)
+    }
+
+    structure DistanceUtils<domainService> {
+        function double haversineDistance(double lat1, double lon1, double lat2, double lon2)
+    }
+
+    structure RatingServiceClient<infrastructureService> {
+        function double getAverageRatingForVehicle(long vehicleId),
+        function double getAverageRatingForProvider(long providerId)
+    }
+
+    structure UserServiceClient<infrastructureService> {
+        function string getProviderCompanyName(long providerId)
     }
 }

@@ -6,6 +6,8 @@ import jakarta.persistence.Enumerated;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Embeddable
 @Data
 @NoArgsConstructor
@@ -18,7 +20,7 @@ public class Price {
         if (amount < 0) {
             throw new IllegalArgumentException("Price amount must be positive");
         }
-        this.amount = amount;
-        this.billingModel = billingModel;
+        this.amount = Objects.requireNonNull(amount, "amount must not be null");
+        this.billingModel = Objects.requireNonNull(billingModel, "billingModel must not be null");
     }
 }
