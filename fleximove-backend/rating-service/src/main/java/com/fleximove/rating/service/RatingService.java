@@ -15,26 +15,38 @@ import java.util.UUID;
 public class RatingService {
 
     @Autowired
-    private RatingVehicleRepository vehicleRepository;
+    private RatingVehicleRepository ratingVehicleRepository;
 
     @Autowired
-    private RatingProviderRepository providerRepository;
+    private RatingProviderRepository ratingProviderRepository;
 
     public RatingVehicle rateVehicle(RatingVehicle rating) {
-        return vehicleRepository.save(rating);
+        return ratingVehicleRepository.save(rating);
     }
 
     public RatingProvider rateProvider(RatingProvider rating) {
-        return providerRepository.save(rating);
+        return ratingProviderRepository.save(rating);
     }
 
     public double getAverageRatingForVehicle(Long vehicleId) {
-        return vehicleRepository.findAverageScoreByVehicleId(vehicleId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No ratings found for this vehicle."));
+        Double avgVehicleRating;
+        try {
+            avgVehicleRating = ratingVehicleRepository.findAverageScoreByVehicleId(vehicleId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No ratings found for this vehicle."));
+        } catch (Exception e) {
+            avgVehicleRating = 0.0;
+        }
+        return avgVehicleRating;
     }
 
     public double getAverageRatingForProvider(Long providerId) {
-        return providerRepository.findAverageScoreByProviderId(providerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No ratings found for this provider."));
+        Double avgProviderRating;
+        try {
+            avgProviderRating = ratingProviderRepository.findAverageScoreByProviderId(providerId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No ratings found for this provider."));
+        } catch (Exception e) {
+            avgProviderRating = 0.0;
+        }
+        return avgProviderRating;
     }
 }

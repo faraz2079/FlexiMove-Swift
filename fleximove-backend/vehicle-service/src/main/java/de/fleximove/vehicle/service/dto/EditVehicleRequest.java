@@ -9,6 +9,8 @@ public class EditVehicleRequest {
     private String identificationNumber;
     private String vehicleModel;
     private String vehicleType;
+    private String status;
+    private String address;
     private Double priceAmount;
     private String billingModel;
     private Integer minAge;

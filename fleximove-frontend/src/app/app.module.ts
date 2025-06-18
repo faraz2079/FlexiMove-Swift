@@ -43,6 +43,10 @@ import { ProviderHomepageComponent } from './provider-pages/provider-homepage/pr
 import { NgChartsModule } from 'ng2-charts';
 import { VehicleStatusChartComponent } from './provider-pages/vehicle-status-chart/vehicle-status-chart.component';
 import { RegisterVehicleDialogComponent } from './provider-pages/register-vehicle-dialog/register-vehicle-dialog.component';
+import { ConfirmDeleteDialogComponent } from './provider-pages/confirm-delete-dialog/confirm-delete-dialog.component';
+import { EditVehicleDialogComponent } from './provider-pages/edit-vehicle-dialog/edit-vehicle-dialog.component';
+import { UserService } from './src/app/services/user.service';
+import { RatingService } from './src/app/services/rating.service';
 
 @NgModule({
   declarations: [
@@ -63,7 +67,9 @@ import { RegisterVehicleDialogComponent } from './provider-pages/register-vehicl
     ProviderHeaderComponent,
     ProviderHomepageComponent,
     VehicleStatusChartComponent,
-    RegisterVehicleDialogComponent
+    RegisterVehicleDialogComponent,
+    ConfirmDeleteDialogComponent,
+    EditVehicleDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -89,7 +95,7 @@ import { RegisterVehicleDialogComponent } from './provider-pages/register-vehicl
     MatDialogModule,
     NgChartsModule
   ],
-  providers: [RegistrationService, LoginService, GeocodingService, VehicleService],
+  providers: [RegistrationService, LoginService, GeocodingService, VehicleService, UserService, RatingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

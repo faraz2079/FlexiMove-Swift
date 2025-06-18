@@ -10,6 +10,7 @@ import de.fleximove.vehicle.service.utils.DistanceUtils;
 import de.fleximove.vehicle.service.utils.VehicleMapper;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,9 +45,13 @@ public class VehicleService {
     }
 
     public void deleteVehicle(Long id) {
-        //TODO: löschen nur dann möglich, wenn es weder IN_USE noch BOOKED ist
         Vehicle vehicle = fetchVehicleById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle with ID " + id + " not found"));
+
+        if (vehicle.getStatus() == VehicleStatus.IN_USE || vehicle.getStatus() == VehicleStatus.BOOKED) {
+            throw new IllegalStateException("Vehicle cannot be deleted while it is in use or booked.");
+        }
+
         vehicleRepository.delete(vehicle);
     }
 
@@ -133,7 +138,6 @@ public class VehicleService {
 
 
     public void updateVehicleStatus(Long vehicleId, VehicleStatus newStatus) {
-        //TODO: update nur dann möglich, wenn es weder IN_USE noch BOOKED ist
         Vehicle vehicle = fetchVehicleById(vehicleId)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with ID: " + vehicleId));
         vehicle.setStatus(newStatus);
@@ -148,13 +152,18 @@ public class VehicleService {
     }
 
     public void editVehicleInformation(Long vehicleId, EditVehicleRequest request) {
-        //TODO: update nur dann möglich machen, wenn der Status vom Vehicle weder BOOKED noch IN_USE ist
         Vehicle vehicleToUpdate = fetchVehicleById(vehicleId)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with ID: " + vehicleId));
+
+        if (vehicleToUpdate.getStatus() == VehicleStatus.BOOKED || vehicleToUpdate.getStatus() == VehicleStatus.IN_USE) {
+            throw new IllegalStateException("Vehicle cannot be updated while it is booked or in use.");
+        }
 
         updateIdentificationNumberIfPresent(vehicleToUpdate, request);
         updateVehicleModelIfPresent(vehicleToUpdate, request);
         updateVehicleTypeIfPresent(vehicleToUpdate, request);
+        updateStatusIfPresent(vehicleToUpdate, request);
+        updateAddressIfPresent(vehicleToUpdate, request);
         updateRestrictionsIfPresent(vehicleToUpdate, request);
         updatePriceIfPresent(vehicleToUpdate, request);
 
@@ -168,7 +177,7 @@ public class VehicleService {
             String newIdent = request.getIdentificationNumber();
             Optional<Vehicle> existingVehicleWithIdentNumber = vehicleRepository.findByIdentificationNumberIdentNumber(newIdent);
             if (existingVehicleWithIdentNumber.isPresent()) {
-                throw new IllegalArgumentException("Identification number already in use.");
+                throw new DataIntegrityViolationException("Identification number already in use.");
             }
 
             vehicle.setIdentificationNumber(new IdentificationNumber(newIdent));
@@ -189,31 +198,40 @@ public class VehicleService {
         }
     }
 
+    private void updateStatusIfPresent(Vehicle vehicle, EditVehicleRequest request) {
+        if (request.getStatus() != null) {
+            VehicleStatus status = VehicleStatus.valueOf(request.getStatus().toUpperCase());
+            vehicle.setStatus(status);
+        }
+    }
+
     private void updatePriceIfPresent(Vehicle vehicle, EditVehicleRequest request) {
         BillingModel billingModel = BillingModel.valueOf(request.getBillingModel().toUpperCase());
         vehicle.setVehiclePrice(new Price(request.getPriceAmount(), billingModel));
     }
 
-    private void updateRestrictionsIfPresent(Vehicle vehicle, EditVehicleRequest request) {
-        if (request.getMinAge() != null || request.getMaxBookingTimeMinutes() != null ||
-                request.getMaxDistanceKm() != null || request.getMaxPassengers() != null ||
-                request.getRequiredLicenseType() != null) {
-
-            VehicleRestrictions restrictions = vehicle.getRestrictions();
-
-            if (request.getMinAge() != null) { restrictions.setMinAge(request.getMinAge()); }
-            if (request.getMaxBookingTimeMinutes() != null) { restrictions.setMaxBookingTimeMinutes(request.getMaxBookingTimeMinutes()); }
-            if (request.getMaxDistanceKm() != null) { restrictions.setMaxDistanceKm(request.getMaxDistanceKm()); }
-            if (request.getMaxPassengers() != null) { restrictions.setMaxPassengers(request.getMaxPassengers()); }
-
-            if (request.getRequiredLicenseType() != null) {
-                restrictions.setRequiredLicense(
-                        DriverLicenseType.licenseTypeFromCode(request.getRequiredLicenseType())
-                );
-            }
-
-            vehicle.setRestrictions(restrictions);
+    private void updateAddressIfPresent(Vehicle vehicle, EditVehicleRequest request) {
+        if (request.getAddress() != null && !request.getAddress().isBlank()) {
+            Location location = geocodingService.geocodeAddress(request.getAddress());
+            vehicle.setCurrentLocation(location);
         }
+    }
+
+
+    private void updateRestrictionsIfPresent(Vehicle vehicle, EditVehicleRequest request) {
+        VehicleRestrictions restrictions = vehicle.getRestrictions();
+
+        if (request.getMinAge() != null) { restrictions.setMinAge(request.getMinAge()); }
+        if (request.getMaxBookingTimeMinutes() != null) { restrictions.setMaxBookingTimeMinutes(request.getMaxBookingTimeMinutes()); }
+        if (request.getMaxDistanceKm() != null) { restrictions.setMaxDistanceKm(request.getMaxDistanceKm()); }
+        if (request.getMaxPassengers() != null) { restrictions.setMaxPassengers(request.getMaxPassengers()); }
+        if (request.getRequiredLicenseType() != null) {
+            restrictions.setRequiredLicense(
+                    DriverLicenseType.licenseTypeFromCode(request.getRequiredLicenseType())
+            );
+        }
+
+        vehicle.setRestrictions(restrictions);
     }
 
     private void validateVehicleConsistency(Vehicle vehicle) {
