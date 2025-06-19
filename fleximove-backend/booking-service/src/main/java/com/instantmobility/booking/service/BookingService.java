@@ -5,6 +5,7 @@ import com.instantmobility.booking.clients.VehicleServiceClient;
 import com.instantmobility.booking.domain.*;
 import com.instantmobility.booking.dto.*;
 import com.instantmobility.booking.repository.BookingRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +21,14 @@ import java.util.stream.Collectors;
 @Service
 public class BookingService {
     private final BookingRepository bookingRepository;
-    private final PaymentServiceClient paymentService;
+    private final PaymentServiceClient paymentServiceClient;
 
     private final VehicleServiceClient vehicleServiceClient;
 
     @Autowired
-    public BookingService(BookingRepository bookingRepository, PaymentServiceClient paymentService, VehicleServiceClient vehicleServiceClient) {
+    public BookingService(BookingRepository bookingRepository, PaymentServiceClient paymentServiceClient, VehicleServiceClient vehicleServiceClient) {
         this.bookingRepository = bookingRepository;
-        this.paymentService = paymentService;
+        this.paymentServiceClient = paymentServiceClient;
         this.vehicleServiceClient = vehicleServiceClient;
     }
 
@@ -119,7 +120,7 @@ public class BookingService {
         paymentRequest.setDescription("Ride payment for booking " + booking.getId().getValue());
 
         try {
-            PaymentResponseDTO response = paymentService.processPayment(paymentRequest);
+            PaymentResponseDTO response = paymentServiceClient.processPayment(paymentRequest);
             // Store payment reference in booking or handle accordingly
             System.out.println("Payment processed: " + response.getPaymentId());
         } catch (Exception e) {
@@ -131,27 +132,73 @@ public class BookingService {
     /**
      * Deletes all bookings for a specific user
      */
+    @Transactional
     public void deleteBookingsByUserId(Long userId) {
         List<Booking> userBookings = bookingRepository.findByUserId(userId);
 
         if (!userBookings.isEmpty()) {
-           for (Booking booking : userBookings)
-            {
+           for (Booking booking : userBookings) {
                 // Don't allow deletion of active bookings
                 if (booking.getStatus() != BookingStatus.PAID &&
                         booking.getStatus() != BookingStatus.CANCELLED) {
                     throw new IllegalStateException(
-                            "Cannot delete user with active bookings. Either bookings have to be canceled or trips have to be finished first.");
+                            "Cannot delete user with active or not paid bookings. Either bookings have to be paid or trips have to be cancelled first.");
                 }
             }
 
             try {
-                bookingRepository.deleteBookingsByUserId(userId);
+                boolean hasPaidBookings = userBookings.stream()
+                        .anyMatch(b -> b.getStatus() == BookingStatus.PAID);
+
+                if (hasPaidBookings) {
+                    try {
+                        paymentServiceClient.deletePaymentsByUser(userId);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to delete payment info for user " + userId, e);
+                    }
+                }
+                bookingRepository.deleteByUserId(userId);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to delete bookings for user " + userId, e);
             }
         }
     }
+
+    @Transactional
+    public void deleteBookingsAndPaymentsByVehicle(Long vehicleId) {
+        List<Booking> bookings = bookingRepository.findByVehicleId(vehicleId);
+
+        if (!bookings.isEmpty()) {
+            for (Booking booking : bookings) {
+                // Don't allow deletion of active bookings
+                if (booking.getStatus() != BookingStatus.PAID &&
+                        booking.getStatus() != BookingStatus.CANCELLED) {
+                    throw new IllegalStateException(
+                            "Cannot delete vehicle with active or not paid booking.");
+                }
+            }
+
+            try {
+                List<Booking> deletableBookings = bookings.stream()
+                        .filter(b -> b.getStatus() == BookingStatus.PAID)
+                        .toList();
+
+                if (!deletableBookings.isEmpty()) {
+                    try {
+                        for (Booking b : deletableBookings) {
+                            paymentServiceClient.deletePaymentsByBookingId(b.getId().getValue());
+                        }
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to delete payment info for vehicle " + vehicleId, e);
+                    }
+                }
+                bookingRepository.deleteByVehicleId(vehicleId);
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to delete bookings for vehicle " + vehicleId, e);
+            }
+        }
+    }
+
 
     /**
      * Gets booking history for a user with pagination

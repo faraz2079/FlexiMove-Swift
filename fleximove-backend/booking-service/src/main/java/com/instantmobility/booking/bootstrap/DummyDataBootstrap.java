@@ -44,10 +44,9 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
         booking1.confirm();
         booking1.startTrip(booking1.getPickupLocation(), LocalDateTime.now().minusDays(2));
         booking1.endTrip(new GeoLocation(52.5150, 13.4100), LocalDateTime.now().minusDays(1));
-
+        //booking1.setStatus(BookingStatus.CANCELLED);
         bookingRepository.save(booking1);
 
-        // Jetzt die Buchungen abfragen und ausgeben:
         List<Booking> bookings = bookingRepository.findByUserIdOrderByTimeFrame_StartTimeDesc(TEST_USER_ID);
         System.out.println("Bookings for TEST_USER_ID:");
         bookings.forEach(b -> System.out.println("Booking ID: " + b.getId() + ", Status: " + b.getStatus() + ", StartTime: " + b.getTimeFrame().getStartTime()));

@@ -6,6 +6,7 @@ import de.fleximove.vehicle.service.dto.EditVehicleRequest;
 import de.fleximove.vehicle.service.dto.NearestAvailableVehicleResponse;
 import de.fleximove.vehicle.service.dto.ProviderVehicleResponse;
 import de.fleximove.vehicle.service.services.GeocodingService;
+import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -70,16 +71,25 @@ public class VehicleController {
             return ResponseEntity.ok().build();
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (IllegalStateException e) {
+        } catch (FeignException | IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }
     }
 
     //Request kommt aus UserService
     @DeleteMapping("/deleteAllVehicles")
-    public ResponseEntity<Void> deleteVehiclesByProvider(@RequestParam Long deleteForProviderId) {
-        vehicleService.deleteAllVehiclesByProviderId(deleteForProviderId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteVehiclesByProvider(@RequestParam Long deleteForProviderId) {
+        try {
+            vehicleService.deleteAllVehiclesByProviderId(deleteForProviderId);
+            return ResponseEntity.ok().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected error occurred while deleting vehicles.");
+        }
     }
 
     //Request kommt aus Frontend

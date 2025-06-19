@@ -2,25 +2,23 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Customer } from 'src/app/models/customer.model';
 import { UserService } from 'src/app/src/app/services/user.service';
-import { DeleteAccountDialogComponent } from '../../delete-account-dialog/delete-account-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Provider } from 'src/app/models/provider.model';
+import { DeleteAccountDialogComponent } from 'src/app/delete-account-dialog/delete-account-dialog.component';
 
 @Component({
-  selector: 'app-customer-account',
-  templateUrl: './customer-account.component.html',
-  styleUrls: ['./customer-account.component.css']
+  selector: 'app-provider-account',
+  templateUrl: './provider-account.component.html',
+  styleUrls: ['./provider-account.component.css']
 })
-export class CustomerAccountComponent {
-  user: Customer = {
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
+export class ProviderAccountComponent {
+  user: Provider = {
+    companyName: '',
     phoneNumber: '',
     email: { value: '' },
-    password: '',
-    driverLicenseType: 'NONE',
+    password: {value: ''},
     address: { street: '', city: '', postcode: '', country: '' },
-    paymentinfo: { cardHolderName: '', creditCardNumber: '', cvv: '', expiryDate: '' }
+    paymentinfo: { cardHolderName: '', creditCardNumber: '', cvv: '', expiryDate: '' },
   };
 
   passwordData = {
@@ -38,7 +36,7 @@ export class CustomerAccountComponent {
         return;
       }
 
-      const currentUser = this.userService.getCustomer();
+      const currentUser = this.userService.getProvider();
 
       if (!currentUser) {
         this.userService.getUserById(userId).subscribe({
@@ -76,10 +74,10 @@ export class CustomerAccountComponent {
               },
               error: err => {
                   if (err.status === 404) {
-                    alert('Error: Account not found.');
+                    alert('Error: Account or related vehicles not found.');
                   }
                   else if (err.status === 409) {
-                      alert('Account deletion failed. Please make sure that all your bookings are paid or cancelled.');
+                      alert('Account deletion failed. Some vehicles are currently in use or booked, or the booking is either active or not paid. You can retire the available ones first before trying again.');
                   }
                   else if (err.status === 500) {
                     alert('An unexpected error occurred. Please try again later.');
@@ -144,14 +142,11 @@ export class CustomerAccountComponent {
     if (!userId) return;
 
     const personalData = {
-      firstName: this.user.firstName,
-      lastName: this.user.lastName,
-      dateOfBirth: this.user.dateOfBirth,
-      phoneNumber: this.user.phoneNumber,
-      driverLicenseType: this.user.driverLicenseType
+      companyName: this.user.companyName,
+      phoneNumber: this.user.phoneNumber
     };
 
-    this.userService.updatePersonalInfo(+userId, personalData).subscribe({
+    this.userService.updateProviderPersonalInfo(+userId, personalData).subscribe({
       next: () => alert('Personal information updated successfully!'),
       error: err => {
         console.error('Update failed', err);

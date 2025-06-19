@@ -210,7 +210,9 @@ export class ProviderHomepageComponent {
             if (err.status === 404) {
               alert('Vehicle not found.');
             } else if (err.status === 409) {
-              alert('Cannot delete vehicle while it is booked or in use.');
+              alert('Cannot delete vehicle while it is booked or in use or when the booking is either active or not paid.');
+            } else if (err.status === 502) {
+              alert('Payment information deletion failed. Please try again later.');
             } else {
               alert('Unexpected error while deleting vehicle.');
             }

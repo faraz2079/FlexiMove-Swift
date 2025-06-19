@@ -2,9 +2,13 @@ package de.fhdo.spring.user.context.controllers;
 
 import java.util.List;
 
+import de.fhdo.spring.user.context.clients.RatingClient;
 import de.fhdo.spring.user.context.domain.*;
 import de.fhdo.spring.user.context.dto.PasswordChangeRequest;
 import de.fhdo.spring.user.context.dto.PersonalInfoUpdateRequest;
+import de.fhdo.spring.user.context.dto.ProviderPersonalInfoUpdateRequest;
+import feign.FeignException;
+import jakarta.persistence.EntityNotFoundException;
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,16 +30,12 @@ public class UserController {
 	private final UserService userService;
     private final LoginService loginService;
     private final RegistrationService registrationService;
-    private final BookingClient bookingClient;
-    private final VehicleClient vehicleClient;
 
     @Autowired
-    public UserController(UserService userService, LoginService loginService, RegistrationService registrationService, BookingClient bookingClient,VehicleClient vehicleClient) {
+    public UserController(UserService userService, LoginService loginService, RegistrationService registrationService) {
         this.userService = userService;
         this.loginService = loginService;
         this.registrationService = registrationService;
-        this.bookingClient = bookingClient;
-        this.vehicleClient=vehicleClient;
     }
 
 
@@ -52,26 +52,19 @@ public class UserController {
 	}
 	
 	@DeleteMapping("/deleteAccount/{userId}")
-	public ResponseEntity<Void> deleteUserWithDependencies(@PathVariable Long userId) {
+	public ResponseEntity<?> deleteUserWithDependencies(@PathVariable Long userId) {
 	    try {
-	        User user = userService.getUserById(userId);
-	        if (user == null) {
-	            return ResponseEntity.notFound().build();
-	        }
-	        if (user instanceof Customer) {
-	            bookingClient.deleteUserBookings(userId);
-	        } else if (user instanceof Provider) {
-	            vehicleClient.deleteVehicle(userId);
-	        } else {
-	            return ResponseEntity.badRequest().build();
-	        }
-	        userService.deleteUserById(userId);
-	        return ResponseEntity.noContent().build();
-
-	    } catch (Exception e) {
-	        System.err.println("Error during deletion of account: " + e.getMessage());
-	        return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).build();
-	    }
+			userService.deleteUserAndDependencies(userId);
+			return ResponseEntity.noContent().build();
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.SC_NOT_FOUND).body("User not found.");
+		} catch (FeignException | IllegalStateException e) {
+			return ResponseEntity.status(HttpStatus.SC_CONFLICT).body(e.getMessage());
+		} catch (Exception e) {
+			System.err.println("Error during deletion of account: " + e.getMessage());
+			return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+					.body("Unexpected error occurred while deleting user.");
+		}
 	}
 
 	// Change Password
@@ -116,8 +109,16 @@ public class UserController {
 		return ResponseEntity.ok().build();
 	}
 
+	@PatchMapping("/{id}/provider-personal-info")
+	public ResponseEntity<?> updateProviderPersonalInfo(@PathVariable Long id, @RequestBody ProviderPersonalInfoUpdateRequest request) {
+		User user = userService.getUserById(id);
+		if (user == null) {
+			return ResponseEntity.notFound().build();
+		}
+		userService.updateProviderPersonalInfo(user, request);
+		return ResponseEntity.ok().build();
+	}
 
-	//Change Adress
 	@PatchMapping("/{id}/address")
 	public ResponseEntity<?> updateAddress(@PathVariable Long id, @RequestBody Address newAddress) {
 		User user = userService.getUserById(id);

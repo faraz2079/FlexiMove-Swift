@@ -1,5 +1,6 @@
 package de.fleximove.vehicle.service.services;
 
+import de.fleximove.vehicle.service.clients.BookingServiceClient;
 import de.fleximove.vehicle.service.clients.RatingServiceClient;
 import de.fleximove.vehicle.service.clients.UserServiceClient;
 import de.fleximove.vehicle.service.domain.Vehicle;
@@ -8,7 +9,9 @@ import de.fleximove.vehicle.service.dto.*;
 import de.fleximove.vehicle.service.repository.VehicleRepository;
 import de.fleximove.vehicle.service.utils.DistanceUtils;
 import de.fleximove.vehicle.service.utils.VehicleMapper;
+import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -25,14 +28,16 @@ public class VehicleService {
     private final GeocodingService geocodingService;
     private final UserServiceClient userServiceClient;
     private final RatingServiceClient ratingServiceClient;
+    private final BookingServiceClient bookingServiceClient;
 
     @Autowired
-    VehicleService(VehicleRepository vehicleRepository, VehicleMapper vehicleMapper, GeocodingService geocodingService, UserServiceClient userServiceClient, RatingServiceClient ratingServiceClient){
+    VehicleService(VehicleRepository vehicleRepository, VehicleMapper vehicleMapper, GeocodingService geocodingService, UserServiceClient userServiceClient, RatingServiceClient ratingServiceClient, BookingServiceClient bookingServiceClient){
         this.vehicleRepository = vehicleRepository;
         this.vehicleMapper = vehicleMapper;
         this.geocodingService = geocodingService;
         this.userServiceClient = userServiceClient;
         this.ratingServiceClient = ratingServiceClient;
+        this.bookingServiceClient = bookingServiceClient;
     }
 
     public void registerNewVehicle(VehicleRequest request, Long providerId) {
@@ -44,6 +49,7 @@ public class VehicleService {
         return vehicleRepository.findById(id);
     }
 
+    @Transactional
     public void deleteVehicle(Long id) {
         Vehicle vehicle = fetchVehicleById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle with ID " + id + " not found"));
@@ -52,12 +58,40 @@ public class VehicleService {
             throw new IllegalStateException("Vehicle cannot be deleted while it is in use or booked.");
         }
 
+        ratingServiceClient.deleteRatingsByVehicleId(vehicle.getId());
+        bookingServiceClient.deleteBookingsByVehicleId(vehicle.getId());
+
         vehicleRepository.delete(vehicle);
     }
 
+    @Transactional
     public void deleteAllVehiclesByProviderId(Long providerId) {
-        //delete only if all vehicles are not in use
-        //for available vehicles change the status to RETIRED
+        List<Vehicle> vehicles = vehicleRepository.findAllByProviderId(providerId);
+        if (vehicles.isEmpty()) {
+            throw new EntityNotFoundException("No vehicles found for provider ID: " + providerId);
+        }
+
+        boolean hasActiveVehicles = vehicles.stream()
+                .anyMatch(v -> v.getStatus() == VehicleStatus.IN_USE || v.getStatus() == VehicleStatus.BOOKED);
+
+        if (hasActiveVehicles) {
+            throw new IllegalStateException("Some vehicles are in use or booked. Deletion stopped.");
+        }
+        for (Vehicle v : vehicles) {
+            try {
+                ratingServiceClient.deleteRatingsByVehicleId(v.getId());
+            } catch (FeignException e) {
+                throw new IllegalStateException("Failed to delete ratings for vehicle " + v.getId() + ": " + e.getMessage());
+            }
+        }
+
+        for (Vehicle v: vehicles) {
+            try {
+                bookingServiceClient.deleteBookingsByVehicleId(v.getId());
+            } catch (FeignException e) {
+                throw new IllegalStateException("Failed to delete bookings for vehicle " + v.getId() + ": " + e.getMessage());
+            }
+        }
         vehicleRepository.deleteAllByProviderId(providerId);
     }
 
