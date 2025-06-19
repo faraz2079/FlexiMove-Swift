@@ -30,7 +30,7 @@
             <div class="tab-content">
                 <mat-form-field appearance="fill">
                 <mat-label>Email</mat-label>
-                <input matInput [(ngModel)]="user.email.value">
+                <input matInput [(ngModel)]="user.email.value" required>
                 </mat-form-field>
                 <button mat-raised-button color="primary" (click)="changeEmail()">Save</button>
             </div>
@@ -40,12 +40,12 @@
             <div class="tab-content">
                 <mat-form-field appearance="fill" class="full-width">
                     <mat-label>Current Password</mat-label>
-                    <input matInput type="password" [(ngModel)]="passwordData.oldPassword">
+                    <input matInput type="password" [(ngModel)]="passwordData.oldPassword" required>
                 </mat-form-field>
 
                 <mat-form-field appearance="fill" class="full-width">
                     <mat-label>New Password</mat-label>
-                    <input matInput type="password" [(ngModel)]="passwordData.newPassword">
+                    <input matInput type="password" [(ngModel)]="passwordData.newPassword" required>
                 </mat-form-field>
 
                 <button mat-raised-button color="primary" (click)="changePassword()">Change Password</button>
@@ -78,7 +78,7 @@
             </div>
             </mat-tab>
 
-            <mat-tab label="Payment Info">
+            <mat-tab label="Payment Info (optional)">
             <div class="tab-content">
                 <mat-form-field appearance="fill">
                 <mat-label>Cardholder Name</mat-label>

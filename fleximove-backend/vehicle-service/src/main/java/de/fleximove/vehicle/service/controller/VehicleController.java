@@ -18,8 +18,7 @@ import de.fleximove.vehicle.service.dto.VehicleRequest;
 
 import java.util.List;
 
-//TODO: exception handling
-//TODO: split controller
+//TODO for future: split controller
 @RestController
 @RequestMapping("/vehicles")
 public class VehicleController {
@@ -147,6 +146,4 @@ public class VehicleController {
         );
         return ResponseEntity.ok().build();
     }
-
-    //TODO: look for vehicles with other status?
 }

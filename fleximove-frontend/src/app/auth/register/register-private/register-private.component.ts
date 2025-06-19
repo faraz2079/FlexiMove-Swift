@@ -46,8 +46,8 @@ export class RegisterPrivateComponent {
     }
   }
 
-  //TODO: die Werte sollen auch beim Neuladen der Seite in Form bleiben
-  //TODO: die Daten validieren, wenn der User die eingibt (Eventuell im Backend auch Validierung machen)
+  //TODO for future: die Werte sollen auch beim Neuladen der Seite in Form bleiben
+  //TODO for future: die Daten validieren, wenn der User die eingibt (Eventuell im Backend auch Validierung machen)
 
 onSubmit() {
   if (this.registerForm.valid) {

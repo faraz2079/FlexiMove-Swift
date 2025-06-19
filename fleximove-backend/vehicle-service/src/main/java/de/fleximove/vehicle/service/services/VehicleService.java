@@ -67,32 +67,30 @@ public class VehicleService {
     @Transactional
     public void deleteAllVehiclesByProviderId(Long providerId) {
         List<Vehicle> vehicles = vehicleRepository.findAllByProviderId(providerId);
-        if (vehicles.isEmpty()) {
-            throw new EntityNotFoundException("No vehicles found for provider ID: " + providerId);
-        }
+        if (!vehicles.isEmpty()) {
+            boolean hasActiveVehicles = vehicles.stream()
+                    .anyMatch(v -> v.getStatus() == VehicleStatus.IN_USE || v.getStatus() == VehicleStatus.BOOKED);
 
-        boolean hasActiveVehicles = vehicles.stream()
-                .anyMatch(v -> v.getStatus() == VehicleStatus.IN_USE || v.getStatus() == VehicleStatus.BOOKED);
-
-        if (hasActiveVehicles) {
-            throw new IllegalStateException("Some vehicles are in use or booked. Deletion stopped.");
-        }
-        for (Vehicle v : vehicles) {
-            try {
-                ratingServiceClient.deleteRatingsByVehicleId(v.getId());
-            } catch (FeignException e) {
-                throw new IllegalStateException("Failed to delete ratings for vehicle " + v.getId() + ": " + e.getMessage());
+            if (hasActiveVehicles) {
+                throw new IllegalStateException("Some vehicles are in use or booked. Deletion stopped.");
             }
-        }
-
-        for (Vehicle v: vehicles) {
-            try {
-                bookingServiceClient.deleteBookingsByVehicleId(v.getId());
-            } catch (FeignException e) {
-                throw new IllegalStateException("Failed to delete bookings for vehicle " + v.getId() + ": " + e.getMessage());
+            for (Vehicle v : vehicles) {
+                try {
+                    ratingServiceClient.deleteRatingsByVehicleId(v.getId());
+                } catch (FeignException e) {
+                    throw new IllegalStateException("Failed to delete ratings for vehicle " + v.getId() + ": " + e.getMessage());
+                }
             }
+
+            for (Vehicle v : vehicles) {
+                try {
+                    bookingServiceClient.deleteBookingsByVehicleId(v.getId());
+                } catch (FeignException e) {
+                    throw new IllegalStateException("Failed to delete bookings for vehicle " + v.getId() + ": " + e.getMessage());
+                }
+            }
+            vehicleRepository.deleteAllByProviderId(providerId);
         }
-        vehicleRepository.deleteAllByProviderId(providerId);
     }
 
     public List<NearestAvailableVehicleResponse> findAvailableNearbyVehicles(Location neededLocationWithAvailableVehicles, double radiusInKm) {

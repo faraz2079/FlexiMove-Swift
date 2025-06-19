@@ -2,7 +2,6 @@ package de.fhdo.spring.user.context.controllers;
 
 import java.util.List;
 
-import de.fhdo.spring.user.context.clients.RatingClient;
 import de.fhdo.spring.user.context.domain.*;
 import de.fhdo.spring.user.context.dto.PasswordChangeRequest;
 import de.fhdo.spring.user.context.dto.PersonalInfoUpdateRequest;
@@ -12,11 +11,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.apache.hc.core5.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import de.fhdo.spring.user.context.clients.BookingClient;
-import de.fhdo.spring.user.context.clients.VehicleClient;
 
 import de.fhdo.spring.user.context.dto.LoginRequest;
 import de.fhdo.spring.user.context.services.LoginService;

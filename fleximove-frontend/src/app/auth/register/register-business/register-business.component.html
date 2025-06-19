@@ -38,9 +38,31 @@
             <input matInput formControlName="country" />
             <mat-error *ngIf="businessForm.get('country')?.hasError('required')">Required</mat-error>
           </mat-form-field>
+
+          <div formGroupName="paymentinfo">
+            <mat-form-field class="full-width">
+              <mat-label>Card Holder Name</mat-label>
+              <input matInput formControlName="cardHolderName"/>
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+              <mat-label>Credit Card Number</mat-label>
+              <input matInput formControlName="creditCardNumber" />
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+              <mat-label>CVV</mat-label>
+              <input matInput formControlName="cvv"/>
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+              <mat-label>Expiry Date</mat-label>
+              <input matInput formControlName="expiryDate" placeholder="MM/YY"/>
+            </mat-form-field>
+          </div>
   
           <mat-form-field appearance="fill" class="full-width">
-            <mat-label>Email</mat-label>
+            <mat-label>Email Address</mat-label>
             <input matInput formControlName="email" />
             <mat-error *ngIf="businessForm.get('email')?.hasError('required')">Email is required</mat-error>
             <mat-error *ngIf="businessForm.get('email')?.hasError('email')">Enter a valid email</mat-error>
