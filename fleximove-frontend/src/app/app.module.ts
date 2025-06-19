@@ -36,13 +36,18 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CustomerAccountComponent } from './customer-pages/customer-account/customer-account.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
-import { DeleteAccountDialogComponent } from './customer-pages/delete-account-dialog/delete-account-dialog.component';
+import { DeleteAccountDialogComponent } from './delete-account-dialog/delete-account-dialog.component';
 import { ProviderLayoutComponent } from './layout/provider/provider-layout/provider-layout.component';
 import { ProviderHeaderComponent } from './layout/provider/provider-header/provider-header.component';
 import { ProviderHomepageComponent } from './provider-pages/provider-homepage/provider-homepage.component';
 import { NgChartsModule } from 'ng2-charts';
 import { VehicleStatusChartComponent } from './provider-pages/vehicle-status-chart/vehicle-status-chart.component';
 import { RegisterVehicleDialogComponent } from './provider-pages/register-vehicle-dialog/register-vehicle-dialog.component';
+import { ConfirmDeleteDialogComponent } from './provider-pages/confirm-delete-dialog/confirm-delete-dialog.component';
+import { EditVehicleDialogComponent } from './provider-pages/edit-vehicle-dialog/edit-vehicle-dialog.component';
+import { UserService } from './src/app/services/user.service';
+import { RatingService } from './src/app/services/rating.service';
+import { ProviderAccountComponent } from './provider-pages/provider-account/provider-account.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +68,10 @@ import { RegisterVehicleDialogComponent } from './provider-pages/register-vehicl
     ProviderHeaderComponent,
     ProviderHomepageComponent,
     VehicleStatusChartComponent,
-    RegisterVehicleDialogComponent
+    RegisterVehicleDialogComponent,
+    ConfirmDeleteDialogComponent,
+    EditVehicleDialogComponent,
+    ProviderAccountComponent
   ],
   imports: [
     BrowserModule,
@@ -89,7 +97,7 @@ import { RegisterVehicleDialogComponent } from './provider-pages/register-vehicl
     MatDialogModule,
     NgChartsModule
   ],
-  providers: [RegistrationService, LoginService, GeocodingService, VehicleService],
+  providers: [RegistrationService, LoginService, GeocodingService, VehicleService, UserService, RatingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

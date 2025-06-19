@@ -5,6 +5,10 @@ import { VehicleService } from 'src/app/src/app/services/vehicle.service';
 import { Provider as FlexiProvider} from 'src/app/models/provider.model';
 import { MatDialog } from '@angular/material/dialog';
 import { RegisterVehicleDialogComponent } from '../register-vehicle-dialog/register-vehicle-dialog.component';
+import { ConfirmDeleteDialogComponent } from '../confirm-delete-dialog/confirm-delete-dialog.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { EditVehicleDialogComponent } from '../edit-vehicle-dialog/edit-vehicle-dialog.component';
+import { RatingService } from 'src/app/src/app/services/rating.service';
 
 export interface ProviderVehicle {
   vehicleId: number;
@@ -41,8 +45,9 @@ interface ProviderVehicleWithDetails extends ProviderVehicle {
 export class ProviderHomepageComponent {
   provider: FlexiProvider | null = null;
   foundVehicles: ProviderVehicleWithDetails[] = [];
+  providerRating: number | null = null;
 
-  constructor(private router: Router, private vehicleService: VehicleService, private userService: UserService, private dialog: MatDialog) {}
+  constructor(private router: Router, private vehicleService: VehicleService, private userService: UserService, private dialog: MatDialog, private snackBar: MatSnackBar, private ratingService: RatingService) {}
   
 
   ngOnInit(): void {
@@ -61,6 +66,7 @@ export class ProviderHomepageComponent {
         next: (data) => {
           this.provider = data;
           this.loadProviderVehicles(+userId);
+          this.loadProviderRating(+userId);
         },
         error: (err) => {
           console.error('Error while loading provider:', err);
@@ -70,6 +76,7 @@ export class ProviderHomepageComponent {
     } else {
       this.provider = currentUser;
       this.loadProviderVehicles(+userId);
+      this.loadProviderRating(+userId);
     }
   }
 
@@ -83,7 +90,19 @@ export class ProviderHomepageComponent {
       },
       error: (err) => {
         console.error('Could not load vehicles:', err);
-        alert('Error loading provider vehicles.');
+        alert('Error loading your vehicles.');
+      }
+    });
+  }
+
+  loadProviderRating(providerId: number): void {
+    this.ratingService.getProviderRating(providerId).subscribe({
+      next: (rating) => {
+        this.providerRating = rating;
+      },
+      error: (err) => {
+        console.error('Could not load provider rating:', err);
+        alert('Error loading your rating.');
       }
     });
   }
@@ -128,6 +147,17 @@ export class ProviderHomepageComponent {
     }
   }
 
+  formatVehicleStatus(status: string): string {
+    switch (status) {
+      case 'AVAILABLE': return 'Available';
+      case 'BOOKED': return 'Booked';
+      case 'IN_USE': return 'In use';
+      case 'MAINTENANCE': return 'Maintenance';
+      case 'RETIRED': return 'Retired';
+      default: return '';
+    }
+  }
+
   toggleDetails(vehicle: ProviderVehicleWithDetails): void {
     vehicle.showDetails = !vehicle.showDetails;
 
@@ -151,8 +181,66 @@ export class ProviderHomepageComponent {
 
     dialogRef.afterClosed().subscribe((refresh) => {
       if (refresh) {
-        this.loadProviderVehicles(+userId!);
+        this.loadProviderVehicles(+userId);
       }
     });
   }
+
+  openDeleteDialog(vehicle: ProviderVehicle): void {
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) {
+      alert('User ID not found.');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
+      width: '400px',
+      data: { vehicleModel: vehicle.vehicleModel }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.vehicleService.deleteVehicle(vehicle.vehicleId).subscribe({
+          next: () => {
+            this.snackBar.open('Vehicle deleted successfully.', 'OK', { duration: 3000 });
+            this.loadProviderVehicles(+userId);
+          },
+          error: (err) => {
+            if (err.status === 404) {
+              alert('Vehicle not found.');
+            } else if (err.status === 409) {
+              alert('Cannot delete vehicle while it is booked or in use or when the booking is either active or not paid.');
+            } else if (err.status === 502) {
+              alert('Payment information deletion failed. Please try again later.');
+            } else {
+              alert('Unexpected error while deleting vehicle.');
+            }
+          }
+        });
+      }
+    });
+  }
+
+  openEditDialog(vehicle: ProviderVehicle): void {
+    const userId = localStorage.getItem('userId');
+
+    if (!userId) {
+      alert('User ID not found.');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(EditVehicleDialogComponent, {
+      width: '600px',
+      data: { vehicle }
+    });
+
+    dialogRef.afterClosed().subscribe(refresh => {
+      if (refresh) {
+        this.loadProviderVehicles(+userId);
+      }
+    });
+  }
+
+
 }

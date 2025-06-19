@@ -7,14 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
-
 @RestController
 @RequestMapping("/ratings")
 public class RatingController {
 
+    private final RatingService ratingService;
+
     @Autowired
-    private RatingService ratingService;
+    RatingController(RatingService ratingService){
+        this.ratingService = ratingService;
+    }
 
     @PostMapping("/vehicle")
     public ResponseEntity<RatingVehicle> rateVehicle(@RequestBody RatingVehicle rating) {
@@ -34,5 +36,23 @@ public class RatingController {
     @GetMapping("/provider/{providerId}/average")
     public ResponseEntity<Double> getAverageProviderRating(@PathVariable Long providerId) {
         return ResponseEntity.ok(ratingService.getAverageRatingForProvider(providerId));
+    }
+
+    @DeleteMapping("/customerRatings/{customerId}/deleteAll")
+    public ResponseEntity<Void> deleteCustomerRatingsByUserId(@PathVariable Long customerId) {
+        ratingService.deleteAllCustomerRatingsByUser(customerId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/deleteAll/forRatedProvider/{providerId}")
+    public ResponseEntity<Void> deleteProviderRatingsByProviderId(@PathVariable Long providerId) {
+        ratingService.deleteAllProviderRatings(providerId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/deleteAll/forRatedVehicle/{vehicleId}")
+    public ResponseEntity<Void> deleteVehicleRatingsByVehicleId(@PathVariable Long vehicleId) {
+        ratingService.deleteAllVehicleRatings(vehicleId);
+        return ResponseEntity.noContent().build();
     }
 }

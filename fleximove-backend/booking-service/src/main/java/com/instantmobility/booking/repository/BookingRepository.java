@@ -27,8 +27,5 @@ public interface BookingRepository extends JpaRepository<Booking, BookingId> {
             @Param("userId") Long userId,
             Pageable pageable
     );
-    @Modifying
-    @Transactional
-    @Query("DELETE FROM Booking b WHERE b.userId = :userId")
-    void deleteBookingsByUserId(@Param("userId") Long userId);
+    void deleteByVehicleId(Long vehicleId);
 }

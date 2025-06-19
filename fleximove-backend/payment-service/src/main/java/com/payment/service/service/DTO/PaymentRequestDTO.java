@@ -5,11 +5,11 @@ import java.util.UUID;
 
 public class PaymentRequestDTO {
 
-    public UUID getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
@@ -45,7 +45,7 @@ public class PaymentRequestDTO {
         this.description = description;
     }
 
-    private UUID userId;
+    private Long userId;
     private UUID bookingId;
     private BigDecimal amount;
     private String currency;

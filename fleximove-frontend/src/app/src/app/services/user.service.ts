@@ -21,23 +21,27 @@ export class UserService {
     }
 
     changePassword(userId: number, passwordData: { oldPassword: string; newPassword: string }) {
-      return this.http.put(`${this.baseUrl}/${userId}/password`, passwordData);
+      return this.http.patch(`${this.baseUrl}/${userId}/password`, passwordData);
     }
 
     updateEmail(userId: number, newEmail: string) {
-      return this.http.put(`${this.baseUrl}/${userId}/email`, newEmail);
+      return this.http.patch(`${this.baseUrl}/${userId}/email`, newEmail);
     }
 
     updatePersonalInfo(userId: number, personalData: any) {
-      return this.http.put(`${this.baseUrl}/${userId}/personal-info`, personalData);
+      return this.http.patch(`${this.baseUrl}/${userId}/personal-info`, personalData);
+    }
+
+    updateProviderPersonalInfo(userId: number, personalData: any) {
+      return this.http.patch(`${this.baseUrl}/${userId}/provider-personal-info`, personalData);
     }
 
     updateAddress(userId: number, newAddress: Address) {
-      return this.http.put(`${this.baseUrl}/${userId}/address`, newAddress);
+      return this.http.patch(`${this.baseUrl}/${userId}/address`, newAddress);
     }
 
     updatePaymentInfo(userId: number, paymentInfo: PaymentInfo) {
-      return this.http.put<void>(`${this.baseUrl}/${userId}/payment-info`, paymentInfo);
+      return this.http.patch<void>(`${this.baseUrl}/${userId}/payment-info`, paymentInfo);
     }
 
     setCustomer(customer: Customer) {

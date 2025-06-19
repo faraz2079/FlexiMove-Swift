@@ -6,8 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import de.fhdo.spring.user.context.clients.RatingClient;
+import de.fhdo.spring.user.context.clients.VehicleClient;
 import de.fhdo.spring.user.context.domain.*;
 import de.fhdo.spring.user.context.dto.PersonalInfoUpdateRequest;
+import de.fhdo.spring.user.context.dto.ProviderPersonalInfoUpdateRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,12 +26,16 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final BookingClient bookingClient;
 	private final PasswordEncoder passwordEncoder;
+	private final VehicleClient vehicleClient;
+	private final RatingClient ratingClient;
 
 	@Autowired
-	public UserService(UserRepository userRepository, BookingClient bookingClient, PasswordEncoder passwordEncoder) {
+	public UserService(UserRepository userRepository, BookingClient bookingClient, PasswordEncoder passwordEncoder, VehicleClient vehicleClient, RatingClient ratingClient) {
 	    this.userRepository = userRepository;
 	    this.bookingClient = bookingClient;
 		this.passwordEncoder = passwordEncoder;
+		this.vehicleClient = vehicleClient;
+		this.ratingClient = ratingClient;
 	}
 
 	//Alle User
@@ -96,6 +104,16 @@ public class UserService {
 		userRepository.save(user);
 	}
 
+	public void updateProviderPersonalInfo(User user, ProviderPersonalInfoUpdateRequest request) {
+		user.setPhoneNumber(request.getPhoneNumber());
+
+		if (user instanceof Provider) {
+			((Provider) user).setCompanyName(request.getCompanyName());
+		}
+
+		userRepository.save(user);
+	}
+
 	public void updatePaymentInfo(User user, PaymentInfo newInfo) {
 		user.setPaymentinfo(newInfo);
 		userRepository.save(user);
@@ -126,6 +144,26 @@ public class UserService {
 
 	public boolean isPasswordCorrect(User user, String inputPassword) {
 		return passwordEncoder.matches(inputPassword, user.getPassword().getValue());
+	}
+
+	@Transactional
+	public void deleteUserAndDependencies(Long userId) {
+		User user = getUserById(userId);
+		if (user == null) {
+			throw new EntityNotFoundException("User not found with ID: " + userId);
+		}
+
+		if (user instanceof Customer) {
+			ratingClient.deleteCustomerRatingsByUserId(userId);
+			bookingClient.deleteUserBookings(userId);
+		} else if (user instanceof Provider) {
+			ratingClient.deleteAllProviderRatings(userId);
+			vehicleClient.deleteVehicle(userId);
+		} else {
+			throw new IllegalArgumentException("Unsupported user type.");
+		}
+
+		deleteUserById(userId);
 	}
 
 }

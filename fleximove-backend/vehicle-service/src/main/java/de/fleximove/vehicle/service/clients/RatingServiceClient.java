@@ -1,6 +1,7 @@
 package de.fleximove.vehicle.service.clients;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -12,4 +13,7 @@ public interface RatingServiceClient {
 
     @GetMapping("${ratingService.averageRatingForProvider.endpoint}")
     Double getAverageRatingForProvider(@PathVariable("providerId") Long providerId);
+
+    @DeleteMapping("${ratingService.deleteAllVehicleRatings.endpoint}")
+    void deleteRatingsByVehicleId(@PathVariable Long vehicleId);
 }

@@ -6,9 +6,13 @@ import com.payment.service.domain.repo.PaymentRepository;
 import com.payment.service.infrastructure.PaymentGatewayClient;
 import com.payment.service.service.DTO.PaymentRequestDTO;
 import com.payment.service.service.DTO.PaymentResponseDTO;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PaymentProcessingService {
@@ -63,4 +67,27 @@ public class PaymentProcessingService {
                 saved.getDescription()
         );
     }
+
+    @Transactional
+    public void deletePaymentsByUserId(Long userId) {
+        List<Payment> payments = paymentRepository.findByUserId(userId);
+
+        if (payments.isEmpty()) {
+            throw new EntityNotFoundException("No payments found for user ID: " + userId);
+        }
+
+        paymentRepository.deleteAll(payments);
+    }
+
+    @Transactional
+    public void deletePaymentsByBookingId(UUID bookingId) {
+        List<Payment> payments = paymentRepository.findByBookingId(bookingId);
+
+        if (payments.isEmpty()) {
+            throw new EntityNotFoundException("No payments found for booking: " + bookingId);
+        }
+
+        paymentRepository.deleteAll(payments);
+    }
+
 }

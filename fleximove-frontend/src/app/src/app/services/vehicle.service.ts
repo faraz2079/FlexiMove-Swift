@@ -32,6 +32,14 @@ export class VehicleService {
     return this.http.post<void>(`${this.baseUrl}/registeredBy?providerId=${providerId}`, request);
   }
 
+  deleteVehicle(vehicleId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/delete/${vehicleId}`);
+  }
+
+  updateVehicle(vehicleId: number, payload: any): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/edit/${vehicleId}`, payload);
+  }
+
   setResults(vehicles: NearestAvailableVehicleResponse[]) {
     this.results = vehicles;
   }

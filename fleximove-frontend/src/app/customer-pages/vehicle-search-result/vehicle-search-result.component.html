@@ -77,7 +77,7 @@
 
     <div class="vehicle-list">
         <mat-card *ngFor="let vehicle of filteredVehicles" class="vehicle-card">
-            <mat-card-title>{{ vehicle.vehicleModel }} ({{ vehicle.vehicleType }})</mat-card-title>
+            <mat-card-title>{{ vehicle.vehicleModel }} ({{ formatVehicleType(vehicle.vehicleType) }})</mat-card-title>
             <mat-card-content>
                 <p><strong>Provider:</strong> {{ vehicle.providerName }}</p>
                 <p><strong>Address:</strong> {{ vehicle.address }}</p>
@@ -86,13 +86,13 @@
                 <p>
                     <strong>Vehicle Rating: </strong> 
                     <span matTooltip="{{ vehicle.averageVehicleRating + ' / 5' }}" matTooltipPosition="right">
-                        <p-rating [ngModel]="vehicle.averageVehicleRating" [readonly]="true" [cancel]="false"></p-rating>
+                        <p-rating [ngModel]="vehicle.averageVehicleRating" [readonly]="true" [cancel]="false" class="rating-stars"></p-rating>
                     </span>
                 </p>
                 <p>
                     <strong>Provider Rating: </strong> 
                     <span matTooltip="{{ vehicle.averageProviderRating + ' / 5' }}" matTooltipPosition="right">
-                        <p-rating [ngModel]="vehicle.averageProviderRating" [readonly]="true" [cancel]="false"></p-rating>
+                        <p-rating [ngModel]="vehicle.averageProviderRating" [readonly]="true" [cancel]="false" class="rating-stars"></p-rating>
                     </span>
                 </p>
             </mat-card-content>

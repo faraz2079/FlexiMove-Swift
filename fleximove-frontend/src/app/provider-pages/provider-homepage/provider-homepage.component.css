@@ -9,7 +9,6 @@
     animation: fadeIn 1s ease-in-out;
 }
 
-
 .homepage-container{
     margin-left: 85px;
     display: flex;
@@ -86,4 +85,43 @@
 .chart-container {
   width: 27%;
 }
+
+.edit-and-delete {
+  gap: 1rem;
+  display: flex;
+}
+
+.provider-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 18px;
+  margin-top: 8px;
+  margin-left: 3px;
+}
+
+.rating-label, .rating-value {
+  font-weight: 500;
+  color: #2b2b2b;
+}
+
+.rating-stars ::ng-deep .p-rating-icon {
+  color: gold;
+  transform: scale(1.6);  
+}
+
+.rating-stars ::ng-deep .p-rating {
+  display: flex;
+  gap: 9px;
+}
+
+.rating-vehicle-stars ::ng-deep .p-rating-icon {
+  color: goldenrod;
+}
+
+.stars {
+  margin-right: 5px;
+}
+
+
 

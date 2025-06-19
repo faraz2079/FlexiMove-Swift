@@ -8,10 +8,15 @@ import java.util.UUID;
 
 @FeignClient(name = "payment-service")
 public interface PaymentServiceClient {
-    @PostMapping("/api/payments/process")
+    @PostMapping("${paymentService.paymentProcess.endpoint}")
     PaymentResponseDTO processPayment(@RequestBody PaymentRequestDTO request);
 
-    @GetMapping("/api/payments/{paymentId}")
+    @GetMapping("${paymentService.paymentStatus.endpoint}")
     PaymentResponseDTO getPaymentStatus(@PathVariable UUID paymentId);
 
+    @DeleteMapping("${paymentService.deleteAllPaymentInfoForUser.endpoint}")
+    void deletePaymentsByUser(@PathVariable Long userId);
+
+    @DeleteMapping("${paymentService.deleteAllPaymentInfoForBooking.endpoint}")
+    void deletePaymentsByBookingId(@PathVariable UUID bookingId);
 }

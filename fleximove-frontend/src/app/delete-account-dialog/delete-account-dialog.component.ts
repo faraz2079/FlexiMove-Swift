@@ -13,7 +13,6 @@ export class DeleteAccountDialogComponent {
   }
 
   confirm(): void {
-    //TODO: send a request to user service to delete a customer (and his bookings)
     this.dialogRef.close(true);
   }
 }

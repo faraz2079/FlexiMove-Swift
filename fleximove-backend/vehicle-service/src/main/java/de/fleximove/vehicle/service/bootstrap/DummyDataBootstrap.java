@@ -46,7 +46,8 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
         VehicleRestrictions restrictions2 = new VehicleRestrictions(0, 60, 50.0, 1, DriverLicenseType.NONE);
 
         Vehicle newVehicle2 = new Vehicle(identificationNumber2, "Ultimate CF 7", vehicleType2, vehicleLocation2, vehiclePrice2, restrictions2, 2L);
-
+        //For test
+        //newVehicle2.setStatus(VehicleStatus.BOOKED);
         vehicleRepository.save(newVehicle2);
     }
 }

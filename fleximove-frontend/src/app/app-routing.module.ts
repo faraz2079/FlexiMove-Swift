@@ -10,6 +10,7 @@ import { VehicleSearchResultComponent } from './customer-pages/vehicle-search-re
 import { CustomerAccountComponent } from './customer-pages/customer-account/customer-account.component';
 import { ProviderLayoutComponent } from './layout/provider/provider-layout/provider-layout.component';
 import { ProviderHomepageComponent } from './provider-pages/provider-homepage/provider-homepage.component';
+import { ProviderAccountComponent } from './provider-pages/provider-account/provider-account.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -34,7 +35,7 @@ const routes: Routes = [
     children: [
       { path: '', component: ProviderHomepageComponent },
       { path: 'home', component: ProviderHomepageComponent },
-      //{ path: 'account', component: CustomerAccountComponent }
+      { path: 'account', component: ProviderAccountComponent }
     ]
   }
 ];

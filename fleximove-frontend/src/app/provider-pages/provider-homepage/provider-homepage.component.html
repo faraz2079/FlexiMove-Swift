@@ -3,12 +3,14 @@
         <p class="slogan">
             Welcome, {{provider?.companyName}}!
         </p>
-        <!--<p>
-         <strong>Provider Rating: </strong> 
-            <span matTooltip="{{ vehicle.averageProviderRating + ' / 5' }}" matTooltipPosition="right">
-                <p-rating [ngModel]="vehicle.averageProviderRating" [readonly]="true" [cancel]="false"></p-rating>
+        <p *ngIf="providerRating !== null" class="provider-rating">
+            <span class="rating-label">Your current rating:</span>
+            <span class="stars" matTooltip="{{ providerRating + ' / 5' }}" matTooltipPosition="right">
+                <p-rating [ngModel]="providerRating" [readonly]="true" [cancel]="false" class="rating-stars"></p-rating>
             </span>
-        </p>-->
+            <span class="rating-value">{{ providerRating.toFixed(1) }} / 5</span>
+        </p>
+
     </div>
     <button class="register-button" mat-raised-button color="primary" (click)="openRegisterDialog()">Register Vehicle</button>
 </div>   
@@ -29,14 +31,16 @@
 
     <div class="vehicle-list">
         <mat-card *ngFor="let vehicle of foundVehicles" class="vehicle-card">
-            <mat-card-title>{{ vehicle.vehicleModel }} ({{ vehicle.vehicleType }})</mat-card-title>
+            <mat-card-title>{{ vehicle.vehicleModel }} ({{ formatVehicleType(vehicle.vehicleType) }})</mat-card-title>
             <mat-card-content>
                 <p><strong>Address:</strong> {{ vehicle.address }}</p>
                 <p><strong>Price:</strong> {{ vehicle.priceAmount }}€ / {{ formatBillingModel(vehicle.billingModel) }}</p>
+                <p><strong>Identification Number:</strong> {{ vehicle.identNumber }}</p>
+                <p><strong>Status:</strong> {{ formatVehicleStatus(vehicle.status) }}</p>
                 <p>
                     <strong>Vehicle Rating: </strong> 
                     <span matTooltip="{{ vehicle.averageVehicleRating + ' / 5' }}" matTooltipPosition="right">
-                        <p-rating [ngModel]="vehicle.averageVehicleRating" [readonly]="true" [cancel]="false"></p-rating>
+                        <p-rating [ngModel]="vehicle.averageVehicleRating" [readonly]="true" [cancel]="false" class="rating-vehicle-stars"></p-rating>
                     </span>
                 </p>
             </mat-card-content>
@@ -44,7 +48,12 @@
                 <button mat-button color="primary" (click)="toggleDetails(vehicle)">
                 {{ vehicle.showDetails ? 'Less details' : 'More details' }}
                 </button>
-                <button mat-raised-button color="primary">Edit</button>
+                <div class="edit-and-delete">
+                    <button mat-raised-button color="primary" (click)="openEditDialog(vehicle)">Edit</button>
+                    <button mat-raised-button color="warn" class="delete-button" (click)="openDeleteDialog(vehicle)">
+                        <mat-icon>delete</mat-icon>Delete
+                    </button>
+                </div>
             </mat-card-actions>
             <mat-card-content *ngIf="vehicle.showDetails">
                 <ul *ngIf="vehicle.restrictions" class="vehicle-restrictions">

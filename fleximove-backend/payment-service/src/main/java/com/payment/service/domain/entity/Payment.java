@@ -16,7 +16,7 @@ public class Payment {
     private UUID paymentId;
 
     private UUID bookingId;
-    private UUID userId;
+    private Long userId;
 
     private BigDecimal amount;
 
@@ -31,8 +31,6 @@ public class Payment {
     private BillingModel billingModel;
 
     private LocalDateTime timestamp = LocalDateTime.now();
-
-    // Getters and setters...
 
     public UUID getPaymentId() {
         return paymentId;
@@ -50,11 +48,11 @@ public class Payment {
         this.bookingId = bookingId;
     }
 
-    public UUID getUserId() {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 

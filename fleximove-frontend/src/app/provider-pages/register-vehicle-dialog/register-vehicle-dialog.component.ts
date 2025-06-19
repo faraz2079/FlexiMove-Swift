@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { VehicleService } from 'src/app/src/app/services/vehicle.service';
 
@@ -18,17 +18,17 @@ export class RegisterVehicleDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: { providerId: number }
   ) {
     this.vehicleForm = this.fb.group({
-      identificationNumber: [''],
-      vehicleType: [''],
-      vehicleModel: [''],
-      priceAmount: [0],
-      billingModel: [''],
-      address: [''],
-      minAge: [null],
-      maxBookingTimeMinutes: [null],
-      maxDistanceKm: [null],
-      maxPassengers: [null],
-      requiredLicenseType: ['']
+      identificationNumber: ['', Validators.required],
+      vehicleType: ['', Validators.required],
+      vehicleModel: ['', Validators.required],
+      priceAmount: [0, Validators.required],
+      billingModel: ['', Validators.required],
+      address: ['', Validators.required],
+      minAge: [null, Validators.required],
+      maxBookingTimeMinutes: [null, Validators.required],
+      maxDistanceKm: [null, Validators.required],
+      maxPassengers: [null, Validators.required],
+      requiredLicenseType: ['', Validators.required]
     });
   }
 
@@ -36,7 +36,15 @@ export class RegisterVehicleDialogComponent {
     if (this.vehicleForm.valid) {
       this.vehicleService.registerVehicle(this.vehicleForm.value, this.data.providerId).subscribe({
         next: () => this.dialogRef.close(true),
-        error: () => alert('Fehler beim Registrieren des Fahrzeugs.')
+        error: (err) => {
+        if (err.status === 409) {
+          alert('A vehicle with this identification number already exists.');
+        } else if (err.status === 400) {
+          alert(err.error); // zeigt z. B. "A valid driver license is required for vehicle type 'CAR'..."
+        } else {
+          alert('An unexpected error occurred while registering the vehicle.');
+        }
+      }
       });
     }
   }

@@ -6,7 +6,10 @@ import de.fleximove.vehicle.service.dto.EditVehicleRequest;
 import de.fleximove.vehicle.service.dto.NearestAvailableVehicleResponse;
 import de.fleximove.vehicle.service.dto.ProviderVehicleResponse;
 import de.fleximove.vehicle.service.services.GeocodingService;
+import feign.FeignException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +34,20 @@ public class VehicleController {
 
     //Request kommt aus Frontend
     @PostMapping("/registeredBy")
-    public ResponseEntity<Void> registerVehicle(@RequestBody VehicleRequest request, @RequestParam Long providerId) {
-        vehicleService.registerNewVehicle(request, providerId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> registerVehicle(@RequestBody VehicleRequest request, @RequestParam Long providerId) {
+        try {
+            vehicleService.registerNewVehicle(request, providerId);
+            return ResponseEntity.ok().build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("A vehicle with this identification number already exists.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected error during registration.");
+        }
     }
 
     //Request kommt aus Frontend oder aus RatingService oder aus BookingService
@@ -51,16 +65,31 @@ public class VehicleController {
 
     //Request kommt aus Frontend, wird von Provider getriggered
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteVehicle(@PathVariable Long id) {
-        vehicleService.deleteVehicle(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteVehicle(@PathVariable Long id) {
+        try {
+            vehicleService.deleteVehicle(id);
+            return ResponseEntity.ok().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (FeignException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
     }
 
     //Request kommt aus UserService
     @DeleteMapping("/deleteAllVehicles")
-    public ResponseEntity<Void> deleteVehiclesByProvider(@RequestParam Long deleteForProviderId) {
-        vehicleService.deleteAllVehiclesByProviderId(deleteForProviderId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteVehiclesByProvider(@RequestParam Long deleteForProviderId) {
+        try {
+            vehicleService.deleteAllVehiclesByProviderId(deleteForProviderId);
+            return ResponseEntity.ok().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected error occurred while deleting vehicles.");
+        }
     }
 
     //Request kommt aus Frontend
@@ -82,12 +111,25 @@ public class VehicleController {
 
     //Request kommt aus Frontend, wird von Provider getriggered
     @PatchMapping("/edit/{vehicleId}")
-    public ResponseEntity<Void> editVehicle(@PathVariable Long vehicleId, @RequestBody EditVehicleRequest request) {
-        vehicleService.editVehicleInformation(vehicleId, request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> editVehicle(@PathVariable Long vehicleId, @RequestBody EditVehicleRequest request) {
+        try {
+            vehicleService.editVehicleInformation(vehicleId, request);
+            return ResponseEntity.ok().build();
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("A vehicle with this identification number already exists.");
+        }
+        catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found: " + e.getMessage());
+        }
+        catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error occurred.");
+        }
     }
 
-    //Request kommt aus dem Frontend oder aus dem BookingService, wird von Provider oder waehrend Booking getriggered
+    //Request kommt aus dem BookingService, wird waehrend Booking getriggered
     @PatchMapping("/updateStatus/{vehicleId}")
     public ResponseEntity<Void> updateVehicleStatus(@PathVariable Long vehicleId, @RequestParam VehicleStatus newStatus
     ) {
