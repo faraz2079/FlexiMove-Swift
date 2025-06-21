@@ -26,7 +26,7 @@ technology Eureka {
 				int registryFetchIntervalSeconds <singleval>;
 				string defaultZone <singleval>;
 				string username<singleval>;
-				string passwrd<singleval>;
+				string password<singleval>;
 			}
 		}
 	}
