@@ -1,5 +1,7 @@
 package com.instantmobility.booking.domain;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import jakarta.persistence.*;
@@ -12,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Table(name = "BOOKING")
 public class Booking {
-	@Id
+    @Id
     @Column(name = "id", columnDefinition = "BINARY(16)")
     private BookingId id;
 
@@ -26,20 +28,32 @@ public class Booking {
     @Column(name = "status", nullable = false)
     private BookingStatus status;
 
+    @Column(name = "payment_id", columnDefinition = "BINARY(16)")
+    private UUID paymentId;
+
+    // Getters, setters
+    public UUID getPaymentId() {
+        return paymentId;
+    }
+
+    public void setPaymentId(UUID paymentId) {
+        this.paymentId = paymentId;
+    }
+
     @Embedded
     private TimeFrame timeFrame;
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "latitude", column = @Column(name = "pickup_latitude")),
-        @AttributeOverride(name = "longitude", column = @Column(name = "pickup_longitude"))
+            @AttributeOverride(name = "latitude", column = @Column(name = "pickup_latitude")),
+            @AttributeOverride(name = "longitude", column = @Column(name = "pickup_longitude"))
     })
     private GeoLocation pickupLocation;
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "latitude", column = @Column(name = "dropoff_latitude")),
-        @AttributeOverride(name = "longitude", column = @Column(name = "dropoff_longitude"))
+            @AttributeOverride(name = "latitude", column = @Column(name = "dropoff_latitude")),
+            @AttributeOverride(name = "longitude", column = @Column(name = "dropoff_longitude"))
     })
     private GeoLocation dropoffLocation;
 
@@ -56,12 +70,27 @@ public class Booking {
             @AttributeOverride(name = "startLongitude", column = @Column(name = "trip_start_longitude")),
             @AttributeOverride(name = "endLatitude", column = @Column(name = "trip_end_latitude")),
             @AttributeOverride(name = "endLongitude", column = @Column(name = "trip_end_longitude")),
-            @AttributeOverride(name = "completed", column = @Column(name = "trip_completed"))
+            @AttributeOverride(name = "completed", column = @Column(name = "trip_completed")),
+
+            @AttributeOverride(name = "distance", column = @Column(name = "trip_distance")),
+            @AttributeOverride(name = "trip_status", column = @Column(name = "trip_status")),
+
+            // TimeFrame overrides
+            @AttributeOverride(name = "timeFrame.startTime", column = @Column(name = "trip_start_time")),
+            @AttributeOverride(name = "timeFrame.endTime", column = @Column(name = "trip_end_time")),
+
+            // startLocation overrides
+            @AttributeOverride(name = "startLocation.latitude", column = @Column(name = "trip_start_latitude")),
+            @AttributeOverride(name = "startLocation.longitude", column = @Column(name = "trip_start_longitude")),
+
+            // endLocation overrides
+            @AttributeOverride(name = "endLocation.latitude", column = @Column(name = "trip_end_latitude")),
+            @AttributeOverride(name = "endLocation.longitude", column = @Column(name = "trip_end_longitude"))
             // If Trip has a status field, add this:
             // @AttributeOverride(name = "status", column = @Column(name = "trip_status"))
     })
     private Trip trip;
-    
+
     public Booking(BookingId id, Long userId, Long vehicleId, TimeFrame timeFrame, GeoLocation pickupLocation) {
         this.id = id;
         this.userId = userId;
@@ -127,25 +156,51 @@ public class Booking {
         status = BookingStatus.CANCELLED;
     }
 
-    private void calculateCost() {
-        // Simple cost calculation based on distance and time
-        double baseFare = 2.50;
-        double perKmRate = 1.25;
-        double perMinuteRate = 0.35;
-
-        double distanceCost = 0;
-        double timeCost = 0;
-
-        if (trip != null) {
-            distanceCost = trip.getDistance() * perKmRate;
+    public void calculateCost(String billingModel, BigDecimal rate) {
+        if (status != BookingStatus.COMPLETED) {
+            throw new IllegalStateException("Cannot calculate cost: trip not completed");
         }
 
-        if (timeFrame.getEndTime() != null) {
-            long minutes = timeFrame.getDuration().toMinutes();
-            timeCost = minutes * perMinuteRate;
+        if (trip == null) {
+            throw new IllegalStateException("Cannot calculate cost: no trip information available");
         }
 
-        cost = baseFare + distanceCost + timeCost;
+        double distanceInKm = trip.getDistanceInKm();
+        long durationInMinutes = trip.getDurationInMinutes();
+
+        BigDecimal calculatedCost;
+        if ("PER_HOUR".equals(billingModel)) {
+            double hours = durationInMinutes / 60.0;
+            calculatedCost = rate.multiply(BigDecimal.valueOf(hours));
+        } else {
+            calculatedCost = rate.multiply(BigDecimal.valueOf(distanceInKm));
+        }
+
+        // Round to 2 decimal places
+        calculatedCost = calculatedCost.setScale(2, RoundingMode.HALF_UP);
+
+        // Set the cost
+        this.cost = calculatedCost.doubleValue();
+    }
+
+    public TripSummary createTripSummary(String billingModel, BigDecimal rate) {
+        if (status != BookingStatus.COMPLETED) {
+            throw new IllegalStateException("Cannot create summary: trip not completed");
+        }
+
+        TripSummary summary = new TripSummary();
+        summary.setBookingId(id.getValue());
+        summary.setCost(BigDecimal.valueOf(cost));
+        summary.setDistanceInKm(trip.getDistanceInKm());
+        summary.setDurationInMinutes(trip.getDurationInMinutes());
+        summary.setBillingModel(billingModel);
+        summary.setRate(rate);
+        summary.setStartTime(timeFrame.getStartTime());
+        summary.setEndTime(timeFrame.getEndTime());
+        summary.setPickupLocation(pickupLocation);
+        summary.setDropoffLocation(dropoffLocation);
+
+        return summary;
     }
 
     public GeoLocation getFinalLocation() {
@@ -159,3 +214,4 @@ public class Booking {
         return null;
     }
 }
+

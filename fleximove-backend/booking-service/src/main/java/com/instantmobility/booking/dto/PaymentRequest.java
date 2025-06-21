@@ -3,7 +3,7 @@ package com.instantmobility.booking.dto;
 import java.math.BigDecimal;
 import java.util.UUID;
 
-public class PaymentRequestDTO {
+public class PaymentRequest {
     private long userId;
     private UUID bookingId;
     private BigDecimal amount;
@@ -12,10 +12,10 @@ public class PaymentRequestDTO {
     private String description;
 
     // Default constructor
-    public PaymentRequestDTO() {}
+    public PaymentRequest() {}
 
     // Constructor with essential fields
-    public PaymentRequestDTO(long userId, UUID bookingId, BigDecimal amount, String description) {
+    public PaymentRequest(long userId, UUID bookingId, BigDecimal amount, String description) {
         this.userId = userId;
         this.bookingId = bookingId;
         this.amount = amount;

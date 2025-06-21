@@ -1,16 +1,16 @@
 package com.instantmobility.booking.controller;
 
-import com.instantmobility.booking.dto.BookingDTO;
-import com.instantmobility.booking.dto.CreateBookingRequest;
-import com.instantmobility.booking.dto.EndTripRequest;
-import com.instantmobility.booking.dto.StartTripRequest;
+import com.instantmobility.booking.domain.TripSummary;
+import com.instantmobility.booking.dto.*;
 import com.instantmobility.booking.service.BookingService;
+import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -35,11 +35,63 @@ public class BookingController {
         return ResponseEntity.ok().build();
     }
 
+//    @PostMapping("/{bookingId}/end")
+//    //TODO: dont send Void back, but some DTO with distance, duration and totalCost to show in the frontend
+//    public ResponseEntity<Void> endTrip(@PathVariable UUID bookingId, @RequestBody EndTripRequest request) {
+//        bookingService.endTrip(bookingId, request);
+//        return ResponseEntity.ok().build();
+//    }
+
     @PostMapping("/{bookingId}/end")
-    //TODO: dont send Void back, but some DTO with distance, duration and totalCost to show in the frontend
-    public ResponseEntity<Void> endTrip(@PathVariable UUID bookingId, @RequestBody EndTripRequest request) {
-        bookingService.endTrip(bookingId, request);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> endTrip(@PathVariable UUID bookingId, @RequestBody EndTripRequest request) {
+        try {
+            TripSummary summary = bookingService.endTrip(bookingId, request);
+            return ResponseEntity.ok(summary);
+        } catch (IllegalStateException e) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to end trip: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{bookingId}/payment")
+    public ResponseEntity<?> processPayment(
+            @PathVariable UUID bookingId,
+            @RequestBody PaymentRequest request) {
+        try {
+            PaymentResponse response = bookingService.processPayment(bookingId, request);
+
+            if ("SUCCESS".equals(response.getStatus())) {
+                return ResponseEntity.ok(Map.of(
+                        "status", "success",
+                        "message", "Payment processed successfully",
+                        "paymentId", response.getPaymentId()
+                ));
+            } else {
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of(
+                                "status", "failed",
+                                "message", response.getMessage()
+                        ));
+            }
+        } catch (ValidationException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to process payment: " + e.getMessage()));
+        }
     }
 
     @PostMapping("/{bookingId}/cancel")

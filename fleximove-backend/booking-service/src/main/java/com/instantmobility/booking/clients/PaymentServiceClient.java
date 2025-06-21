@@ -1,7 +1,7 @@
 package com.instantmobility.booking.clients;
 
-import com.instantmobility.booking.dto.PaymentRequestDTO;
-import com.instantmobility.booking.dto.PaymentResponseDTO;
+import com.instantmobility.booking.dto.PaymentRequest;
+import com.instantmobility.booking.dto.PaymentResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
@@ -9,10 +9,10 @@ import java.util.UUID;
 @FeignClient(name = "payment-service")
 public interface PaymentServiceClient {
     @PostMapping("${paymentService.paymentProcess.endpoint}")
-    PaymentResponseDTO processPayment(@RequestBody PaymentRequestDTO request);
+    PaymentResponse processPayment(@RequestBody PaymentRequest request);
 
     @GetMapping("${paymentService.paymentStatus.endpoint}")
-    PaymentResponseDTO getPaymentStatus(@PathVariable UUID paymentId);
+    PaymentResponse getPaymentStatus(@PathVariable UUID paymentId);
 
     @DeleteMapping("${paymentService.deleteAllPaymentInfoForUser.endpoint}")
     void deletePaymentsByUser(@PathVariable Long userId);

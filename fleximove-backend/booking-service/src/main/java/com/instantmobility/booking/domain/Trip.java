@@ -1,9 +1,11 @@
 package com.instantmobility.booking.domain;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Transient;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,8 @@ public class Trip {
     private double distance;
     private String trip_status;
     private UUID id = UUID.randomUUID();
+    private GeoLocation startLocation;
+    private GeoLocation endLocation;
 
     public Trip(UUID id) {
         this.id = id;
@@ -24,6 +28,8 @@ public class Trip {
         this.distance = 0.0;
         this.trip_status = "IN_PROGRESS";
     }
+    @Embedded
+    private TimeFrame timeFrame;
 
     public void recordLocation(GeoLocation location) {
         if (this.route == null) {
@@ -35,13 +41,9 @@ public class Trip {
 
         route.add(location);
 
-        // Calculate distance if there are at least two points
-        if (route.size() >= 2) {
-            GeoLocation previousLocation = route.get(route.size() - 2);
-            double segmentDistance = calculateDistance(previousLocation, location);
-            distance += segmentDistance;
-        }
     }
+
+
 
     public void complete() {
         if (!"IN_PROGRESS".equals(trip_status)) {
@@ -50,23 +52,39 @@ public class Trip {
         trip_status = "COMPLETED";
     }
 
-    private double calculateDistance(GeoLocation from, GeoLocation to) {
-        if (this.route == null) {
-            this.route = new ArrayList<>();
+    public double getDistanceInKm() {
+        if (startLocation == null || endLocation == null) {
+            return 0;
         }
-        // Simple Haversine formula for distance calculation
-        final int R = 6371; // Radius of the earth in km
 
-        double latDistance = Math.toRadians(to.getLatitude() - from.getLatitude());
-        double lonDistance = Math.toRadians(to.getLongitude() - from.getLongitude());
+        return haversineDistance(
+                startLocation.getLatitude(), startLocation.getLongitude(),
+                endLocation.getLatitude(), endLocation.getLongitude()
+        );
+    }
+
+    public long getDurationInMinutes() {
+        if (timeFrame.getStartTime() == null ||timeFrame.getEndTime() == null) {
+            return 0;
+        }
+
+        return Duration.between(timeFrame.getStartTime(), timeFrame.getEndTime()).toMinutes();
+    }
+
+    private double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
+        // Earth radius in kilometers
+        final int R = 6371;
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
 
         double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-                + Math.cos(Math.toRadians(from.getLatitude())) * Math.cos(Math.toRadians(to.getLatitude()))
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-        return R * c; // Distance in km
+        return R * c;
     }
 
     public UUID getId() {

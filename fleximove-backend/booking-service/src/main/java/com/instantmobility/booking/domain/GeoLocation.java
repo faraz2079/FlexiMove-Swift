@@ -31,4 +31,7 @@ public class GeoLocation {
     public int hashCode() {
         return Objects.hash(latitude, longitude);
     }
+
 }
+
+
