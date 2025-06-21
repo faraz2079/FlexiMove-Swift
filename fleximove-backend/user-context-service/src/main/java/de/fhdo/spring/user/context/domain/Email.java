@@ -16,7 +16,7 @@ public class Email {
 		        Pattern.CASE_INSENSITIVE
 		    );
 
-	 private  String value;
+	 private String value;
 
 	 public Email(String value) {
 		 if (value == null || !EMAIL_PATTERN.matcher(value).matches()) {

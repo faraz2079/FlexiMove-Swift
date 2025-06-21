@@ -56,7 +56,7 @@ public class RatingService {
     }
 
     @Transactional
-    public void deleteAllCustomerRatingsByUser(Long userId) {
+    public void deleteAllCustomerRatings(Long userId) {
         List<RatingProvider> ratedProvider = ratingProviderRepository.findByUserId(userId);
         List<RatingVehicle> ratedVehicles = ratingVehicleRepository.findByUserId(userId);
 

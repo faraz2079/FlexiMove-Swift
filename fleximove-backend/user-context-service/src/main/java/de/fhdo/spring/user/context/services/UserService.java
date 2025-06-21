@@ -38,32 +38,17 @@ public class UserService {
 		this.ratingClient = ratingClient;
 	}
 
-	//Alle User
-	public List<User> getAlleUser() {
-		List<User> user = new ArrayList<User>();
+	public List<User> getAllUser() {
+		List<User> user = new ArrayList();
 		this.userRepository.findAll().forEach(user::add);
 		return user;
 	}
 
-	//User mit ID rausholen
 	public User getUserById(Long id) {
 		 Optional<User> user = this.userRepository.findById(id);
 		 return user.isPresent() ? user.get() : null; 
 	}
-	
-	public User getUserByEmail(String email) {
-	    User user = this.userRepository.findByEmail(new Email(email));
-	    return user != null ? user : null;
-	}
 
-	
-   //User speichern
-	public void saveUser(User user) {
-		userRepository.save(user);
-	}
-	
-	
-	
 	public void deleteUserById(Long userId) {
 	    Optional<User> optionalUser = userRepository.findById(userId);
 	    if (optionalUser.isPresent()) {
@@ -73,8 +58,8 @@ public class UserService {
 	    }
 	}
 
-	public void updatepw(User user, String newPasswordPlaintext) {
-		String hashed = passwordEncoder.encode(newPasswordPlaintext);
+	public void updatepw(User user, String newPassword) {
+		String hashed = passwordEncoder.encode(newPassword);
 		Password pw = new Password(hashed);
 		user.setPassword(pw);
 		userRepository.save(user);
@@ -123,9 +108,8 @@ public class UserService {
 		user.setAddress(address);
 		userRepository.save(user);
 	}
-	
-	//Company-Name ändern
-	public void updtaecompanyname(Provider provider, String companyName) {
+
+	public void updateCompanyName(Provider provider, String companyName) {
 		provider.setCompanyName(companyName);
 		userRepository.save(provider);
 	}
@@ -137,9 +121,7 @@ public class UserService {
 	        Provider provider = (Provider) optionalUser.get();
 	        return provider.getCompanyName();
 	    }
-
-	    // Optional: Fehlerbehandlung oder null zurückgeben
-	    return null;
+		return null;
 	}
 
 	public boolean isPasswordCorrect(User user, String inputPassword) {

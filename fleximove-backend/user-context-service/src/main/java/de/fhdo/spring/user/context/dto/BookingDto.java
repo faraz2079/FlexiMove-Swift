@@ -1,13 +1,14 @@
 package de.fhdo.spring.user.context.dto;
 
+import lombok.Data;
+
 import java.util.UUID;
 
+@Data
 public class BookingDto {
     private UUID id;
-    private UUID userId;
-    private UUID carId;
+    private Long userId;
+    private Long vehicleId;
     private String startDate;
     private String endDate;
-
-    // Getter & Setter
 }

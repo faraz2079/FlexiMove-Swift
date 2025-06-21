@@ -17,16 +17,16 @@ public class PaymentInfo {
 
     public PaymentInfo(String creditCardNumber, String cardHolderName, String expiryDate, String cvv) {
         if (creditCardNumber == null || creditCardNumber.trim().isEmpty()) {
-            throw new IllegalArgumentException("Kreditkartennummer darf nicht leer sein");
+            throw new IllegalArgumentException("Credit card number must not be empty");
         }
         if (cardHolderName == null || cardHolderName.trim().isEmpty()) {
-            throw new IllegalArgumentException("Karteninhaber darf nicht leer sein");
+            throw new IllegalArgumentException("Cardholder must not be empty");
         }
         if (expiryDate == null || expiryDate.trim().isEmpty()) {
-            throw new IllegalArgumentException("Ablaufdatum darf nicht leer sein");
+            throw new IllegalArgumentException("Expiration date must not be empty");
         }
         if (cvv == null || cvv.trim().isEmpty()) {
-            throw new IllegalArgumentException("CVV darf nicht leer sein");
+            throw new IllegalArgumentException("CVV must not be empty");
         }
         this.creditCardNumber = creditCardNumber;
         this.cardHolderName = cardHolderName;

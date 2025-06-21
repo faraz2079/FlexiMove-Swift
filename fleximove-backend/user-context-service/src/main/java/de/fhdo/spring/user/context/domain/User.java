@@ -1,11 +1,8 @@
 package de.fhdo.spring.user.context.domain;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-
 
 @Entity
 @Data

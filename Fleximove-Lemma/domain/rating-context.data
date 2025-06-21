@@ -1,4 +1,6 @@
 context Rating {
+    
+    //Entity
     structure RatingProvider<entity> {
         long id<identifier>, //GeneratedValue
         long providerId<neverEmpty>,
@@ -8,6 +10,7 @@ context Rating {
         date timestamp //initialized with current time on creation
     }
 
+    //Entity
     structure RatingVehicle<entity> {
         long id<identifier>, //GeneratedValue
         long vehicleId<neverEmpty>,
@@ -17,21 +20,35 @@ context Rating {
         date timestamp //initialized with current time
     }
 
+    collection RatingProviderList {RatingProvider ratingProvider}
+
+    collection RatingVehicleList {RatingVehicle ratingVehicle}
+
     structure RatingProviderRepository<repository> {
         //function Optional<Double> findAverageScoreByProviderId(long providerId)
-        function double findAverageScoreByProviderId(long providerId)
+        function double findAverageScoreByProviderId(long providerId),
+        procedure deleteByUserId(long userId),
+        function RatingProviderList findByProviderId(long providerId),
+        function RatingProviderList findByUserId(long userId)
     }
 
     structure RatingVehicleRepository<repository> {
         //function Optional<Double> findAverageScoreByVehicleId(long vehicleId)
-        function double findAverageScoreByVehicleId(long vehicleId)
+        function double findAverageScoreByVehicleId(long vehicleId),
+        procedure deleteByUserId(long userId),
+        procedure deleteByVehicleId(long vehicleId),
+        function RatingVehicleList findByVehicleId(long vehicleId),
+        function RatingVehicleList findByUserId(long userId)
     }
 
     structure RatingService<applicationService> {
         function RatingVehicle rateVehicle(RatingVehicle rating),
         function RatingProvider rateProvider(RatingProvider rating),
         function double getAverageRatingForVehicle(long vehicleId),
-        function double getAverageRatingForProvider(long providerId)
+        function double getAverageRatingForProvider(long providerId),
+        procedure deleteAllCustomerRatings(long userId), //Transactional
+        procedure deleteAllProviderRatings(long providerId),
+        procedure deleteAllVehicleRatings(long vehicleId)
     }
 
 }

@@ -1,11 +1,9 @@
 package de.fhdo.spring.user.context.services;
 
-import de.fhdo.spring.user.context.clients.BookingClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import de.fhdo.spring.user.context.domain.Email;
 import de.fhdo.spring.user.context.domain.Password;
 import de.fhdo.spring.user.context.domain.User;
 import de.fhdo.spring.user.context.repository.UserRepository;

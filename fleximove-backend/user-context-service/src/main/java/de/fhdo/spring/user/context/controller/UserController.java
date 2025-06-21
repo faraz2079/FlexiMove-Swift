@@ -1,4 +1,4 @@
-package de.fhdo.spring.user.context.controllers;
+package de.fhdo.spring.user.context.controller;
 
 import java.util.List;
 
@@ -33,11 +33,9 @@ public class UserController {
         this.registrationService = registrationService;
     }
 
-
-	// Alle User abrufen
 	@GetMapping
-	public List<User> getAlleUser() {
-		return userService.getAlleUser();
+	public List<User> getAllUser() {
+		return userService.getAllUser();
 	}
 
 	// User nach ID abrufen
@@ -142,7 +140,7 @@ public class UserController {
 		User user = userService.getUserById(id);
 		if (user instanceof Provider) {
 			Provider provider = (Provider) user;
-			userService.updtaecompanyname(provider, newCompanyName);
+			userService.updateCompanyName(provider, newCompanyName);
 		}
 	}
 	

@@ -1,0 +1,132 @@
+context UserContext {
+
+    // Entity 
+    // Table(name = simpleUser) 
+    structure User<entity, aggregate> {
+        long id<identifier>, //GeneratedValue
+        Address address<part>,
+        Password password<part>,
+        Email email<part>, 
+        string  phoneNumber, 
+        PaymentInfo paymentInfo<part>,
+        boolean isRegistered
+    }
+
+    structure Email<valueObject> {
+        immutable string value<neverEmpty> 
+    }
+
+    structure Password<valueObject> {
+        immutable string value<neverEmpty>
+    }
+
+    structure Address<valueObject> {
+        immutable string street<neverEmpty>, 
+        immutable string city<neverEmpty>,
+        immutable string streetNumber<neverEmpty>,
+        immutable string zipCode<neverEmpty>,
+        immutable string country<neverEmpty>
+    }
+
+    structure PaymentInfo<valueObject> {
+        immutable string creditCardNumber<neverEmpty>,
+        immutable string cardHolderName<neverEmpty>,
+        immutable string expiryDate<neverEmpty>,
+        immutable string cvv<neverEmpty>
+    }
+
+    enum DriverLicenseType {
+        A, B, C, D, E
+    }
+
+    structure Customer<entity> extends User {
+        string firstName,
+        string lastName,
+        string dateOfBirth,
+        DriverLicenseType driverLicenseType
+    }
+
+    structure Provider<entity> extends User {
+        string companyName
+    }
+
+    //DTO
+    structure BookingDto<valueObject> {
+        immutable long id, //UUID
+        immutable long userId,
+        immutable long vehicleId,
+        immutable string startDate,
+        immutable string endDate
+    }
+
+    //DTO
+    structure LoginRequest<valueObject> {
+        immutable string email,
+        immutable string password
+    }
+
+    //DTO
+    structure PasswordChangeRequest<valueObject> {
+        immutable string oldPassword,
+        immutable string newPassword
+    }
+
+    //DTO
+    structure PersonalInfoUpdateRequest<valueObject> {
+        immutable  string firstName,
+        immutable string lastName,
+        immutable date dateOfBirth,
+        immutable string phoneNumber,
+        immutable DriverLicenseType driverLicenseType
+    }
+
+    //DTO
+    structure ProviderPersonalInfoUpdateRequest<valueObject> {
+        immutable string companyName,
+        immutable string phoneNumber
+    }
+
+    structure BookingClient<infrastructureService> {
+        procedure deleteUserBookings(long userId)
+    }
+
+    structure RatingClient<infrastructureService> {
+        procedure deleteCustomerRatingsByUserId(long customerId),
+        procedure deleteAllProviderRatings(long providerId)
+    }
+
+    structure VehicleClient<infrastructureService> {
+        procedure deleteVehicle(long deleteForProviderId)
+    }
+
+    structure UserRepository<repository> {
+        function User findByEmail(Email email)    
+    }
+
+    structure LoginService<applicationService> {
+        function User login(string email, string password)
+    }
+
+    structure RegistrationService<applicationService> {
+        procedure registerUser(User user)
+    }
+
+    collection UserList {User user}
+
+    structure UserService<applicationService> {
+        function UserList getAllUser,
+        function User getUserById(long userId),
+        procedure deleteUserById(long userId),
+        procedure updatepw(User user, string newPassword),
+        procedure updateEmail(User user, string newEmail),
+        function boolean emailExists(string newEmail),
+        procedure updatePersonalInfo(User user, PersonalInfoUpdateRequest request),
+        procedure updateProviderPersonalInfo(User user, ProviderPersonalInfoUpdateRequest request),
+        procedure updatePaymentInfo(User user, PaymentInfo newInfo),
+        procedure updateAddress(User user, Address address),
+        procedure updateCompanyName(Provider provider, string companyName),
+        function string getCompanyNameById(long id),
+        function boolean isPasswordCorrect(User user, string inputPassword),
+        procedure deleteUserAndDependencies(long userId) //Transactional
+    }
+}

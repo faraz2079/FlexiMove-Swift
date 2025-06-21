@@ -40,7 +40,7 @@ public class RatingController {
 
     @DeleteMapping("/customerRatings/{customerId}/deleteAll")
     public ResponseEntity<Void> deleteCustomerRatingsByUserId(@PathVariable Long customerId) {
-        ratingService.deleteAllCustomerRatingsByUser(customerId);
+        ratingService.deleteAllCustomerRatings(customerId);
         return ResponseEntity.noContent().build();
     }
 

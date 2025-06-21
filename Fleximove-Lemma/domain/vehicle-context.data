@@ -1,5 +1,6 @@
 context VehicleContext {
 
+    //Entity
     structure Vehicle<entity, aggregate> {
         long id<identifier>, //GeneratedValue
         IdentificationNumber identificationNumber<part>,
@@ -85,6 +86,8 @@ context VehicleContext {
         immutable string identificationNumber,
         immutable string vehicleModel,
         immutable string vehicleType,
+        immutable string vehicleStatus,
+        immutable string address,
         immutable double priceAmount,
         immutable string billingModel,
         immutable int minAge,
@@ -168,8 +171,8 @@ context VehicleContext {
         //hide immutable RatingServiceClient ratingServiceClient,
         procedure registerNewVehicle(VehicleRequest request, long providerId),
         //function Optional<Vehicle> fetchVehicleById(long id),
-        procedure deleteVehicle(long id),
-        procedure deleteAllVehiclesByProviderId(long providerId),
+        procedure deleteVehicle(long id), //Transactional
+        procedure deleteAllVehiclesByProviderId(long providerId), //Transactional
         function NearestAvailableVehicleResponseList findAvailableNearbyVehicles(Location neededLocationWithAvailableVehicles, double radiusInKm),
         function ProviderVehicleResponseList listProviderVehiclesWithRatings(long providerId),
         procedure updateVehicleStatus(long vehicleId, VehicleStatus newStatus),
@@ -200,10 +203,15 @@ context VehicleContext {
 
     structure RatingServiceClient<infrastructureService> {
         function double getAverageRatingForVehicle(long vehicleId),
-        function double getAverageRatingForProvider(long providerId)
+        function double getAverageRatingForProvider(long providerId),
+        procedure deleteRatingsByVehicleId(long vehicleId)
     }
 
     structure UserServiceClient<infrastructureService> {
         function string getProviderCompanyName(long providerId)
+    }
+
+    structure BookingServiceClient<infrastructureService> {
+        procedure deleteBookingsByVehicleId(long vehicleId)
     }
 }
