@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -24,9 +25,29 @@ public class BookingController {
     }
 
     @PostMapping
-    public ResponseEntity<UUID> createBooking(@RequestBody CreateBookingRequest request) {
-        UUID bookingId = bookingService.createBooking(request);
-        return new ResponseEntity<>(bookingId, HttpStatus.CREATED);
+    public ResponseEntity<?> createBooking(@RequestBody CreateBookingRequest request) {
+        try {
+            UUID bookingId = bookingService.createBooking(request);
+
+            // Return success response with booking ID and validation message
+            Map<String, Object> response = new HashMap<>();
+            response.put("bookingId", bookingId);
+            response.put("message", "User is eligible to drive this vehicle. Booking created successfully.");
+
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (ValidationException e) {
+            // Return validation error
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        } catch (Exception e) {
+            // Return other errors
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", e.getMessage());
+
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/{bookingId}/start")
