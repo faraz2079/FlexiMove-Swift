@@ -204,6 +204,19 @@ public class VehicleService {
         vehicleRepository.save(vehicleToUpdate);
     }
 
+    public BillingInfo getBillingModel(Long vehicleId) {
+        Vehicle vehicle = vehicleRepository.findById(vehicleId)
+                .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with ID: " + vehicleId));
+
+        Price price = vehicle.getVehiclePrice();
+        BillingInfo billingInfo = new BillingInfo();
+        billingInfo.setBillingModel(price.getBillingModel().name());
+        billingInfo.setRate(price.getAmount());
+
+        return billingInfo;
+    }
+
+
     private void updateIdentificationNumberIfPresent(Vehicle vehicle, EditVehicleRequest request) {
         if (request.getIdentificationNumber() != null && !request.getIdentificationNumber().equals(vehicle.getIdentificationNumber().getIdentNumber())) {
             String newIdent = request.getIdentificationNumber();

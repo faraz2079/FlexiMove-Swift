@@ -1,6 +1,5 @@
 package com.payment.service.service.DTO;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 public class PaymentResponseDTO {
@@ -9,7 +8,7 @@ public class PaymentResponseDTO {
     private String message;
 
     private UUID bookingId;
-    private BigDecimal amount;
+    private double amount;
     private String currency;
     private String description;
 
@@ -21,11 +20,11 @@ public class PaymentResponseDTO {
         this.bookingId = bookingId;
     }
 
-    public BigDecimal getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -46,7 +45,7 @@ public class PaymentResponseDTO {
     }
 
     public PaymentResponseDTO(UUID paymentId, String paymentStatus, String message,
-                              UUID bookingId, BigDecimal amount, String currency, String description) {
+                              UUID bookingId, double amount, String currency, String description) {
         this.paymentId = paymentId;
         this.paymentStatus = paymentStatus;
         this.message = message;

@@ -21,6 +21,8 @@ public class Trip {
     private UUID id = UUID.randomUUID();
     private GeoLocation startLocation;
     private GeoLocation endLocation;
+    @Embedded
+    private TimeFrame timeFrame;
 
     public Trip(UUID id) {
         this.id = id;
@@ -28,8 +30,6 @@ public class Trip {
         this.distance = 0.0;
         this.trip_status = "IN_PROGRESS";
     }
-    @Embedded
-    private TimeFrame timeFrame;
 
     public void recordLocation(GeoLocation location) {
         if (this.route == null) {
@@ -42,8 +42,6 @@ public class Trip {
         route.add(location);
 
     }
-
-
 
     public void complete() {
         if (!"IN_PROGRESS".equals(trip_status)) {

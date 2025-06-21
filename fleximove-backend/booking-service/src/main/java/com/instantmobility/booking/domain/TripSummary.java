@@ -1,19 +1,15 @@
-
-
-
 package com.instantmobility.booking.domain;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class TripSummary {
     private UUID bookingId;
-    private BigDecimal cost;
+    private double cost;
     private double distanceInKm;
     private long durationInMinutes;
     private String billingModel;
-    private BigDecimal rate;
+    private double rate;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private GeoLocation pickupLocation;
@@ -23,7 +19,7 @@ public class TripSummary {
         return bookingId;
     }
 
-    public BigDecimal getCost() {
+    public double getCost() {
         return cost;
     }
 
@@ -39,7 +35,7 @@ public class TripSummary {
         return billingModel;
     }
 
-    public BigDecimal getRate() {
+    public double getRate() {
         return rate;
     }
 
@@ -64,7 +60,7 @@ public class TripSummary {
         this.bookingId = bookingId;
     }
 
-    public void setCost(BigDecimal cost) {
+    public void setCost(double cost) {
         this.cost = cost;
     }
 
@@ -80,7 +76,7 @@ public class TripSummary {
         this.billingModel = billingModel;
     }
 
-    public void setRate(BigDecimal rate) {
+    public void setRate(double rate) {
         this.rate = rate;
     }
 

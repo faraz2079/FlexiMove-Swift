@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -30,15 +31,6 @@ public class Booking {
 
     @Column(name = "payment_id", columnDefinition = "BINARY(16)")
     private UUID paymentId;
-
-    // Getters, setters
-    public UUID getPaymentId() {
-        return paymentId;
-    }
-
-    public void setPaymentId(UUID paymentId) {
-        this.paymentId = paymentId;
-    }
 
     @Embedded
     private TimeFrame timeFrame;
@@ -86,8 +78,6 @@ public class Booking {
             // endLocation overrides
             @AttributeOverride(name = "endLocation.latitude", column = @Column(name = "trip_end_latitude")),
             @AttributeOverride(name = "endLocation.longitude", column = @Column(name = "trip_end_longitude"))
-            // If Trip has a status field, add this:
-            // @AttributeOverride(name = "status", column = @Column(name = "trip_status"))
     })
     private Trip trip;
 
@@ -139,9 +129,6 @@ public class Booking {
         status = BookingStatus.COMPLETED;
 
         dropoffLocation = endLocation;
-
-        // Calculate cost based on distance and duration
-        //calculateCost();
     }
 
     public void cancel() {
@@ -156,7 +143,7 @@ public class Booking {
         status = BookingStatus.CANCELLED;
     }
 
-    public void calculateCost(String billingModel, BigDecimal rate) {
+    public void calculateCost(String billingModel, double rate) {
         if (status != BookingStatus.COMPLETED) {
             throw new IllegalStateException("Cannot calculate cost: trip not completed");
         }
@@ -168,29 +155,29 @@ public class Booking {
         double distanceInKm = trip.getDistanceInKm();
         long durationInMinutes = trip.getDurationInMinutes();
 
-        BigDecimal calculatedCost;
+        double calculatedCost;
         if ("PER_HOUR".equals(billingModel)) {
             double hours = durationInMinutes / 60.0;
-            calculatedCost = rate.multiply(BigDecimal.valueOf(hours));
+            calculatedCost = rate * hours;
         } else {
-            calculatedCost = rate.multiply(BigDecimal.valueOf(distanceInKm));
+            calculatedCost = rate * distanceInKm;
         }
 
         // Round to 2 decimal places
-        calculatedCost = calculatedCost.setScale(2, RoundingMode.HALF_UP);
+        calculatedCost = Math.round(calculatedCost * 100.0) / 100.0;
 
         // Set the cost
-        this.cost = calculatedCost.doubleValue();
+        this.cost = calculatedCost;
     }
 
-    public TripSummary createTripSummary(String billingModel, BigDecimal rate) {
+    public TripSummary createTripSummary(String billingModel, double rate) {
         if (status != BookingStatus.COMPLETED) {
             throw new IllegalStateException("Cannot create summary: trip not completed");
         }
 
         TripSummary summary = new TripSummary();
         summary.setBookingId(id.getValue());
-        summary.setCost(BigDecimal.valueOf(cost));
+        summary.setCost(cost);
         summary.setDistanceInKm(trip.getDistanceInKm());
         summary.setDurationInMinutes(trip.getDurationInMinutes());
         summary.setBillingModel(billingModel);

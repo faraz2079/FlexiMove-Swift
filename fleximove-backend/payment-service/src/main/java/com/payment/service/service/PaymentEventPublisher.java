@@ -1,7 +1,7 @@
 package com.payment.service.service;
+
 import com.payment.service.domain.entity.Payment;
 import org.springframework.stereotype.Component;
-
 
 // Kafka Mock
 // for real kafka implentation we should implement the kafka template

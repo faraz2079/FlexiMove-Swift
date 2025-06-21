@@ -143,6 +143,12 @@ context VehicleContext {
     }
 
     //DTO
+    structure BillingInfo<valueObject> {
+        immutable string billingModel,
+        immutable double rate
+    }
+
+    //DTO
     structure VehicleRequest<valueObject> {
         immutable string identificationNumber,
         immutable string vehicleType,

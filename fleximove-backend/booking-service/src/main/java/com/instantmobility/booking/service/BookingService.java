@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -33,8 +32,8 @@ public class BookingService {
     }
 
 
+    @Transactional
     public UUID createBooking(CreateBookingRequest request) {
-
         validateUserForVehicle(request);
         // Create booking domain object
         BookingId bookingId = BookingId.generate();
@@ -42,8 +41,7 @@ public class BookingService {
         GeoLocation pickupLocation = new GeoLocation(request.getPickupLatitude(), request.getPickupLongitude());
 
         Booking booking = new Booking(bookingId, request.getUserId(), request.getVehicleId(), timeFrame, pickupLocation);
-        //TODO in real application: check whether user fulfills the vehicle restrictions; request to the vehicleServiceClient
-        //TODO for now: only check whether the user has neccessary license and his age
+
         booking.confirm();
 
         if (booking.getStatus() == BookingStatus.CONFIRMED) {
@@ -80,6 +78,7 @@ public class BookingService {
         }
     }
 
+    @Transactional
     public void startTrip(UUID bookingId, StartTripRequest request) {
         Booking booking = getBookingById(bookingId);
 
@@ -92,42 +91,6 @@ public class BookingService {
         }
         bookingRepository.save(booking);
     }
-
-//    public void endTrip(UUID bookingId, EndTripRequest request) {
-//        Booking booking = getBookingById(bookingId);
-//
-//        GeoLocation endLocation = new GeoLocation(request.getEndLatitude(), request.getEndLongitude());
-//        LocalDateTime endTime = request.getEndTime() != null ? request.getEndTime() : LocalDateTime.now();
-//
-//        booking.endTrip(endLocation, endTime);
-//
-//        // Get billing info from vehicle service
-//
-//
-//        //TODO: trigger Vehicle Service to get data about billing model and price
-//        //TODO: totalCost = trigger Payment Service and send to it duration, distance, price and bbilling model
-//        // Get billing info from vehicle service
-//        BillingInfo billingInfo = vehicleService.getBillingInfo(booking.getVehicleId());
-//
-//
-//
-//
-//        try {
-//            //processPaymentForBooking(booking);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Payment failed for booking " + bookingId + ": " + e.getMessage(), e);
-//        }
-//
-//        if (booking.getStatus() == BookingStatus.COMPLETED) {
-//            try {
-//                updateVehicleLocationAndStatus(booking.getVehicleId(), endLocation);
-//            } catch (Exception e) {
-//                throw new RuntimeException("Failed to update vehicle location or status for booking " + bookingId + ": " + e.getMessage(), e);
-//            }
-//        }
-//
-//        bookingRepository.save(booking);
-//    }
 
     @Transactional
     public TripSummary endTrip(UUID bookingId, EndTripRequest request) {
@@ -149,6 +112,10 @@ public class BookingService {
                 billingInfo.getBillingModel(),
                 billingInfo.getRate()
         );
+
+        if (booking.getStatus() == BookingStatus.COMPLETED) {
+            vehicleServiceClient.updateVehicleStatus(booking.getVehicleId(), VehicleStatus.AVAILABLE);
+        }
 
         // Save booking with updated cost
         bookingRepository.save(booking);
@@ -176,8 +143,7 @@ public class BookingService {
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setBookingId(bookingId);
         paymentRequest.setUserId(request.getUserId());
-        paymentRequest.setAmount(BigDecimal.valueOf(booking.getCost()));
-        paymentRequest.setPaymentMethod(request.getPaymentMethod());
+        paymentRequest.setAmount(booking.getCost());
         paymentRequest.setDescription("Payment for booking " + bookingId);
 
         // Call payment service
@@ -193,6 +159,7 @@ public class BookingService {
         return response;
     }
 
+    @Transactional
     public void cancelBooking(UUID bookingId) {
         Booking booking = getBookingById(bookingId);
         booking.cancel();
@@ -216,7 +183,7 @@ public class BookingService {
         PaymentRequest paymentRequest = new PaymentRequest();
         paymentRequest.setUserId(booking.getUserId());
         paymentRequest.setBookingId(booking.getId().getValue());
-        paymentRequest.setAmount(BigDecimal.valueOf(booking.getCost()));
+        paymentRequest.setAmount(booking.getCost());
         paymentRequest.setDescription("Ride payment for booking " + booking.getId().getValue());
 
         try {

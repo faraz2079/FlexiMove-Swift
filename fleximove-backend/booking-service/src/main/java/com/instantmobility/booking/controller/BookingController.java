@@ -24,7 +24,7 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    @PostMapping
+    @PostMapping("/createNewBooking")
     public ResponseEntity<?> createBooking(@RequestBody CreateBookingRequest request) {
         try {
             UUID bookingId = bookingService.createBooking(request);
@@ -55,13 +55,6 @@ public class BookingController {
         bookingService.startTrip(bookingId, request);
         return ResponseEntity.ok().build();
     }
-
-//    @PostMapping("/{bookingId}/end")
-//    //TODO: dont send Void back, but some DTO with distance, duration and totalCost to show in the frontend
-//    public ResponseEntity<Void> endTrip(@PathVariable UUID bookingId, @RequestBody EndTripRequest request) {
-//        bookingService.endTrip(bookingId, request);
-//        return ResponseEntity.ok().build();
-//    }
 
     @PostMapping("/{bookingId}/end")
     public ResponseEntity<?> endTrip(@PathVariable UUID bookingId, @RequestBody EndTripRequest request) {

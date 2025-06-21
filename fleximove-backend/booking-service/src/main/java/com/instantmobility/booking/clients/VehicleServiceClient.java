@@ -7,9 +7,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.util.UUID;
-
 @FeignClient(name = "vehicleService")
 public interface VehicleServiceClient {
     @PatchMapping("${vehicleService.updateVehicleStatus.endpoint}")
@@ -18,7 +15,7 @@ public interface VehicleServiceClient {
     @PatchMapping("${vehicleService.vehicleUpdateLocation.endpoint}")
     ResponseEntity<Void> updateVehicleLocation(@PathVariable Long vehicleId, @RequestBody GeoLocation locationData);
 
-    @GetMapping("/api/vehicles/{vehicleId}/billing")
+    @GetMapping("${vehicleService.billingInfo.endpoint}")
     BillingInfo getBillingInfo(@PathVariable Long vehicleId);
 }
 

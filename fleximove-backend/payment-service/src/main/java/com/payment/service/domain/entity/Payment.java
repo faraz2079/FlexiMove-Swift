@@ -2,9 +2,9 @@ package com.payment.service.domain.entity;
 
 import com.payment.service.domain.enums.BillingModel;
 import com.payment.service.domain.enums.PaymentStatus;
+import com.payment.service.domain.valueObject.Amount;
 import jakarta.persistence.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ public class Payment {
     private UUID bookingId;
     private Long userId;
 
-    private BigDecimal amount;
+    private Amount amount;
 
     private String currency;
 
@@ -56,11 +56,11 @@ public class Payment {
         this.userId = userId;
     }
 
-    public BigDecimal getAmount() {
+    public Amount getAmount() {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(Amount amount) {
         this.amount = amount;
     }
 

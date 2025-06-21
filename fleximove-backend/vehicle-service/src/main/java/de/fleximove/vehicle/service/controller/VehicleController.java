@@ -1,10 +1,10 @@
 package de.fleximove.vehicle.service.controller;
 
+import de.fleximove.vehicle.service.domain.valueobject.BillingModel;
 import de.fleximove.vehicle.service.domain.valueobject.Location;
+import de.fleximove.vehicle.service.domain.valueobject.Price;
 import de.fleximove.vehicle.service.domain.valueobject.VehicleStatus;
-import de.fleximove.vehicle.service.dto.EditVehicleRequest;
-import de.fleximove.vehicle.service.dto.NearestAvailableVehicleResponse;
-import de.fleximove.vehicle.service.dto.ProviderVehicleResponse;
+import de.fleximove.vehicle.service.dto.*;
 import de.fleximove.vehicle.service.services.GeocodingService;
 import feign.FeignException;
 import jakarta.persistence.EntityNotFoundException;
@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import de.fleximove.vehicle.service.services.VehicleService;
-import de.fleximove.vehicle.service.dto.VehicleRequest;
 
 import java.util.List;
 
@@ -146,4 +145,19 @@ public class VehicleController {
         );
         return ResponseEntity.ok().build();
     }
+
+    //Request kommt aus dem BookingService
+    @GetMapping("/{vehicleId}/billing")
+    public ResponseEntity<?> getBillingInfo(@PathVariable Long vehicleId) {
+        try {
+            BillingInfo billingModel = vehicleService.getBillingModel(vehicleId);
+            return ResponseEntity.ok(billingModel);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal error");
+        }
+    }
+
+
 }

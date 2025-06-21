@@ -9,7 +9,6 @@ import java.util.UUID;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, UUID> {
-    void deletePaymentInfoByUserId(Long userId);
     List<Payment> findByUserId(Long userId);
     List<Payment> findByBookingId(UUID bookingId);
 }

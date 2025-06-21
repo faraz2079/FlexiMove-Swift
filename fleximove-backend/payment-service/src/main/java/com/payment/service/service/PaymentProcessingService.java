@@ -3,11 +3,11 @@ package com.payment.service.service;
 import com.payment.service.domain.entity.Payment;
 import com.payment.service.domain.enums.PaymentStatus;
 import com.payment.service.domain.repo.PaymentRepository;
+import com.payment.service.domain.valueObject.Amount;
 import com.payment.service.infrastructure.PaymentGatewayClient;
 import com.payment.service.service.DTO.PaymentRequestDTO;
 import com.payment.service.service.DTO.PaymentResponseDTO;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,7 +34,7 @@ public class PaymentProcessingService {
         Payment payment = new Payment();
         payment.setBookingId(dto.getBookingId());
         payment.setUserId(dto.getUserId());
-        payment.setAmount(dto.getAmount());
+        payment.setAmount(new Amount(dto.getAmount()));
         payment.setCurrency(dto.getCurrency());
         payment.setDescription(dto.getDescription());
         payment.setTimestamp(LocalDateTime.now());
@@ -62,13 +62,12 @@ public class PaymentProcessingService {
                 saved.getPaymentStatus() == PaymentStatus.COMPLETED ?
                         "Payment successful" : "Payment failed",
                 saved.getBookingId(),
-                saved.getAmount(),
+                saved.getAmount().getAmountValue(),
                 saved.getCurrency(),
                 saved.getDescription()
         );
     }
 
-    @Transactional
     public void deletePaymentsByUserId(Long userId) {
         List<Payment> payments = paymentRepository.findByUserId(userId);
 
@@ -79,7 +78,6 @@ public class PaymentProcessingService {
         paymentRepository.deleteAll(payments);
     }
 
-    @Transactional
     public void deletePaymentsByBookingId(UUID bookingId) {
         List<Payment> payments = paymentRepository.findByBookingId(bookingId);
 

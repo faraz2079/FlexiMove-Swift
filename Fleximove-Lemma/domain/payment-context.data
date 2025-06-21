@@ -1,0 +1,72 @@
+context PaymentContext {
+
+    //Entity
+    structure Payment<entity, aggregate> {
+        string paymentId<identifier>, //UUID, GeneratedValue
+        string bookingId, //UUID
+        long userId,
+        Amount amount<part>,
+        string currency,
+        string description,
+        PaymentStatus paymentStatus, //Default-value is PaymentStatus.PENDING
+        BillingModel billingModel,
+        date timestamp //initialized with current time on creation
+    }
+
+    structure Amount<valueObject> {
+        immutable double amount
+    }
+
+    enum PaymentStatus {
+        PENDING,
+        COMPLETED,
+        FAILED
+    }
+
+    enum BillingModel {
+        PER_BOOKING,
+        PER_KM,
+        SUBSCRIPTION
+    }
+
+    collection PaymentList {Payment payment}
+
+     structure PaymentRepository<repository> {
+        function PaymentList findByUserId(long userId),
+        function PaymentList findByBookingId(string bookingId) //UUID
+    }
+
+    structure PaymentGatewayClient<infrastructureService> {
+        function boolean charge(Payment payment)
+    }
+
+    //DTO
+    structure PaymentRequestDTO<valueObject> {
+        immutable long userId,
+        immutable string bookingId, // UUID
+        immutable double amount,
+        immutable string currency,
+        immutable string description
+    }
+
+    //DTO
+    structure PaymentResponseDTO<valueObject> {
+        immutable string paymentId, //UUID
+        immutable string paymentStatus,
+        immutable string message,
+        immutable string bookingId, //UUID
+        immutable double amount,
+        immutable string currency,
+        immutable string description
+    }
+
+    structure PaymentEventPublisher<infrastructureService> {
+        procedure publishPaymentProcessed(Payment payment)
+    }
+
+    structure PaymentProcessingService<applicationService> {
+        procedure deletePaymentsByUserId(long userId),
+        procedure deletePaymentsByBookingId(string bookingId),
+        function PaymentResponseDTO processPayment(PaymentRequestDTO dto)
+    }
+}

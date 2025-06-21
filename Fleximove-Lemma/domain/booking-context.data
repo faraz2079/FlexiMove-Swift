@@ -1,0 +1,183 @@
+
+context BookingContext {
+
+    //Entity
+    //Table(name = "BOOKING")
+    structure Booking <entity, aggregate> {
+        BookingId id <identifier, part>,
+        long userId,
+        long vehicleId,
+        BookingStatus status,
+        TimeFrame timeFrame<part>,
+        GeoLocation pickupLocation<part>,
+        GeoLocation dropoffLocation<part>,
+        double cost,
+        Trip trip<part>,
+        procedure confirm,
+        procedure startTrip(GeoLocation startLocation, date startTime),
+        procedure endTrip(GeoLocation endLocation, date endTime),
+        procedure cancel,
+        function GeoLocation getFinalLocation
+    }
+
+    enum BookingStatus {
+        CREATED,
+        CONFIRMED,
+        STARTED,
+        COMPLETED,
+        CANCELLED,
+        PAID
+    }
+
+    enum VehicleStatus {
+        AVAILABLE,
+        BOOKED,
+        IN_USE,
+        MAINTENANCE,
+        RETIRED
+    }
+
+    structure BookingId <valueObject> {
+        immutable string value<neverEmpty> //UUID
+    }
+
+    structure GeoLocation <valueObject> {
+        immutable double latitude,
+        immutable double longitude
+    }
+
+    structure TimeFrame <valueObject> {
+        immutable date startTime<neverEmpty>,
+        immutable date endTime
+    }
+
+   structure Trip<valueObject> {
+        immutable string id, //UUID
+        immutable GeoLocation startLocation,
+        immutable GeoLocation endLocation,
+        immutable double distance = 0.0,
+        immutable string trip_status = "IN_PROGRESS",
+        immutable TimeFrame timeFrame,
+        hide function double haversineDistance(double lat1, double lon1, double lat2, double lon2)<sideEffectFree>
+    }
+
+    //DTO
+    structure TripSummary<valueObject>{
+        immutable string bookingId, //UUID
+        immutable double cost,
+        immutable double distanceInKm,
+        immutable long durationInMinutes,
+        immutable string billingModel,
+        immutable double rate,
+        immutable date startTime,
+        immutable date endTime,
+        immutable GeoLocation pickupLocation,
+        immutable GeoLocation dropoffLocation
+    }
+
+    //DTO
+    structure BillingInfo<valueObject> {
+        immutable string billingModel,
+        immutable double rate
+    }
+
+    //DTO
+    structure BookingDTO<valueObject> {
+        immutable string id, //UUID
+        immutable long userId,
+        immutable long vehicleId,
+        immutable string status,
+        immutable date startTime,
+        immutable date endTime,
+        immutable double pickupLatitude,
+        immutable double pickupLongitude,
+        immutable double dropoffLatitude,
+        immutable double dropoffLongitude,
+        immutable double cost,
+        immutable double distance
+    }
+
+    //DTO
+    structure CreateBookingRequest<valueObject> {
+        immutable long userId,
+        immutable long vehicleId,
+        immutable date startTime,
+        immutable double pickupLatitude,
+        immutable double pickupLongitude,
+        immutable int userAge,
+        immutable string userLicenseType,
+        immutable int vehicleMinimumAge,
+        immutable string vehicleRequiredLicenses
+    }
+
+    //DTO
+    structure EndTripRequest<valueObject> {
+        immutable double endLatitude,
+        immutable double endLongitude,
+        immutable date endTime
+    }
+
+    //DTO
+    structure PaymentRequest<valueObject> {
+        immutable long userId,
+        immutable string bookingId, //UUID
+        immutable double amount,
+        immutable string currency = "USD",
+        immutable string description
+    }
+
+    //DTO
+    structure PaymentResponse<valueObject> {
+        immutable string paymentId, //UUID
+        immutable string status,
+        immutable double amount,
+        immutable date timestamp,
+        immutable string transactionId,
+        immutable string message
+    }
+
+    //DTO
+    structure StartTripRequest<valueObject> {
+        immutable double startLatitude,
+        immutable double startLongitude,
+        immutable date startTime
+    }
+
+    collection BookingList {Booking booking}
+
+    structure BookingRepository<repository> {
+        function BookingList findByUserId(long userId),
+        function BookingList findByVehicleId(long vehicleId),
+        function BookingList findByUserIdOrderByStartTimeDesc(long userId),
+        procedure deleteByUserId(long userId),
+        procedure deleteByVehicleId(long vehicleId)
+        //function BookingList findByUserIdOrderByStartTimeDescPaged(long userId, Pageable pageable)
+    }
+
+    structure PaymentServiceClient<infrastructureService> {
+        function PaymentResponse processPayment(PaymentRequest request),
+        function PaymentResponse getPaymentStatus(string paymentId), //UUID
+        procedure deletePaymentsByUser(long userId),
+        procedure deletePaymentsByBookingId(string bookingId) //UUID
+    }
+
+    structure VehicleServiceClient<infrastructureService> {
+        procedure updateVehicleStatus(long vehicleId, VehicleStatus newStatus),
+        procedure updateVehicleLocation(long vehicleId, GeoLocation locationData),
+        function BillingInfo getBillingInfo(long vehicleId)
+    }
+
+    collection BookingDTOList {BookingDTO bookingDto}
+
+    structure BookingService<applicationService> {
+        function string createBooking(CreateBookingRequest request), //Transactional, UUID
+        procedure startTrip(string bookingId, StartTripRequest request), //Transactional, UUID
+        function TripSummary endTrip(string bookingId, EndTripRequest request), //Transactional, UUID
+        function PaymentResponse processPayment(string bookingId, PaymentRequest request), //Transactional, UUID
+        procedure cancelBooking(string bookingId), //Transactional, UUID
+        procedure deleteBookingsByUserId(long userId), //Transactional
+        procedure deleteBookingsAndPaymentsByVehicle(long vehicleId), //Transactional
+        function BookingDTO getBookingDetails(string bookingId), //UUID
+        function BookingDTOList getUserBookings(long userId)    
+    }
+}

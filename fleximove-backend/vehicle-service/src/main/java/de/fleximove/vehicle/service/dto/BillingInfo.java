@@ -1,4 +1,4 @@
-package com.instantmobility.booking.dto;
+package de.fleximove.vehicle.service.dto;
 
 import lombok.Data;
 
@@ -7,6 +7,3 @@ public class BillingInfo {
     private String billingModel;
     private double rate;
 }
-
-
-
