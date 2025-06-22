@@ -1,0 +1,30 @@
+import microservices  from "../microservices/Rating.services" as Ratingservice
+import technology from "../technology/Docker.technology" as docker
+import technology from "../technology/Protocols.technology" as proctols
+
+
+
+
+@technology(docker)
+@technology(proctols)
+container ratingServiceContainer 
+    deployment technology docker::_deployment.Docker 
+    deploys Ratingservice::com.fleximove.RatingService{ //irgendwas fehlt hier  vor dem Booking Service
+    default values {
+        Dockerfile = 
+            "
+CMD java ${JAVA_OPTS} -jar order-service.jar 
+COPY rating-service.jar ."
+        basic endpoints {
+            proctols::_protocols.rest : "localhost:8080";
+        }
+    }
+}
+
+
+
+// Bei Verwendung von Docker benutzt man Images 
+/*nach deploy kommt der service der in dem Conatiner laufen soll
+ * Im viedeo steht with operation enviroment... man kann das weglassen
+ * Die Jar file mus evt neu eingesetzt werde 
+ * */

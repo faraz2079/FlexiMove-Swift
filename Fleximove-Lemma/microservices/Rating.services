@@ -1,5 +1,6 @@
-import datatypes from "../TechnologyModels/Java.technology" as Java
-import datatypes from "../TechnologyModels/Spring.technology" as Spring
+import technology  from "../technology/JavaSpring.technology" as Spring
+import technology  from "../technology/Java.technology" as Java
+import technology from "../technology/Protocols.technology" as proctols
 import datatypes from "RatingDomain.data" as RatingDomain
 
 @technology(Java)

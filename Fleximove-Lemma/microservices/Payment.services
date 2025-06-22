@@ -1,5 +1,6 @@
-import technology from "../technology/java.technology" as java
-
+import technology  from "../technology/JavaSpring.technology" as Spring
+import technology  from "../technology/Java.technology" as Java
+import technology from "../technology/Protocols.technology" as proctols
 //import datatypes from "../TechnologyModels/Spring.technology" as Spring
 import datatypes from "../domain/Payment.data" as payment
 
