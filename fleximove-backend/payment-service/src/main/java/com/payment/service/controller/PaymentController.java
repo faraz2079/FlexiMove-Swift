@@ -24,20 +24,28 @@ public class PaymentController {
         this.processingService = service;
     }
 
+    // Simple create (not used by booking)
     @PostMapping
     public Payment create(@RequestBody Payment payment) {
         return repository.save(payment);
     }
 
+    // Direct fetch (raw Payment entity)
     @GetMapping("/{paymentId}")
     public Payment get(@PathVariable("paymentId") UUID paymentId) {
         return repository.findById(paymentId).orElseThrow();
     }
 
-    // Main endpoint for processing payments from Booking
+    // Called by BookingService: POST /api/payments/process
     @PostMapping("/process")
     public PaymentResponseDTO processFromBooking(@RequestBody PaymentRequestDTO request) {
         return processingService.processPayment(request);
+    }
+
+    // Called by BookingService: GET /api/payments/status/{paymentId}
+    @GetMapping("/status/{paymentId}")
+    public ResponseEntity<PaymentResponseDTO> getStatus(@PathVariable UUID paymentId) {
+        return ResponseEntity.ok(processingService.getPaymentStatus(paymentId));
     }
 
     @DeleteMapping("/deleteByUser/{userId}")

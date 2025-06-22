@@ -30,7 +30,6 @@ public class PaymentProcessingService {
     }
 
     public PaymentResponseDTO processPayment(PaymentRequestDTO dto) {
-        // Build Payment entity from DTO
         Payment payment = new Payment();
         payment.setBookingId(dto.getBookingId());
         payment.setUserId(dto.getUserId());
@@ -38,54 +37,62 @@ public class PaymentProcessingService {
         payment.setCurrency(dto.getCurrency());
         payment.setDescription(dto.getDescription());
         payment.setTimestamp(LocalDateTime.now());
-        payment.setPaymentStatus(PaymentStatus.PENDING); // Initial state
+        payment.setTransactionId(UUID.randomUUID().toString());
 
-        // Charge using gateway
-        try {
-            boolean success = gatewayClient.charge(payment);
-            if (success) {
-                payment.markAsCompleted();
-            } else {
-                payment.markAsFailed();
-            }
-        } catch (Exception e) {
+        // Simulate logic (no real gateway used)
+        if (dto.getAmount() == 0) {
+            // Maybe the user hasn't confirmed yet or system delay
+            payment.markAsPending();
+        } else if (dto.getAmount() > 10) {
+            payment.markAsCompleted();
+        } else {
             payment.markAsFailed();
         }
 
-        // Save and publish event
         Payment saved = paymentRepository.save(payment);
         eventPublisher.publishPaymentProcessed(saved);
 
         return new PaymentResponseDTO(
                 saved.getPaymentId(),
                 saved.getPaymentStatus().toString(),
-                saved.getPaymentStatus() == PaymentStatus.COMPLETED ?
-                        "Payment successful" : "Payment failed",
+                saved.getPaymentStatus() == PaymentStatus.COMPLETED ? "Payment successful" : "Payment failed",
                 saved.getBookingId(),
                 saved.getAmount().getAmountValue(),
                 saved.getCurrency(),
-                saved.getDescription()
+                saved.getDescription(),
+                saved.getTransactionId()
+        );
+    }
+
+    public PaymentResponseDTO getPaymentStatus(UUID paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new EntityNotFoundException("No payment found with ID: " + paymentId));
+
+        return new PaymentResponseDTO(
+                payment.getPaymentId(),
+                payment.getPaymentStatus().toString(),
+                "Payment status retrieved",
+                payment.getBookingId(),
+                payment.getAmount().getAmountValue(),
+                payment.getCurrency(),
+                payment.getDescription(),
+                payment.getTransactionId()
         );
     }
 
     public void deletePaymentsByUserId(Long userId) {
         List<Payment> payments = paymentRepository.findByUserId(userId);
-
         if (payments.isEmpty()) {
             throw new EntityNotFoundException("No payments found for user ID: " + userId);
         }
-
         paymentRepository.deleteAll(payments);
     }
 
     public void deletePaymentsByBookingId(UUID bookingId) {
         List<Payment> payments = paymentRepository.findByBookingId(bookingId);
-
         if (payments.isEmpty()) {
             throw new EntityNotFoundException("No payments found for booking: " + bookingId);
         }
-
         paymentRepository.deleteAll(payments);
     }
-
 }

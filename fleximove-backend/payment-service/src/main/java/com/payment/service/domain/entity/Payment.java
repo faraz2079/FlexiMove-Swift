@@ -32,6 +32,16 @@ public class Payment {
 
     private LocalDateTime timestamp = LocalDateTime.now();
 
+    private String transactionId;
+
+    public String getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
+
     public UUID getPaymentId() {
         return paymentId;
     }
@@ -112,6 +122,11 @@ public class Payment {
     public void markAsFailed() {
         if (paymentStatus == PaymentStatus.PENDING)
             this.paymentStatus = PaymentStatus.FAILED;
+    }
+
+    public void markAsPending() {
+        if (paymentStatus == PaymentStatus.PENDING)
+            this.paymentStatus = PaymentStatus.PENDING;
     }
 }
 

@@ -11,6 +11,11 @@ public class PaymentResponseDTO {
     private double amount;
     private String currency;
     private String description;
+    private String transactionId;
+
+    public String getTransactionId() {
+        return transactionId;
+    }
 
     public UUID getBookingId() {
         return bookingId;
@@ -45,7 +50,7 @@ public class PaymentResponseDTO {
     }
 
     public PaymentResponseDTO(UUID paymentId, String paymentStatus, String message,
-                              UUID bookingId, double amount, String currency, String description) {
+                              UUID bookingId, double amount, String currency, String description, String transactionId) {
         this.paymentId = paymentId;
         this.paymentStatus = paymentStatus;
         this.message = message;
@@ -53,6 +58,7 @@ public class PaymentResponseDTO {
         this.amount = amount;
         this.currency = currency;
         this.description = description;
+        this.transactionId = transactionId;
     }
 
     public UUID getPaymentId() {
