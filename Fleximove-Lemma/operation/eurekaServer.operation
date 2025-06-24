@@ -24,14 +24,9 @@ eurekaService is Eureka::_infrastructure.Eureka
                 );
             }
             default values {
+                name="Eureka"
                 hostname="eureka"
                 port=8761
-                imageType="SpringComponent"
-                mavenArtifactId="Eureka"
-                mavenGroupId="de.fhdo.puls.service.eureka"
-                mavenVersion="0.0.1-SNAPSHOT"
-                mavenName="eureka"
-                programmingLanguage="Java"
 
             }
         }

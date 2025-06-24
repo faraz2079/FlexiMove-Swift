@@ -3,6 +3,7 @@ package com.instantmobility.booking.domain;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Transient;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Duration;
@@ -13,6 +14,7 @@ import java.util.UUID;
 
 @Embeddable
 @NoArgsConstructor
+@Data
 public class Trip {
     @Transient
     private  List<GeoLocation> route;
@@ -85,19 +87,7 @@ public class Trip {
         return R * c;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
     public List<GeoLocation> getRoute() {
         return Collections.unmodifiableList(route);
-    }
-
-    public double getDistance() {
-        return distance;
-    }
-
-    public String getStatus() {
-        return trip_status;
     }
 }

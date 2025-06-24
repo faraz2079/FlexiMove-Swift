@@ -68,14 +68,12 @@ context VehicleContext {
         CAR,
         TRUCK,
         BUS
-        //function boolean requiresLicense<sideEffectFree>,
-        //function boolean requiresMinAge<sideEffectFree>
     }
 
     collection VehicleList {Vehicle vehicle}
 
     structure VehicleRepository<repository> {
-        //function VehicleList findByStatus(VehicleStatus status);
+        function VehicleList findByStatus(VehicleStatus status),
         function VehicleList findAllByProviderId(long providerId),
         //function Optional<Vehicle> findByIdentificationNumberIdentNumber(string identificationNumber),
         procedure deleteAllByProviderId(long providerId)
@@ -170,11 +168,6 @@ context VehicleContext {
     }
 
     structure VehicleService<applicationService> {
-        //hide immutable VehicleRepository vehicleRepository,
-        //hide immutable VehicleMapper vehicleMapper,
-        //hide immutable GeocodingService geocodingService,
-        //hide immutable UserServiceClient userServiceClient,
-        //hide immutable RatingServiceClient ratingServiceClient,
         procedure registerNewVehicle(VehicleRequest request, long providerId),
         //function Optional<Vehicle> fetchVehicleById(long id),
         procedure deleteVehicle(long id), //Transactional

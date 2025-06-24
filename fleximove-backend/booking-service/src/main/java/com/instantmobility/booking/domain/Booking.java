@@ -1,7 +1,5 @@
 package com.instantmobility.booking.domain;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import jakarta.persistence.*;
@@ -126,6 +124,7 @@ public class Booking {
             // Create new TimeFrame if we can't modify the existing one
             timeFrame = new TimeFrame(timeFrame.getStartTime(), endTime);
         }
+        trip.setTimeFrame(timeFrame);
         status = BookingStatus.COMPLETED;
 
         dropoffLocation = endLocation;
