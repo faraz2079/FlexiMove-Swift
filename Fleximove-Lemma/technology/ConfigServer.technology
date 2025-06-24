@@ -1,0 +1,14 @@
+technology ConfigServer {
+	infrastructure technologies {
+		ConfigServer {
+			operation environments = "openjdk:11-jdk-slim" default;
+
+			service properties {
+				string name <mandatory, singleval>;
+				string hostname <singleval>;
+				int port <singleval>;
+                string springCloudConfigServerGitUri <singleval>;
+			}
+		}
+	}
+}

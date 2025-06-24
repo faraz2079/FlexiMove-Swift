@@ -106,8 +106,6 @@ public class Booking {
 
         timeFrame = new TimeFrame(startTime, timeFrame.getEndTime());
         status = BookingStatus.STARTED;
-
-        pickupLocation = startLocation;
     }
 
     public void endTrip(GeoLocation endLocation, LocalDateTime endTime) {

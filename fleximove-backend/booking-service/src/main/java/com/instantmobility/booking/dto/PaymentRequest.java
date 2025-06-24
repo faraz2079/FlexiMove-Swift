@@ -8,13 +8,13 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 public class PaymentRequest {
-    private long userId;
+    private Long userId;
     private UUID bookingId;
     private double amount;
     private String currency = "USD";
     private String description;
 
-    public PaymentRequest(long userId, UUID bookingId, double amount, String description) {
+    public PaymentRequest(Long userId, UUID bookingId, double amount, String description) {
         this.userId = userId;
         this.bookingId = bookingId;
         this.amount = amount;

@@ -11,9 +11,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class PaymentResponse {
     private UUID paymentId;
-    private String status;
-    private double amount;
-    private LocalDateTime timestamp;
-    private String transactionId;
+    private String paymentStatus;
     private String message;
+    private double amount;
+    private LocalDateTime timeStamp;
+    private String transactionId;
 }

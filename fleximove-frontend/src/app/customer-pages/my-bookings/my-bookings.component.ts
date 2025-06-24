@@ -152,7 +152,7 @@ export class MyBookingsComponent implements OnInit {
         console.log(this.bookings)
       },
       error: err => {
-        console.log(err)
+        console.log(err.message)
         alert('Fehler beim Laden der Buchungen');
         this.bookings = [];
       }
@@ -284,13 +284,29 @@ export class MyBookingsComponent implements OnInit {
   }
 
 
-pay(booking: BookingDetails): void {
-  // TODO: Payment-Logik
-}
+  pay(booking: any): void {
+    const userId = Number(localStorage.getItem('userId'));
+    const paymentRequest = {
+      userId: userId,
+      bookingId: booking.id,
+      amount: booking.cost,
+      description: `Payment for booking ${booking.id}`
+    };
 
-rateBooking(booking: BookingDetails): void {
-  // TODO: Bewertung starten
-}
+    console.log("Payment request: {}", paymentRequest)
+
+    this.bookingService.processPayment(booking.id, paymentRequest).subscribe({
+      next: (response) => {
+        booking.status = 'PAID';
+        alert('Payment successful!');
+      },
+      error: (error) => {
+        console.error('Payment failed:', error);
+        alert('Payment failed: ' + (error.error?.message || 'Unknown error'));
+      }
+    });
+  }
+
 
 formatBillingModel(billingModel: string): string {
     switch (billingModel) {

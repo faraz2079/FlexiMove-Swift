@@ -35,7 +35,6 @@ public class BookingService {
     @Transactional
     public UUID createBooking(CreateBookingRequest request) {
         validateUserForVehicle(request);
-        // Create booking domain object
         BookingId bookingId = BookingId.generate();
         TimeFrame timeFrame = new TimeFrame(request.getStartTime());
         GeoLocation pickupLocation = new GeoLocation(request.getPickupLatitude(), request.getPickupLongitude());
@@ -53,7 +52,6 @@ public class BookingService {
     }
 
     private void validateUserForVehicle(CreateBookingRequest request) {
-        // Age validation
         if (request.getUserAge() < request.getVehicleMinimumAge()) {
             throw new ValidationException(
                     "User age (" + request.getUserAge() + ") is below the minimum required age ("
@@ -61,13 +59,11 @@ public class BookingService {
             );
         }
 
-        // License validation
         if (request.getVehicleRequiredLicense() != null && !request.getVehicleRequiredLicense().isEmpty()) {
             if (request.getUserLicenseType() == null || request.getUserLicenseType().isEmpty()) {
                 throw new ValidationException("User license is required for this vehicle");
             }
 
-            // Case-insensitive string comparison
             if (!request.getUserLicenseType().equalsIgnoreCase(request.getVehicleRequiredLicense())) {
                 throw new ValidationException(
                         "User license type (" + request.getUserLicenseType()
@@ -96,18 +92,14 @@ public class BookingService {
     public TripSummary endTrip(UUID bookingId, EndTripRequest request) {
         Booking booking = getBookingById(bookingId);
 
-        // End the trip
         GeoLocation endLocation = new GeoLocation(request.getEndLatitude(), request.getEndLongitude());
         LocalDateTime endTime = request.getEndTime() != null ? request.getEndTime() : LocalDateTime.now();
         booking.endTrip(endLocation, endTime);
 
-        // Get billing info from vehicle service
         BillingInfo billingInfo = vehicleServiceClient.getBillingInfo(booking.getVehicleId());
 
-        // Calculate cost based on billing model
         booking.calculateCost(billingInfo.getBillingModel(), billingInfo.getRate());
 
-        // Create trip summary
         TripSummary summary = booking.createTripSummary(
                 billingInfo.getBillingModel(),
                 billingInfo.getRate()
@@ -115,9 +107,9 @@ public class BookingService {
 
         if (booking.getStatus() == BookingStatus.COMPLETED) {
             vehicleServiceClient.updateVehicleStatus(booking.getVehicleId(), VehicleStatus.AVAILABLE);
+            vehicleServiceClient.updateVehicleLocation(booking.getVehicleId(), booking.getFinalLocation());
         }
 
-        // Save booking with updated cost
         bookingRepository.save(booking);
 
         return summary;
@@ -125,32 +117,23 @@ public class BookingService {
 
     @Transactional
     public PaymentResponse processPayment(UUID bookingId, PaymentRequest request) {
-        // Validate booking exists and belongs to the user
         Booking booking = getBookingById(bookingId);
 
         if (!booking.getUserId().equals(request.getUserId())) {
             throw new ValidationException("Booking does not belong to this user");
         }
 
-        // Validate booking is in the right state
         if (booking.getStatus() != BookingStatus.COMPLETED) {
             throw new IllegalStateException(
                     "Booking must be in COMPLETED state to process payment, current state: " + booking.getStatus()
             );
         }
 
-        // Create payment request for payment service
-        PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setBookingId(bookingId);
-        paymentRequest.setUserId(request.getUserId());
-        paymentRequest.setAmount(booking.getCost());
-        paymentRequest.setDescription("Payment for booking " + bookingId);
+        PaymentRequest paymentRequest = new PaymentRequest(request.getUserId(), bookingId, request.getAmount(), request.getDescription());
 
-        // Call payment service
         PaymentResponse response = paymentServiceClient.processPayment(paymentRequest);
 
-        // Update booking status based on payment result
-        if ("SUCCESS".equals(response.getStatus())) {
+        if ("COMPLETED".equals(response.getPaymentStatus())) {
             booking.setStatus(BookingStatus.PAID);
             booking.setPaymentId(response.getPaymentId());
             bookingRepository.save(booking);
@@ -169,9 +152,6 @@ public class BookingService {
         bookingRepository.save(booking);
     }
 
-    /**
-     * Updates vehicle location when booking ends
-     */
     private void updateVehicleLocationAndStatus(Long vehicleId, GeoLocation location) {
         vehicleServiceClient.updateVehicleLocation(vehicleId, location);
         vehicleServiceClient.updateVehicleStatus(vehicleId, VehicleStatus.AVAILABLE);
@@ -188,24 +168,18 @@ public class BookingService {
 
         try {
             PaymentResponse response = paymentServiceClient.processPayment(paymentRequest);
-            // Store payment reference in booking or handle accordingly
             System.out.println("Payment processed: " + response.getPaymentId());
         } catch (Exception e) {
-            // Handle payment failure
             System.err.println("Payment failed: " + e.getMessage());
         }
     }
 
-    /**
-     * Deletes all bookings for a specific user
-     */
     @Transactional
     public void deleteBookingsByUserId(Long userId) {
         List<Booking> userBookings = bookingRepository.findByUserId(userId);
 
         if (!userBookings.isEmpty()) {
            for (Booking booking : userBookings) {
-                // Don't allow deletion of active bookings
                 if (booking.getStatus() != BookingStatus.PAID &&
                         booking.getStatus() != BookingStatus.CANCELLED) {
                     throw new IllegalStateException(
@@ -237,7 +211,6 @@ public class BookingService {
 
         if (!bookings.isEmpty()) {
             for (Booking booking : bookings) {
-                // Don't allow deletion of active bookings
                 if (booking.getStatus() != BookingStatus.PAID &&
                         booking.getStatus() != BookingStatus.CANCELLED) {
                     throw new IllegalStateException(

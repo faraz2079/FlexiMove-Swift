@@ -30,8 +30,8 @@ export class BookingService {
     return this.http.post<TripSummary>(`${this.baseUrl}/${bookingId}/end`, request);
   }
 
-  payBooking(bookingId: string): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/${bookingId}/pay`, {});
+  processPayment(bookingId: string, paymentRequest: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/${bookingId}/payment`, paymentRequest);
   }
 
 }

@@ -115,17 +115,17 @@ public class Payment {
     }
 
     public void markAsCompleted() {
-        if (paymentStatus == PaymentStatus.PENDING)
+        if (this.paymentStatus == PaymentStatus.PENDING)
             this.paymentStatus = PaymentStatus.COMPLETED;
     }
 
     public void markAsFailed() {
-        if (paymentStatus == PaymentStatus.PENDING)
+        if (this.paymentStatus == PaymentStatus.PENDING)
             this.paymentStatus = PaymentStatus.FAILED;
     }
 
     public void markAsPending() {
-        if (paymentStatus == PaymentStatus.PENDING)
+        if (this.paymentStatus == PaymentStatus.PENDING)
             this.paymentStatus = PaymentStatus.PENDING;
     }
 }

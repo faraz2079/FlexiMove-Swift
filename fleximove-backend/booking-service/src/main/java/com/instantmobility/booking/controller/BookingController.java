@@ -79,7 +79,7 @@ public class BookingController {
         try {
             PaymentResponse response = bookingService.processPayment(bookingId, request);
 
-            if ("SUCCESS".equals(response.getStatus())) {
+            if ("COMPLETED".equals(response.getPaymentStatus())) {
                 return ResponseEntity.ok(Map.of(
                         "status", "success",
                         "message", "Payment processed successfully",

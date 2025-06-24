@@ -1,14 +1,12 @@
 package com.payment.service.domain.valueObject;
 
 import jakarta.persistence.Embeddable;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
 @Embeddable
 public class Amount {
     private double amountValue;
+
+    public Amount() {}
 
     public Amount(double amountValue) {
         if (amountValue < 0) {

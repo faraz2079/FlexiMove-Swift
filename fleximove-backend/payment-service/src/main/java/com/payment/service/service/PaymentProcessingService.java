@@ -43,7 +43,7 @@ public class PaymentProcessingService {
         if (dto.getAmount() == 0) {
             // Maybe the user hasn't confirmed yet or system delay
             payment.markAsPending();
-        } else if (dto.getAmount() > 10) {
+        } else if (dto.getAmount() > 0) {
             payment.markAsCompleted();
         } else {
             payment.markAsFailed();
@@ -56,10 +56,8 @@ public class PaymentProcessingService {
                 saved.getPaymentId(),
                 saved.getPaymentStatus().toString(),
                 saved.getPaymentStatus() == PaymentStatus.COMPLETED ? "Payment successful" : "Payment failed",
-                saved.getBookingId(),
                 saved.getAmount().getAmountValue(),
-                saved.getCurrency(),
-                saved.getDescription(),
+                saved.getTimestamp(),
                 saved.getTransactionId()
         );
     }
@@ -72,10 +70,8 @@ public class PaymentProcessingService {
                 payment.getPaymentId(),
                 payment.getPaymentStatus().toString(),
                 "Payment status retrieved",
-                payment.getBookingId(),
                 payment.getAmount().getAmountValue(),
-                payment.getCurrency(),
-                payment.getDescription(),
+                payment.getTimestamp(),
                 payment.getTransactionId()
         );
     }

@@ -1,30 +1,19 @@
 package com.payment.service.service.DTO;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class PaymentResponseDTO {
     private UUID paymentId;
     private String paymentStatus;
     private String message;
-
-    private UUID bookingId;
     private double amount;
-    private String currency;
-    private String description;
+    private LocalDateTime timeStamp;
     private String transactionId;
 
     public String getTransactionId() {
         return transactionId;
     }
-
-    public UUID getBookingId() {
-        return bookingId;
-    }
-
-    public void setBookingId(UUID bookingId) {
-        this.bookingId = bookingId;
-    }
-
     public double getAmount() {
         return amount;
     }
@@ -33,31 +22,21 @@ public class PaymentResponseDTO {
         this.amount = amount;
     }
 
-    public String getCurrency() {
-        return currency;
+    public LocalDateTime getTimeStamp() {
+        return timeStamp;
     }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setTimeStamp(LocalDateTime timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public PaymentResponseDTO(UUID paymentId, String paymentStatus, String message,
-                              UUID bookingId, double amount, String currency, String description, String transactionId) {
+                              double amount, LocalDateTime timeStamp, String transactionId) {
         this.paymentId = paymentId;
         this.paymentStatus = paymentStatus;
         this.message = message;
-        this.bookingId = bookingId;
         this.amount = amount;
-        this.currency = currency;
-        this.description = description;
+        this.timeStamp = timeStamp;
         this.transactionId = transactionId;
     }
 

@@ -27,6 +27,5 @@ eurekaService is Eureka::_infrastructure.Eureka
                 name="Eureka"
                 hostname="eureka"
                 port=8761
-
             }
         }

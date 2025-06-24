@@ -24,17 +24,17 @@
             <p>
                 <strong>Vehicle Rating: </strong> 
                 <span matTooltip="{{ booking.averageVehicleRating + ' / 5' }}" matTooltipPosition="right">
-                    <p-rating [ngModel]="booking.averageVehicleRating" [readonly]="!(booking.status === 'COMPLETED' || booking.status === 'CANCELLED')" [cancel]="false" class="rating-stars" (onRate)="onVehicleRatingChange($event.value, booking)"></p-rating>
+                    <p-rating [ngModel]="booking.averageVehicleRating" [readonly]="!(booking.status === 'COMPLETED' || booking.status === 'CANCELLED' || booking.status === 'PAID')" [cancel]="false" class="rating-stars" (onRate)="onVehicleRatingChange($event.value, booking)"></p-rating>
                 </span>
             </p>
             <p>
                 <strong>Provider Rating: </strong> 
                 <span matTooltip="{{ booking.averageProviderRating + ' / 5' }}" matTooltipPosition="right">
-                    <p-rating [ngModel]="booking.averageProviderRating" [readonly]="!(booking.status === 'COMPLETED' || booking.status === 'CANCELLED')"  [cancel]="false" class="rating-stars" (onRate)="onProviderRatingChange($event.value, booking)"></p-rating>
+                    <p-rating [ngModel]="booking.averageProviderRating" [readonly]="!(booking.status === 'COMPLETED' || booking.status === 'CANCELLED' || booking.status === 'PAID')"  [cancel]="false" class="rating-stars" (onRate)="onProviderRatingChange($event.value, booking)"></p-rating>
                 </span>
             </p>
             <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Overall duration:</strong> {{ booking.duration }}</p>
-            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Overall distance:</strong> {{ booking.distance }}</p>
+            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Overall distance:</strong> {{ booking.distance }} km</p>
             <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Total amount:</strong> {{ booking.cost }}€</p>
         </mat-card-content>
 
@@ -65,11 +65,11 @@
 
         <mat-card-content *ngIf="booking.showDetails">
         <ul *ngIf="booking.restrictions" class="vehicle-restrictions">
-            <li><strong>Max booking time:</strong> {{ booking.restrictions.maxBookingTimeMinutes }} min</li>
-            <li><strong>Max distance:</strong>{{ booking.restrictions.maxDistanceKm }} km</li>
-            <li><strong>Max passengers:</strong> {{ booking.restrictions.maxPassengers }}</li>
-            <li><strong>Minimum age:</strong> {{ formatMinAge(booking.restrictions.minAge) }}</li>
-            <li><strong>Required license:</strong> {{ formatLicense(booking.restrictions.requiredLicense) }}</li>
+            <li><strong>Max booking time: </strong> {{ booking.restrictions.maxBookingTimeMinutes }} min</li>
+            <li><strong>Max distance: </strong>{{ booking.restrictions.maxDistanceKm }} km</li>
+            <li><strong>Max passengers: </strong> {{ booking.restrictions.maxPassengers }}</li>
+            <li><strong>Minimum age: </strong> {{ formatMinAge(booking.restrictions.minAge) }}</li>
+            <li><strong>Required license: </strong> {{ formatLicense(booking.restrictions.requiredLicense) }}</li>
         </ul>
         </mat-card-content>
     </mat-card>
