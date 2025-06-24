@@ -8,11 +8,11 @@ import datatypes from "RatingDomain.data" as RatingDomain
 functional microservice com.fleximove.RatingService {
 
     @sync(Spring::_protocols.rest)
-    @endpoints(Spring::_protocols.rest: "/ratings";)
+    @endpoints(Spring::_protocols.rest: "/ratings")
     interface Ratings {
 
         // Vehicle rating erstellen
-        @endpoints(Spring::_protocols.rest: "/vehicle";)
+        @endpoints(Spring::_protocols.rest: "/vehicle")
         @Spring::_aspects.Post
         rateVehicle(
             @Spring::_aspects.RequestBody

@@ -15,4 +15,5 @@ public interface RatingProviderRepository extends JpaRepository<RatingProvider, 
     void deleteByUserId(Long userId);
     List<RatingProvider> findByProviderId(Long providerId);
     List<RatingProvider> findByUserId(Long userId);
+    Optional<RatingProvider> findByUserIdAndProviderId(Long userId, Long providerId);
 }

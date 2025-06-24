@@ -179,7 +179,7 @@ context VehicleContext {
         //function Optional<Vehicle> fetchVehicleById(long id),
         procedure deleteVehicle(long id), //Transactional
         procedure deleteAllVehiclesByProviderId(long providerId), //Transactional
-        function NearestAvailableVehicleResponseList findAvailableNearbyVehicles(Location neededLocationWithAvailableVehicles, double radiusInKm),
+        function NearestAvailableVehicleResponseList findAvailableNearbyVehicles(Location neededLocationWithAvailableVehicles, double radiusInKm), //Transactional
         function ProviderVehicleResponseList listProviderVehiclesWithRatings(long providerId),
         procedure updateVehicleStatus(long vehicleId, VehicleStatus newStatus),
         procedure updateVehicleLocation(long vehicleId, double latitude, double longitude),

@@ -11,6 +11,7 @@ import { CustomerAccountComponent } from './customer-pages/customer-account/cust
 import { ProviderLayoutComponent } from './layout/provider/provider-layout/provider-layout.component';
 import { ProviderHomepageComponent } from './provider-pages/provider-homepage/provider-homepage.component';
 import { ProviderAccountComponent } from './provider-pages/provider-account/provider-account.component';
+import { MyBookingsComponent } from './customer-pages/my-bookings/my-bookings.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -28,7 +29,8 @@ const routes: Routes = [
       { path: '', component: CustomerHomepageComponent },
       { path: 'home', component: CustomerHomepageComponent },
       { path: 'search-results', component: VehicleSearchResultComponent },
-      { path: 'account', component: CustomerAccountComponent }
+      { path: 'account', component: CustomerAccountComponent },
+      { path: 'bookings', component: MyBookingsComponent },
     ]
   },
   {path: 'provider', component: ProviderLayoutComponent,

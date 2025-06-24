@@ -2,9 +2,24 @@ import { Component } from '@angular/core';
 import { NearestAvailableVehicleResponse } from '../customer-homepage/customer-homepage.component';
 import { VehicleService } from 'src/app/src/app/services/vehicle.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { UserService } from 'src/app/src/app/services/user.service';
+import { BookingService } from 'src/app/src/app/services/booking.service';
 
 interface VehicleWithDetails extends NearestAvailableVehicleResponse {
   showDetails: boolean;
+}
+
+export interface CreateBookingRequest {
+  userId: number;
+  vehicleId: number;
+  startTime: string;
+  pickupLatitude: number;
+  pickupLongitude: number;
+  userAge: number;
+  userLicenseType: string;
+  vehicleMinimumAge: number;
+  vehicleRequiredLicense: string;
 }
 
 @Component({
@@ -29,7 +44,7 @@ export class VehicleSearchResultComponent {
   };
 
 
-  constructor(private vehicleSearchService: VehicleService, private route: ActivatedRoute, private router: Router) {}
+  constructor(private vehicleSearchService: VehicleService, private route: ActivatedRoute, private router: Router, private bookingService: BookingService, private snackBar: MatSnackBar, private userService: UserService) {}
 
   ngOnInit(): void {
     const userId = localStorage.getItem('userId');
@@ -183,5 +198,72 @@ export class VehicleSearchResultComponent {
     };
     this.filteredVehicles = [...this.vehicles];
   }
+
+  mapUserLicenseToVehicleLicense(code: string): string {
+    switch (code) {
+      case 'A': return 'MOTORCYCLE';
+      case 'B': return 'CAR';
+      case 'C': return 'TRUCK';
+      case 'D': return 'BUS';
+      case 'NONE': return 'NONE';
+      default: return code;
+    }
+  }
+
+  bookVehicle(vehicle: NearestAvailableVehicleResponse): void {
+    const userId = localStorage.getItem('userId');
+
+    this.userService.getUserById(userId!).subscribe(user => {
+      const request: CreateBookingRequest = {
+        userId: +userId!,
+        vehicleId: vehicle.vehicleId,
+        startTime: new Date().toISOString(),
+        pickupLatitude: vehicle.latitude,
+        pickupLongitude: vehicle.longitude,
+        userAge: this.calculateAge(user.dateOfBirth),
+        userLicenseType: this.mapUserLicenseToVehicleLicense(user.driverLicenseType),
+        vehicleMinimumAge: vehicle.restrictions.minAge,
+        vehicleRequiredLicense: vehicle.restrictions.requiredLicense
+      };
+
+      console.log("Request sent to backend")
+      console.log(request)
+
+      this.bookingService.createBooking(request).subscribe({
+        next: (response: any) => {
+          this.snackBar.open('Vehicle is booked successfully! You can find it under "My Bookings".', 'Close', { duration: 4000 });
+        },
+        error: (err) => {
+          if (err.status === 422) {
+            this.snackBar.open('Validation failed: ' + err.error?.error, 'Close', { duration: 5000 });
+        } else if (err.status === 500) {
+            this.snackBar.open('Server error: ' + err.error?.error, 'Close', { duration: 5000 });
+        } else {
+            this.snackBar.open('Booking failed. Please try again.', 'Close', { duration: 5000 });
+        }
+        }
+      });
+    });
+  }
+
+
+ calculateAge(dateOfBirth: string): number {
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    return age;
+  }
+
+
 
 }

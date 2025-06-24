@@ -48,6 +48,8 @@ import { EditVehicleDialogComponent } from './provider-pages/edit-vehicle-dialog
 import { UserService } from './src/app/services/user.service';
 import { RatingService } from './src/app/services/rating.service';
 import { ProviderAccountComponent } from './provider-pages/provider-account/provider-account.component';
+import { BookingService } from './src/app/services/booking.service';
+import { MyBookingsComponent } from './customer-pages/my-bookings/my-bookings.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +73,8 @@ import { ProviderAccountComponent } from './provider-pages/provider-account/prov
     RegisterVehicleDialogComponent,
     ConfirmDeleteDialogComponent,
     EditVehicleDialogComponent,
-    ProviderAccountComponent
+    ProviderAccountComponent,
+    MyBookingsComponent
   ],
   imports: [
     BrowserModule,
@@ -97,7 +100,7 @@ import { ProviderAccountComponent } from './provider-pages/provider-account/prov
     MatDialogModule,
     NgChartsModule
   ],
-  providers: [RegistrationService, LoginService, GeocodingService, VehicleService, UserService, RatingService],
+  providers: [RegistrationService, LoginService, GeocodingService, VehicleService, UserService, RatingService, BookingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,8 +1,6 @@
 package de.fleximove.vehicle.service.controller;
 
-import de.fleximove.vehicle.service.domain.valueobject.BillingModel;
 import de.fleximove.vehicle.service.domain.valueobject.Location;
-import de.fleximove.vehicle.service.domain.valueobject.Price;
 import de.fleximove.vehicle.service.domain.valueobject.VehicleStatus;
 import de.fleximove.vehicle.service.dto.*;
 import de.fleximove.vehicle.service.services.GeocodingService;
@@ -128,7 +126,7 @@ public class VehicleController {
     }
 
     //Request kommt aus dem BookingService, wird waehrend Booking getriggered
-    @PatchMapping("/updateStatus/{vehicleId}")
+    @PutMapping("/updateStatus/{vehicleId}")
     public ResponseEntity<Void> updateVehicleStatus(@PathVariable Long vehicleId, @RequestParam VehicleStatus newStatus
     ) {
         vehicleService.updateVehicleStatus(vehicleId, newStatus);
@@ -136,7 +134,7 @@ public class VehicleController {
     }
 
     //Request kommt aus dem BookingService
-    @PatchMapping("/updateLocation/{vehicleId}")
+    @PutMapping("/updateLocation/{vehicleId}")
     public ResponseEntity<Void> updateVehicleLocation(@PathVariable Long vehicleId, @RequestBody Location locationData) {
         vehicleService.updateVehicleLocation(
                 vehicleId,

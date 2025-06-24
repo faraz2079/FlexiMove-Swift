@@ -100,7 +100,7 @@
                 <button mat-button color="primary" (click)="toggleDetails(vehicle)">
                 {{ vehicle.showDetails ? 'Less details' : 'More details' }}
                 </button>
-                <button mat-raised-button color="primary">Book</button>
+                <button mat-raised-button color="primary" (click)="bookVehicle(vehicle)">Book</button>
             </mat-card-actions>
             <mat-card-content *ngIf="vehicle.showDetails">
                 <ul *ngIf="vehicle.restrictions" class="vehicle-restrictions">

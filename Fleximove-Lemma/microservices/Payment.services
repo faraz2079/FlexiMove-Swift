@@ -7,7 +7,7 @@ import datatypes from "../domain/Payment.data" as payment
 
 @technology(Java)
 @technology(Spring)
-functional microservice PaymentService {
+functional microservice com.payment.PaymentService {
 
     @sync(Spring::_protocols.rest)
     @endpoints(Spring::_protocols.rest: "/api/payments")

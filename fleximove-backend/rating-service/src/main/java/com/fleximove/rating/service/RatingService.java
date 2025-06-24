@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RatingService {
@@ -26,11 +28,32 @@ public class RatingService {
     }
 
     public RatingVehicle rateVehicle(RatingVehicle rating) {
-        return ratingVehicleRepository.save(rating);
+        Optional<RatingVehicle> existing = ratingVehicleRepository.findByUserIdAndVehicleId(rating.getUserId(), rating.getVehicleId());
+
+        if (existing.isPresent()) {
+            RatingVehicle existingRating = existing.get();
+            existingRating.setScore(rating.getScore());
+            existingRating.setComment(rating.getComment());
+            existingRating.setTimestamp(LocalDateTime.now());
+            return ratingVehicleRepository.save(existingRating);
+        } else {
+            return ratingVehicleRepository.save(rating);
+        }
     }
 
+
     public RatingProvider rateProvider(RatingProvider rating) {
-        return ratingProviderRepository.save(rating);
+        Optional<RatingProvider> existing = ratingProviderRepository.findByUserIdAndProviderId(rating.getUserId(), rating.getProviderId());
+
+        if (existing.isPresent()) {
+            RatingProvider existingRating = existing.get();
+            existingRating.setScore(rating.getScore());
+            existingRating.setComment(rating.getComment());
+            existingRating.setTimestamp(LocalDateTime.now());
+            return ratingProviderRepository.save(existingRating);
+        } else {
+            return ratingProviderRepository.save(rating);
+        }
     }
 
     public double getAverageRatingForVehicle(Long vehicleId) {

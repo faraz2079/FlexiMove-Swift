@@ -1,0 +1,81 @@
+<div [ngClass]="{
+        'no-results-found': bookings.length === 0,
+        'booking-results-wrapper': bookings.length > 0
+    }">
+    <div *ngFor="let booking of bookings" class="booking-card">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Booking {{ booking.id }}</mat-card-title>
+            <span class="status-badge" [ngClass]="booking.status.toLowerCase()">
+                {{ booking.status }}
+            </span>
+        </mat-card-header>
+
+        <mat-card-content>
+            <p><strong>Provider:</strong> {{ booking.providerName }}</p>
+            <p><strong>Identification number of booked Vehicle:</strong> {{ booking.identificationNumber }}</p>
+            <p><strong>Vehicle Type:</strong> {{ formatVehicleType(booking.vehicleType) }}</p>
+            <p><strong>Vehicle Model:</strong> {{ booking.vehicleModel }}</p>
+            <p><strong>Pickup Address:</strong> {{ booking.pickupAddress }}</p>
+            <p><strong>Booked at:</strong> {{ booking.startTime }}</p>
+            <p *ngIf="!(booking.status === 'CREATED' || booking.status === 'CANCELLED' || booking.status === 'CONFIRMED')"><strong>Trip started at:</strong> {{ booking.tripStartedAt }}</p>
+            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Trip ended at:</strong> {{ booking.tripEndedAt }}</p>
+            <p><strong>Price:</strong> {{ booking.priceAmount }}€ / {{ formatBillingModel(booking.billingModel) }}</p>
+            <p>
+                <strong>Vehicle Rating: </strong> 
+                <span matTooltip="{{ booking.averageVehicleRating + ' / 5' }}" matTooltipPosition="right">
+                    <p-rating [ngModel]="booking.averageVehicleRating" [readonly]="!(booking.status === 'COMPLETED' || booking.status === 'CANCELLED')" [cancel]="false" class="rating-stars" (onRate)="onVehicleRatingChange($event.value, booking)"></p-rating>
+                </span>
+            </p>
+            <p>
+                <strong>Provider Rating: </strong> 
+                <span matTooltip="{{ booking.averageProviderRating + ' / 5' }}" matTooltipPosition="right">
+                    <p-rating [ngModel]="booking.averageProviderRating" [readonly]="!(booking.status === 'COMPLETED' || booking.status === 'CANCELLED')"  [cancel]="false" class="rating-stars" (onRate)="onProviderRatingChange($event.value, booking)"></p-rating>
+                </span>
+            </p>
+            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Overall duration:</strong> {{ booking.duration }}</p>
+            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Overall distance:</strong> {{ booking.distance }}</p>
+            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Total amount:</strong> {{ booking.cost }}€</p>
+        </mat-card-content>
+
+        <mat-card-actions class="card-actions">
+            <button mat-button color="primary" (click)="toggleDetails(booking)">
+                {{ booking.showDetails ? 'Less details' : 'More details' }}
+            </button>
+            <div class="main-buttons">
+                <button mat-raised-button color="accent" (click)="startTrip(booking)" 
+                    [disabled]="booking.status !== 'CONFIRMED'">
+                Start trip
+                </button>
+                <button mat-raised-button color="warn" (click)="endTrip(booking)" 
+                        [disabled]="booking.status !== 'STARTED'">
+                    Finish trip
+                </button>
+                <button mat-raised-button color="primary" (click)="pay(booking)" 
+                        [disabled]="booking.status !== 'COMPLETED'">
+                    Pay
+                </button>
+                <button mat-stroked-button color="warn" (click)="cancelBooking(booking)" 
+                        [disabled]="booking.status !== 'CREATED' && booking.status !== 'CONFIRMED'">
+                    Cancel Booking
+                </button>
+            </div>
+        </mat-card-actions>
+
+
+        <mat-card-content *ngIf="booking.showDetails">
+        <ul *ngIf="booking.restrictions" class="vehicle-restrictions">
+            <li><strong>Max booking time:</strong> {{ booking.restrictions.maxBookingTimeMinutes }} min</li>
+            <li><strong>Max distance:</strong>{{ booking.restrictions.maxDistanceKm }} km</li>
+            <li><strong>Max passengers:</strong> {{ booking.restrictions.maxPassengers }}</li>
+            <li><strong>Minimum age:</strong> {{ formatMinAge(booking.restrictions.minAge) }}</li>
+            <li><strong>Required license:</strong> {{ formatLicense(booking.restrictions.requiredLicense) }}</li>
+        </ul>
+        </mat-card-content>
+    </mat-card>
+    </div>
+
+    <div *ngIf="bookings.length === 0" class="no-results-message">
+        <p>No bookings were found. Your booking history is empty.</p>
+    </div>
+</div>

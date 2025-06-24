@@ -6,7 +6,7 @@ import datatypes from "../domain/booking-context.data" as BookingDomain
 
 @technology(Java)
 @technology(Spring)
-functional microservice BookingService {
+functional microservice com.instantmobility.BookingService {
 
     @sync(Spring::_protocols.rest)
     @endpoints(Spring::_protocols.rest: "/api/bookings";)

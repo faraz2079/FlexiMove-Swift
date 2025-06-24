@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name = "vehicleService")
 public interface VehicleServiceClient {
-    @PatchMapping("${vehicleService.updateVehicleStatus.endpoint}")
+    @PutMapping("${vehicleService.updateVehicleStatus.endpoint}")
     ResponseEntity<Void> updateVehicleStatus(@PathVariable Long vehicleId, @RequestParam VehicleStatus newStatus);
 
-    @PatchMapping("${vehicleService.vehicleUpdateLocation.endpoint}")
+    @PutMapping("${vehicleService.vehicleUpdateLocation.endpoint}")
     ResponseEntity<Void> updateVehicleLocation(@PathVariable Long vehicleId, @RequestBody GeoLocation locationData);
 
     @GetMapping("${vehicleService.billingInfo.endpoint}")

@@ -93,6 +93,7 @@ public class VehicleService {
         }
     }
 
+    @Transactional
     public List<NearestAvailableVehicleResponse> findAvailableNearbyVehicles(Location neededLocationWithAvailableVehicles, double radiusInKm) {
         Stream<VehicleWithDistance> foundAvailableVehicles = vehicleRepository.findByStatus(VehicleStatus.AVAILABLE).stream()
                 .map(vehicle -> {
@@ -173,6 +174,7 @@ public class VehicleService {
         Vehicle vehicle = fetchVehicleById(vehicleId)
                 .orElseThrow(() -> new EntityNotFoundException("Vehicle not found with ID: " + vehicleId));
         vehicle.setStatus(newStatus);
+        vehicleRepository.save(vehicle);
     }
 
 

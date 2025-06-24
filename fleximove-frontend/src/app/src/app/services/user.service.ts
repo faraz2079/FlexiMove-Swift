@@ -16,6 +16,10 @@ export class UserService {
         return this.http.get<any>(`${this.baseUrl}/${userId}`);
     }
 
+    getCompanyName(providerId: string): Observable<string> {
+        return this.http.get<string>(`${this.baseUrl}/provider/${providerId}/companyName`, {responseType: 'text' as 'json'});
+    }
+
     deleteAccount(userId: number) {
       return this.http.delete(`${this.baseUrl}/deleteAccount/${userId}`);
     }

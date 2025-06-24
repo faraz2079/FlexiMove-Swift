@@ -1,0 +1,37 @@
+import technology from "../technology/Eureka.technology" as Eureka
+import technology from "../technology/Docker.technology" as docker
+import nodes from "../operation/vehicle.operation" as vehicleBackend
+import nodes from "../operation/user.operation" as userBackend
+import nodes from "../operation/rating.operation" as ratingBackend
+import nodes from "../operation/booking.operation" as bookingBackend
+import nodes from "../operation/payment.operation" as paymentBackend
+
+
+@technology(Eureka)
+@technology(docker)
+eurekaService is Eureka::_infrastructure.Eureka
+    used by nodes vehicleBackend::VehicleServiceContainer,
+        userBackend::UserServiceContainer,
+        ratingBackend::RatingServiceContainer,
+        bookingBackend::BookingServiceContainer,
+        paymentBackend::PaymentServiceContainer {
+            aspects {
+                docker::_aspects.Dockerfile(
+                    '
+                    CMD java ${JAVA_OPTS} -jar eureka-server-0.0.1-SNAPSHOT.jar
+                    COPY fleximove-backend/eureka-server/target/eureka-server-0.0.1-SNAPSHOT.jar .
+                    '
+                );
+            }
+            default values {
+                hostname="eureka"
+                port=8761
+                imageType="SpringComponent"
+                mavenArtifactId="Eureka"
+                mavenGroupId="de.fhdo.puls.service.eureka"
+                mavenVersion="0.0.1-SNAPSHOT"
+                mavenName="eureka"
+                programmingLanguage="Java"
+
+            }
+        }

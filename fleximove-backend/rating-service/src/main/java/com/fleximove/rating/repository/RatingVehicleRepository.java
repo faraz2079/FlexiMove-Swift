@@ -14,4 +14,5 @@ public interface RatingVehicleRepository extends JpaRepository<RatingVehicle, Lo
     void deleteByVehicleId(Long vehicleId);
     List<RatingVehicle> findByVehicleId(Long vehicleId);
     List<RatingVehicle> findByUserId(Long userId);
+    Optional<RatingVehicle> findByUserIdAndVehicleId(Long userId, Long vehicleId);
 }
