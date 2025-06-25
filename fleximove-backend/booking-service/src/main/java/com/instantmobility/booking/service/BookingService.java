@@ -153,7 +153,7 @@ public class BookingService {
 
     public PaymentResponse processPaymentFallback(UUID bookingId, PaymentRequest request, Exception e) {
         PaymentResponse fallbackResponse = new PaymentResponse();
-        fallbackResponse.setStatus("FAILED");
+        fallbackResponse.setPaymentStatus("FAILED");
         fallbackResponse.setMessage("Payment service unavailable. Please try again later.");
 
         return fallbackResponse;

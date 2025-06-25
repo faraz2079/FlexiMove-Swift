@@ -23,7 +23,7 @@ public class PaymentServiceFallbackFactory implements FallbackFactory<PaymentSer
             public PaymentResponse processPayment(PaymentRequest request) {
                 logger.warn("Fallback: Cannot process payment for booking {}", request.getBookingId());
                 PaymentResponse response = new PaymentResponse();
-                response.setStatus("FAILED");
+                response.setPaymentStatus("FAILED");
                 response.setMessage("Payment service unavailable. Please try again later.");
                 return response;
             }
