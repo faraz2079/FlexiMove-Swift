@@ -13,8 +13,10 @@ export interface BookingDTO {
   userId: number;
   vehicleId: number;
   status: string;
+  bookedAt: string;
   startTime: string;
   endTime: string;
+  durationInMinutes: number;
   pickupLatitude: number;
   pickupLongitude: number;
   dropoffLatitude: number;
@@ -37,9 +39,6 @@ interface BookingDetails extends BookingDTO{
   averageProviderRating: number;
   restrictions: VehicleRestrictions,
   showDetails: boolean;
-  tripStartedAt?: string;
-  tripEndedAt?: string;
-  duration?: number;
 }
 
 export interface RatingVehicleDTO {
@@ -206,11 +205,11 @@ export class MyBookingsComponent implements OnInit {
     //In real application we would use the Vehicle GPS
     navigator.geolocation.getCurrentPosition(
       position => {
-        booking.tripStartedAt = new Date().toISOString()
+        booking.startTime = this.getBerlinLocalISOString()
         const request: StartTripRequest = {
           startLatitude: position.coords.latitude,
           startLongitude: position.coords.longitude,
-          startTime: booking.tripStartedAt
+          startTime: booking.startTime
         };
 
         this.bookingService.startTrip(booking.id, request).subscribe({
@@ -241,11 +240,11 @@ export class MyBookingsComponent implements OnInit {
     //In real application we would use the Vehicle GPS
     navigator.geolocation.getCurrentPosition(
       position => {
-        booking.tripEndedAt = new Date().toISOString()
+        booking.endTime = this.getBerlinLocalISOString()
         const request: EndTripRequest = {
           endLatitude: position.coords.latitude,
           endLongitude: position.coords.longitude,
-          endTime: booking.tripEndedAt
+          endTime: booking.endTime
         };
 
         this.bookingService.endTrip(booking.id, request).subscribe({
@@ -253,8 +252,13 @@ export class MyBookingsComponent implements OnInit {
             booking.status = 'COMPLETED';
             booking.cost = summary.cost;
             booking.distance = summary.distanceInKm;
-            booking.duration = summary.durationInMinutes;
-
+            booking.durationInMinutes = summary.durationInMinutes;
+            this.geocodingService.reverseGeocode(summary.dropoffLocation.latitude, summary.dropoffLocation.longitude).subscribe({
+              next: (addr) => {
+                booking.dropoffAddress = addr
+              },
+              error: err => alert('Error while loading the dropoff address.')
+            });
             alert(`Trip finished. Duration: ${summary.durationInMinutes} minutes, total amount: ${summary.cost}€`);
           },
           error: err => {
@@ -347,5 +351,9 @@ formatBillingModel(billingModel: string): string {
     }
   }
 
+  getBerlinLocalISOString(): string {
+    const berlinTime = new Date().toLocaleString("sv-SE", { timeZone: "Europe/Berlin" });
+    return berlinTime.replace(" ", "T");
+  }
 
 }

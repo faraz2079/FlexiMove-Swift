@@ -17,9 +17,9 @@
             <p><strong>Vehicle Type:</strong> {{ formatVehicleType(booking.vehicleType) }}</p>
             <p><strong>Vehicle Model:</strong> {{ booking.vehicleModel }}</p>
             <p><strong>Pickup Address:</strong> {{ booking.pickupAddress }}</p>
-            <p><strong>Booked at:</strong> {{ booking.startTime }}</p>
-            <p *ngIf="!(booking.status === 'CREATED' || booking.status === 'CANCELLED' || booking.status === 'CONFIRMED')"><strong>Trip started at:</strong> {{ booking.tripStartedAt }}</p>
-            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Trip ended at:</strong> {{ booking.tripEndedAt }}</p>
+            <p><strong>Booked at:</strong> {{ booking.bookedAt }}</p>
+            <p *ngIf="!(booking.status === 'CREATED' || booking.status === 'CANCELLED' || booking.status === 'CONFIRMED')"><strong>Trip started at:</strong> {{ booking.startTime }}</p>
+            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Trip ended at:</strong> {{ booking.endTime }}</p>
             <p><strong>Price:</strong> {{ booking.priceAmount }}€ / {{ formatBillingModel(booking.billingModel) }}</p>
             <p>
                 <strong>Vehicle Rating: </strong> 
@@ -33,7 +33,7 @@
                     <p-rating [ngModel]="booking.averageProviderRating" [readonly]="!(booking.status === 'COMPLETED' || booking.status === 'CANCELLED' || booking.status === 'PAID')"  [cancel]="false" class="rating-stars" (onRate)="onProviderRatingChange($event.value, booking)"></p-rating>
                 </span>
             </p>
-            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Overall duration:</strong> {{ booking.duration }}</p>
+            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Overall duration:</strong> {{ booking.durationInMinutes }} minutes</p>
             <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Overall distance:</strong> {{ booking.distance }} km</p>
             <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Total amount:</strong> {{ booking.cost }}€</p>
         </mat-card-content>

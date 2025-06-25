@@ -16,12 +16,7 @@ public interface BookingRepository extends JpaRepository<Booking, BookingId> {
 
     List<Booking> findByUserId(Long userId);
     List<Booking> findByVehicleId(Long vehicleId);
-    List<Booking> findByUserIdOrderByTimeFrame_StartTimeDesc(Long testUserId);
 	void deleteByUserId(Long userId);
-    @Query("SELECT b FROM Booking b WHERE b.userId = :userId ORDER BY b.timeFrame.startTime DESC")
-    List<Booking> findByUserIdOrderByTimeFrameDesc(
-            @Param("userId") Long userId,
-            Pageable pageable
-    );
+    List<Booking> findByUserIdOrderByBookedAtDesc(Long userId);
     void deleteByVehicleId(Long vehicleId);
 }

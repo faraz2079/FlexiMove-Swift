@@ -37,38 +37,37 @@ public class Trip {
         if (this.route == null) {
             this.route = new ArrayList<>();
         }
-        if (!"IN_PROGRESS".equals(trip_status)) {
+        if (!"IN_PROGRESS".equals(this.trip_status)) {
             throw new IllegalStateException("Cannot record location when trip is not in progress");
         }
 
-        route.add(location);
+        this.route.add(location);
 
     }
 
     public void complete() {
-        if (!"IN_PROGRESS".equals(trip_status)) {
+        if (!"IN_PROGRESS".equals(this.trip_status)) {
             throw new IllegalStateException("Cannot complete a trip that is not in progress");
         }
-        trip_status = "COMPLETED";
+        this.trip_status = "COMPLETED";
     }
 
     public double getDistanceInKm() {
-        if (startLocation == null || endLocation == null) {
+        if (this.startLocation == null || this.endLocation == null) {
             return 0;
         }
 
         return haversineDistance(
-                startLocation.getLatitude(), startLocation.getLongitude(),
-                endLocation.getLatitude(), endLocation.getLongitude()
+                this.startLocation.getLatitude(), this.startLocation.getLongitude(),
+                this.endLocation.getLatitude(), this.endLocation.getLongitude()
         );
     }
 
     public long getDurationInMinutes() {
-        if (timeFrame.getStartTime() == null ||timeFrame.getEndTime() == null) {
+        if (this.timeFrame.getStartTime() == null || this.timeFrame.getEndTime() == null) {
             return 0;
         }
-
-        return Duration.between(timeFrame.getStartTime(), timeFrame.getEndTime()).toMinutes();
+        return Duration.between(this.timeFrame.getStartTime(), this.timeFrame.getEndTime()).toMinutes();
     }
 
     private double haversineDistance(double lat1, double lon1, double lat2, double lon2) {

@@ -13,7 +13,7 @@ interface VehicleWithDetails extends NearestAvailableVehicleResponse {
 export interface CreateBookingRequest {
   userId: number;
   vehicleId: number;
-  startTime: string;
+  bookedAt: string;
   pickupLatitude: number;
   pickupLongitude: number;
   userAge: number;
@@ -217,7 +217,7 @@ export class VehicleSearchResultComponent {
       const request: CreateBookingRequest = {
         userId: +userId!,
         vehicleId: vehicle.vehicleId,
-        startTime: new Date().toISOString(),
+        bookedAt: this.getBerlinLocalISOString(),
         pickupLatitude: vehicle.latitude,
         pickupLongitude: vehicle.longitude,
         userAge: this.calculateAge(user.dateOfBirth),
@@ -264,6 +264,8 @@ export class VehicleSearchResultComponent {
     return age;
   }
 
-
-
+  getBerlinLocalISOString(): string {
+    const berlinTime = new Date().toLocaleString("sv-SE", { timeZone: "Europe/Berlin" });
+    return berlinTime.replace(" ", "T");
+  }
 }

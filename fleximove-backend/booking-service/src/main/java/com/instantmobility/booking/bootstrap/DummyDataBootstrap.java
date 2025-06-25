@@ -31,7 +31,7 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
     private static final Long TEST_VEHICLE_ID = 2L;
 
     private void initData() {
-    	long count = bookingRepository.count();
+    	/*long count = bookingRepository.count();
     	System.out.println("initData called — booking in DB: " + count);
     	if (count > 0) return;
 
@@ -49,6 +49,6 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
 
         List<Booking> bookings = bookingRepository.findByUserIdOrderByTimeFrame_StartTimeDesc(TEST_USER_ID);
         System.out.println("Bookings for TEST_USER_ID:");
-        bookings.forEach(b -> System.out.println("Booking ID: " + b.getId() + ", Status: " + b.getStatus() + ", StartTime: " + b.getTimeFrame().getStartTime()));
+        bookings.forEach(b -> System.out.println("Booking ID: " + b.getId() + ", Status: " + b.getStatus() + ", StartTime: " + b.getTimeFrame().getStartTime())); */
     }
 }

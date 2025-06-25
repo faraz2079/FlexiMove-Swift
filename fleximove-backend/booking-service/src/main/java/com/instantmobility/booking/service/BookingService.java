@@ -36,10 +36,9 @@ public class BookingService {
     public UUID createBooking(CreateBookingRequest request) {
         validateUserForVehicle(request);
         BookingId bookingId = BookingId.generate();
-        TimeFrame timeFrame = new TimeFrame(request.getStartTime());
         GeoLocation pickupLocation = new GeoLocation(request.getPickupLatitude(), request.getPickupLongitude());
 
-        Booking booking = new Booking(bookingId, request.getUserId(), request.getVehicleId(), timeFrame, pickupLocation);
+        Booking booking = new Booking(bookingId, request.getUserId(), request.getVehicleId(), request.getBookedAt(), pickupLocation);
 
         booking.confirm();
 
@@ -256,7 +255,7 @@ public class BookingService {
     }
 
     public List<BookingDTO> getUserBookings(Long userId) {
-        List<Booking> bookings = bookingRepository.findByUserId(userId);
+        List<Booking> bookings = bookingRepository.findByUserIdOrderByBookedAtDesc(userId);
         return bookings.stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
@@ -269,13 +268,23 @@ public class BookingService {
 
     private BookingDTO mapToDTO(Booking booking) {
         BookingDTO dto = new BookingDTO();
+        Trip trip = booking.getTrip();
         dto.setId(booking.getId().getValue());
         dto.setUserId(booking.getUserId());
         dto.setVehicleId(booking.getVehicleId());
         dto.setStatus(booking.getStatus().name());
-        dto.setStartTime(booking.getTimeFrame().getStartTime());
-        dto.setEndTime(booking.getTimeFrame().getEndTime());
+        dto.setBookedAt(booking.getBookedAt());
         dto.setCost(booking.getCost());
+
+        if (trip != null) {
+            if (trip.getTimeFrame() != null) {
+                dto.setStartTime(trip.getTimeFrame().getStartTime());
+                dto.setEndTime(trip.getTimeFrame().getEndTime());
+                dto.setDurationInMinutes(trip.getDurationInMinutes());
+            }
+
+            dto.setDistance(booking.getTrip().getDistance());
+        }
 
         if (booking.getPickupLocation() != null) {
             dto.setPickupLatitude(booking.getPickupLocation().getLatitude());
@@ -285,10 +294,6 @@ public class BookingService {
         if (booking.getDropoffLocation() != null) {
             dto.setDropoffLatitude(booking.getDropoffLocation().getLatitude());
             dto.setDropoffLongitude(booking.getDropoffLocation().getLongitude());
-        }
-
-        if (booking.getTrip() != null) {
-            dto.setDistance(booking.getTrip().getDistance());
         }
 
         return dto;

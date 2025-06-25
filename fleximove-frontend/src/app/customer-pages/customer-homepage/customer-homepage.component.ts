@@ -82,9 +82,9 @@ export class CustomerHomepageComponent {
         position => {
           const { latitude, longitude } = position.coords;
           this.geocodingService.reverseGeocode(latitude, longitude).subscribe({
-          next: addr => this.address = addr,
-          error: err => alert('Error while loading the address.')
-        });
+            next: addr => this.address = addr,
+            error: err => alert('Error while loading the address.')
+          });
         },
         error => {
           alert('Unable to retrieve your location.');

@@ -30,8 +30,8 @@ public class Booking {
     @Column(name = "payment_id", columnDefinition = "BINARY(16)")
     private UUID paymentId;
 
-    @Embedded
-    private TimeFrame timeFrame;
+    @Column(name = "booking_time")
+    private LocalDateTime bookedAt;
 
     @Embedded
     @AttributeOverrides({
@@ -79,78 +79,75 @@ public class Booking {
     })
     private Trip trip;
 
-    public Booking(BookingId id, Long userId, Long vehicleId, TimeFrame timeFrame, GeoLocation pickupLocation) {
+    public Booking(BookingId id, Long userId, Long vehicleId, LocalDateTime bookedAt, GeoLocation pickupLocation) {
         this.id = id;
         this.userId = userId;
         this.vehicleId = vehicleId;
         this.status = BookingStatus.CREATED;
-        this.timeFrame = timeFrame;
+        this.bookedAt = bookedAt;
         this.pickupLocation = pickupLocation;
         this.cost = 0.0;
+        this.trip = new Trip(UUID.randomUUID());
     }
 
     public void confirm() {
-        if (status != BookingStatus.CREATED) {
-            throw new IllegalStateException("Booking cannot be confirmed from status: " + status);
+        if (this.status != BookingStatus.CREATED) {
+            throw new IllegalStateException("Booking cannot be confirmed from status: " + this.status);
         }
-        status = BookingStatus.CONFIRMED;
+        this.status = BookingStatus.CONFIRMED;
     }
 
     public void startTrip(GeoLocation startLocation, LocalDateTime startTime) {
-        if (status != BookingStatus.CONFIRMED) {
-            throw new IllegalStateException("Trip cannot be started from status: " + status);
+        if (this.status != BookingStatus.CONFIRMED) {
+            throw new IllegalStateException("Trip cannot be started from status: " + this.status);
         }
+        TimeFrame tripTimeFrame = new TimeFrame(startTime, null);
+        this.trip.recordLocation(startLocation);
+        this.trip.setTimeFrame(tripTimeFrame);
 
-        trip = new Trip(UUID.randomUUID());
-        trip.recordLocation(startLocation);
-
-        timeFrame = new TimeFrame(startTime, timeFrame.getEndTime());
-        status = BookingStatus.STARTED;
+        this.status = BookingStatus.STARTED;
     }
 
     public void endTrip(GeoLocation endLocation, LocalDateTime endTime) {
-        if (status != BookingStatus.STARTED || trip == null) {
-            throw new IllegalStateException("Trip cannot be ended from status: " + status);
+        if (this.status != BookingStatus.STARTED || this.trip == null) {
+            throw new IllegalStateException("Trip cannot be ended from status: " + this.status);
         }
 
-        trip.recordLocation(endLocation);
-        trip.complete();
+        this.trip.recordLocation(endLocation);
+        this.trip.complete();
 
-        if (timeFrame.getEndTime() == null) {
-            timeFrame.setEndTime(endTime);
-        } else {
-            // Create new TimeFrame if we can't modify the existing one
-            timeFrame = new TimeFrame(timeFrame.getStartTime(), endTime);
+        if (this.trip.getTimeFrame().getEndTime() == null) {
+            this.trip.getTimeFrame().setEndTime(endTime);
         }
-        trip.setTimeFrame(timeFrame);
-        status = BookingStatus.COMPLETED;
 
-        dropoffLocation = endLocation;
+        this.status = BookingStatus.COMPLETED;
+        this.dropoffLocation = endLocation;
     }
 
     public void cancel() {
-        if (status == BookingStatus.COMPLETED) {
+        if (this.status == BookingStatus.COMPLETED) {
             throw new IllegalStateException("Completed booking cannot be cancelled");
         }
 
-        if (status == BookingStatus.STARTED) {
+        if (this.status == BookingStatus.STARTED) {
             throw new IllegalStateException("Booking cannot be cancelled. Trip hast to be finished and payed first.");
         }
 
-        status = BookingStatus.CANCELLED;
+        this.status = BookingStatus.CANCELLED;
     }
 
     public void calculateCost(String billingModel, double rate) {
-        if (status != BookingStatus.COMPLETED) {
+        if (this.status != BookingStatus.COMPLETED) {
             throw new IllegalStateException("Cannot calculate cost: trip not completed");
         }
 
-        if (trip == null) {
+        if (this.trip == null) {
             throw new IllegalStateException("Cannot calculate cost: no trip information available");
         }
 
-        double distanceInKm = trip.getDistanceInKm();
-        long durationInMinutes = trip.getDurationInMinutes();
+        double distanceInKm = this.trip.getDistanceInKm();
+        this.trip.setDistance(distanceInKm);
+        long durationInMinutes = this.trip.getDurationInMinutes();
 
         double calculatedCost;
         if ("PER_HOUR".equals(billingModel)) {
@@ -168,31 +165,31 @@ public class Booking {
     }
 
     public TripSummary createTripSummary(String billingModel, double rate) {
-        if (status != BookingStatus.COMPLETED) {
+        if (this.status != BookingStatus.COMPLETED) {
             throw new IllegalStateException("Cannot create summary: trip not completed");
         }
 
         TripSummary summary = new TripSummary();
-        summary.setBookingId(id.getValue());
-        summary.setCost(cost);
-        summary.setDistanceInKm(trip.getDistanceInKm());
-        summary.setDurationInMinutes(trip.getDurationInMinutes());
+        summary.setBookingId(this.id.getValue());
+        summary.setCost(this.cost);
+        summary.setDistanceInKm(this.trip.getDistanceInKm());
+        summary.setDurationInMinutes(this.trip.getDurationInMinutes());
         summary.setBillingModel(billingModel);
         summary.setRate(rate);
-        summary.setStartTime(timeFrame.getStartTime());
-        summary.setEndTime(timeFrame.getEndTime());
-        summary.setPickupLocation(pickupLocation);
-        summary.setDropoffLocation(dropoffLocation);
+        summary.setStartTime(this.trip.getTimeFrame().getStartTime());
+        summary.setEndTime(this.trip.getTimeFrame().getEndTime());
+        summary.setPickupLocation(this.pickupLocation);
+        summary.setDropoffLocation(this.dropoffLocation);
 
         return summary;
     }
 
     public GeoLocation getFinalLocation() {
-        if (status == BookingStatus.COMPLETED && dropoffLocation != null) {
-            return dropoffLocation;
-        } else if (trip != null && !trip.getRoute().isEmpty()) {
+        if (this.status == BookingStatus.COMPLETED && this.dropoffLocation != null) {
+            return this.dropoffLocation;
+        } else if (this.trip != null && !this.trip.getRoute().isEmpty()) {
             // Return last recorded location in trip
-            List<GeoLocation> route = trip.getRoute();
+            List<GeoLocation> route = this.trip.getRoute();
             return route.get(route.size() - 1);
         }
         return null;
