@@ -5,16 +5,21 @@ import com.instantmobility.booking.clients.VehicleServiceClient;
 import com.instantmobility.booking.domain.*;
 import com.instantmobility.booking.dto.*;
 import com.instantmobility.booking.repository.BookingRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.ErrorManager;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +56,7 @@ public class BookingService {
     }
 
     private void validateUserForVehicle(CreateBookingRequest request) {
+        // Age validation
         if (request.getUserAge() < request.getVehicleMinimumAge()) {
             throw new ValidationException(
                     "User age (" + request.getUserAge() + ") is below the minimum required age ("
@@ -58,11 +64,13 @@ public class BookingService {
             );
         }
 
+        // License validation
         if (request.getVehicleRequiredLicense() != null && !request.getVehicleRequiredLicense().isEmpty()) {
             if (request.getUserLicenseType() == null || request.getUserLicenseType().isEmpty()) {
                 throw new ValidationException("User license is required for this vehicle");
             }
 
+            // Case-insensitive string comparison
             if (!request.getUserLicenseType().equalsIgnoreCase(request.getVehicleRequiredLicense())) {
                 throw new ValidationException(
                         "User license type (" + request.getUserLicenseType()
@@ -73,7 +81,6 @@ public class BookingService {
         }
     }
 
-    @Transactional
     public void startTrip(UUID bookingId, StartTripRequest request) {
         Booking booking = getBookingById(bookingId);
 
@@ -91,6 +98,7 @@ public class BookingService {
     public TripSummary endTrip(UUID bookingId, EndTripRequest request) {
         Booking booking = getBookingById(bookingId);
 
+        // End the trip
         GeoLocation endLocation = new GeoLocation(request.getEndLatitude(), request.getEndLongitude());
         LocalDateTime endTime = request.getEndTime() != null ? request.getEndTime() : LocalDateTime.now();
         booking.endTrip(endLocation, endTime);
@@ -115,6 +123,7 @@ public class BookingService {
     }
 
     @Transactional
+    @CircuitBreaker(name = "paymentService", fallbackMethod = "processPaymentFallback")
     public PaymentResponse processPayment(UUID bookingId, PaymentRequest request) {
         Booking booking = getBookingById(bookingId);
 
@@ -122,6 +131,7 @@ public class BookingService {
             throw new ValidationException("Booking does not belong to this user");
         }
 
+        // Validate booking is in the right state
         if (booking.getStatus() != BookingStatus.COMPLETED) {
             throw new IllegalStateException(
                     "Booking must be in COMPLETED state to process payment, current state: " + booking.getStatus()
@@ -141,6 +151,14 @@ public class BookingService {
         return response;
     }
 
+    public PaymentResponse processPaymentFallback(UUID bookingId, PaymentRequest request, Exception e) {
+        PaymentResponse fallbackResponse = new PaymentResponse();
+        fallbackResponse.setStatus("FAILED");
+        fallbackResponse.setMessage("Payment service unavailable. Please try again later.");
+
+        return fallbackResponse;
+    }
+
     @Transactional
     public void cancelBooking(UUID bookingId) {
         Booking booking = getBookingById(bookingId);
@@ -151,6 +169,9 @@ public class BookingService {
         bookingRepository.save(booking);
     }
 
+    /**
+     * Updates vehicle location when booking ends
+     */
     private void updateVehicleLocationAndStatus(Long vehicleId, GeoLocation location) {
         vehicleServiceClient.updateVehicleLocation(vehicleId, location);
         vehicleServiceClient.updateVehicleStatus(vehicleId, VehicleStatus.AVAILABLE);
