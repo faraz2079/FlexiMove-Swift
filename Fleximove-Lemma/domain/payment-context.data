@@ -14,7 +14,7 @@ context PaymentContext {
     }
 
     structure Amount<valueObject> {
-        immutable double amount
+        immutable double amountValue
     }
 
     enum PaymentStatus {

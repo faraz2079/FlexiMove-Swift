@@ -36,7 +36,11 @@ context UserContext {
     }
 
     enum DriverLicenseType {
-        A, B, C, D, E
+        A, 
+        B, 
+        C, 
+        D, 
+        NONE
     }
 
     structure Customer<entity> extends User {

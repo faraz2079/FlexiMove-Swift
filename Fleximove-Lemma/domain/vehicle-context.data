@@ -14,8 +14,7 @@ context VehicleContext {
     }
 
     structure IdentificationNumber<valueObject> {
-        //@Column(name = "identification_number", unique = true, nullable = false)
-        //TODO: fragen, wieso immutable und bzgl. neverEmpty
+        //Column(name = "identification_number", unique = true, nullable = false)
         immutable string identNumber<neverEmpty>
     }
 
@@ -48,7 +47,6 @@ context VehicleContext {
         TRUCK("C"),
         BUS("D"),
         NONE("NONE")
-        //function DriverLicenseType licenseTypeFromCode(string code)<sideEffectFree>
     }
 
     enum VehicleStatus {
@@ -75,7 +73,7 @@ context VehicleContext {
     structure VehicleRepository<repository> {
         function VehicleList findByStatus(VehicleStatus status),
         function VehicleList findAllByProviderId(long providerId),
-        //function Optional<Vehicle> findByIdentificationNumberIdentNumber(string identificationNumber),
+        function Vehicle findByIdentificationNumberIdentNumber(string identificationNumber), //Optional<Vehicle>
         procedure deleteAllByProviderId(long providerId)
     }
 
@@ -169,7 +167,7 @@ context VehicleContext {
 
     structure VehicleService<applicationService> {
         procedure registerNewVehicle(VehicleRequest request, long providerId),
-        //function Optional<Vehicle> fetchVehicleById(long id),
+        function Vehicle fetchVehicleById(long id), //Optional<Vehicle>
         procedure deleteVehicle(long id), //Transactional
         procedure deleteAllVehiclesByProviderId(long providerId), //Transactional
         function NearestAvailableVehicleResponseList findAvailableNearbyVehicles(Location neededLocationWithAvailableVehicles, double radiusInKm), //Transactional
@@ -198,19 +196,5 @@ context VehicleContext {
 
     structure DistanceUtils<domainService> {
         function double haversineDistance(double lat1, double lon1, double lat2, double lon2)
-    }
-
-    structure RatingServiceClient<infrastructureService> {
-        function double getAverageRatingForVehicle(long vehicleId),
-        function double getAverageRatingForProvider(long providerId),
-        procedure deleteRatingsByVehicleId(long vehicleId)
-    }
-
-    structure UserServiceClient<infrastructureService> {
-        function string getProviderCompanyName(long providerId)
-    }
-
-    structure BookingServiceClient<infrastructureService> {
-        procedure deleteBookingsByVehicleId(long vehicleId)
     }
 }

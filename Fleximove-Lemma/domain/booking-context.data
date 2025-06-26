@@ -57,8 +57,7 @@ context BookingContext {
         immutable GeoLocation endLocation,
         immutable double distance = 0.0,
         immutable string trip_status = "IN_PROGRESS",
-        immutable TimeFrame timeFrame,
-        hide function double haversineDistance(double lat1, double lon1, double lat2, double lon2)<sideEffectFree>
+        immutable TimeFrame timeFrame    
     }
 
     //DTO
@@ -148,10 +147,9 @@ context BookingContext {
     structure BookingRepository<repository> {
         function BookingList findByUserId(long userId),
         function BookingList findByVehicleId(long vehicleId),
-        function BookingList findByUserIdOrderByStartTimeDesc(long userId),
         procedure deleteByUserId(long userId),
-        procedure deleteByVehicleId(long vehicleId)
-        //function BookingList findByUserIdOrderByStartTimeDescPaged(long userId, Pageable pageable)
+        procedure deleteByVehicleId(long vehicleId),
+        function BookingList findByUserIdOrderByBookedAtDesc(long userId)
     }
 
     structure PaymentServiceClient<infrastructureService> {

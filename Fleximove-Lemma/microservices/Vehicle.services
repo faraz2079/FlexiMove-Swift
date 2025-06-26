@@ -1,102 +1,116 @@
 import technology  from "../technology/JavaSpring.technology" as Spring
-import technology from "../technology/Protocols.technology" as proctols
-import datatypes from "VehicleDomain.data" as VehicleDomain
-import datatypes from "GeoDomain.data" as GeoDomain
+import technology from "../technology/Protocols.technology" as Protocols
+import datatypes from "../domain/vehicle-context.data" as VehicleDomain
 
-@technology(Java)
 @technology(Spring)
-functional microservice de.fleximove.VehicleService {
+@technology(Protocols)
+@sync(Protocols::_protocols.rest)
+@Spring::_aspects.Application(name="VehicleService")
+public functional microservice de.fleximove.VehicleService {
+    //required operations BookingServiceClient, RatingServiceClient, UserServiceClient
 
-    @sync(Spring::_protocols.rest)
-    @endpoints(Spring::_protocols.rest: "/vehicles";)
-    interface Vehicles {
+    @endpoints(Protocols::_protocols.rest: "/vehicles";)
+    interface VehicleInterface {
 
-        // Neues Fahrzeug registrieren (mit providerId als RequestParam)
-        @endpoints(Spring::_protocols.rest: "/registeredBy";)
-        @Spring::_aspects.Post
+        @endpoints(Protocols::_protocols.rest: "/registeredBy";)
+        @Spring::_aspects.PostMapping
         registerVehicle(
             @Spring::_aspects.RequestBody
-            sync in request : VehicleDomain::VehicleRequest,
+            sync in request : VehicleDomain::VehicleContext.VehicleRequest,
             @Spring::_aspects.RequestParam
-            sync in providerId : long
-        );
-
-        // Fahrzeug nach ID laden
-        @endpoints(Spring::_protocols.rest: "/load/{id}";)
-        @Spring::_aspects.Get
-        getVehicle(
-            @Spring::_aspects.PathVariable
-            sync in id : long,
+            sync in providerId : long, 
             @Spring::_aspects.ResponseEntity
-            sync out vehicle : VehicleDomain::Vehicle
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
         );
 
-        // Fahrzeug löschen nach ID
-        @endpoints(Spring::_protocols.rest: "/delete/{id}";)
-        @Spring::_aspects.Delete
+        @endpoints(Protocols::_protocols.rest: "/load/{id}";)
+        @Spring::_aspects.GetMapping
+        getVehicle(
+            @Spring::_aspects.PathVariable 
+            sync in id : long, 
+            @Spring::_aspects.ResponseEntity
+            sync out vehicle : VehicleDomain::VehicleContext.Vehicle, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int);
+
+        @endpoints(Protocols::_protocols.rest: "/delete/{id}";)
+        @Spring::_aspects.DeleteMapping
         deleteVehicle(
-            @Spring::_aspects.PathVariable
-            sync in id : long
-        );
+            @Spring::_aspects.PathVariable 
+            sync in id : long, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int);
 
-        // Alle Fahrzeuge eines Providers löschen (mit RequestParam)
-        @endpoints(Spring::_protocols.rest: "/deleteAllVehicles";)
-        @Spring::_aspects.Delete
+        @endpoints(Protocols::_protocols.rest: "/deleteAllVehicles";)
+        @Spring::_aspects.DeleteMapping
         deleteVehiclesByProvider(
-            @Spring::_aspects.RequestParam
-            sync in deleteForProviderId : long
-        );
+            @Spring::_aspects.RequestParam 
+            sync in deleteForProviderId : long, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int);
 
-        // Verfügbare Fahrzeuge in der Nähe suchen (address + radiusInKm als RequestParams)
-        @endpoints(Spring::_protocols.rest: "/nearby";)
-        @Spring::_aspects.Get
+        @endpoints(Protocols::_protocols.rest: "/nearby";)
+        @Spring::_aspects.GetMapping
         getNearbyVehicles(
             @Spring::_aspects.RequestParam
             sync in address : string,
             @Spring::_aspects.RequestParam(defaultValue = "3.0")
             sync in radiusInKm : double,
             @Spring::_aspects.ResponseEntity
-            sync out vehicles : VehicleDomain::NearestAvailableVehicleResponse[]
+            sync out vehicles : VehicleDomain::VehicleContext.NearestAvailableVehicleResponseList
         );
 
-        // Fahrzeuge eines Providers auflisten
-        @endpoints(Spring::_protocols.rest: "/providerVehiclesList";)
-        @Spring::_aspects.Get
+        @endpoints(Protocols::_protocols.rest: "/providerVehiclesList";)
+        @Spring::_aspects.GetMapping
         listProviderVehicles(
             @Spring::_aspects.RequestParam
             sync in forProviderId : long,
             @Spring::_aspects.ResponseEntity
-            sync out vehicles : VehicleDomain::Vehicle[]
+            sync out vehicles : VehicleDomain::VehicleContext.ProviderVehicleResponseList
         );
 
-        // Fahrzeuginformationen bearbeiten
-        @endpoints(Spring::_protocols.rest: "/edit/{vehicleId}";)
-        @Spring::_aspects.Patch
+        @endpoints(Protocols::_protocols.rest: "/edit/{vehicleId}";)
+        @Spring::_aspects.PostMapping //PatchMapping
         editVehicle(
             @Spring::_aspects.PathVariable
             sync in vehicleId : long,
             @Spring::_aspects.RequestBody
-            sync in request : VehicleDomain::EditVehicleRequest
+            sync in request : VehicleDomain::VehicleContext.EditVehicleRequest,
+            @Spring::_aspects.ResponseEntity
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
         );
 
-        // Fahrzeugstatus aktualisieren (newStatus als RequestParam)
-        @endpoints(Spring::_protocols.rest: "/updateStatus/{vehicleId}";)
-        @Spring::_aspects.Patch
+        @endpoints(Protocols::_protocols.rest: "/updateStatus/{vehicleId}";)
+        @Spring::_aspects.PutMapping
         updateVehicleStatus(
             @Spring::_aspects.PathVariable
             sync in vehicleId : long,
             @Spring::_aspects.RequestParam
-            sync in newStatus : VehicleDomain::VehicleStatus
+            sync in newStatus : VehicleDomain::VehicleContext.VehicleStatus
         );
 
-        // Fahrzeugposition aktualisieren (Location als RequestBody)
-        @endpoints(Spring::_protocols.rest: "/updateLocation/{vehicleId}";)
-        @Spring::_aspects.Patch
+        @endpoints(Protocols::_protocols.rest: "/updateLocation/{vehicleId}";)
+        @Spring::_aspects.PutMapping
         updateVehicleLocation(
             @Spring::_aspects.PathVariable
             sync in vehicleId : long,
             @Spring::_aspects.RequestBody
-            sync in locationData : GeoDomain::Location
+            sync in locationData : VehicleDomain::VehicleContext.Location
+        );
+
+        @endpoints(Protocols::_protocols.rest: "/{vehicleId}/billing";)
+        @Spring::_aspects.GetMapping
+        getBillingInfo(
+            @Spring::_aspects.PathVariable
+            sync in vehicleId : long,
+            @Spring::_aspects.ResponseEntity
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
         );
     }
 }

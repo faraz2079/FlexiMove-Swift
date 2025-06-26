@@ -34,7 +34,6 @@ export class LoginComponent {
 
 
   //TODO: alerts anpassen (mit Snackbar ersetzen)
-  //TODO: UserService erstellen
   onSubmit() {
   if (this.loginForm.valid) {
     const formData = this.loginForm.value;

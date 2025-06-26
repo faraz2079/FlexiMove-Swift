@@ -25,20 +25,20 @@ context Rating {
     collection RatingVehicleList {RatingVehicle ratingVehicle}
 
     structure RatingProviderRepository<repository> {
-        //function Optional<Double> findAverageScoreByProviderId(long providerId)
-        function double findAverageScoreByProviderId(long providerId),
+        function double findAverageScoreByProviderId(long providerId), //Optional<Double>
         procedure deleteByUserId(long userId),
         function RatingProviderList findByProviderId(long providerId),
-        function RatingProviderList findByUserId(long userId)
+        function RatingProviderList findByUserId(long userId),
+        function RatingProvider findByUserIdAndProviderId(long userId, long providerId) //Optional<RatingProvider>
     }
 
     structure RatingVehicleRepository<repository> {
-        //function Optional<Double> findAverageScoreByVehicleId(long vehicleId)
-        function double findAverageScoreByVehicleId(long vehicleId),
+        function double findAverageScoreByVehicleId(long vehicleId), //Optional<Double> 
         procedure deleteByUserId(long userId),
         procedure deleteByVehicleId(long vehicleId),
         function RatingVehicleList findByVehicleId(long vehicleId),
-        function RatingVehicleList findByUserId(long userId)
+        function RatingVehicleList findByUserId(long userId),
+        function RatingVehicle findByUserIdAndVehicleId(long userId, long vehicleId) //Optional<RatingVehicle>
     }
 
     structure RatingService<applicationService> {
