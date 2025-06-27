@@ -1,96 +1,115 @@
-//import technology  from "../technology/java.technology" as Java
 import technology  from "../technology/JavaSpring.technology" as Spring
-import technology  from "../technology/Java.technology" as Java
-import technology from "../technology/Protocols.technology" as proctols
+import technology from "../technology/Protocols.technology" as Protocols
 import datatypes from "../domain/booking-context.data" as BookingDomain
+import microservices from "../microservices/Vehicle.services" as VehicleBackend
+import microservices from "../microservices/Payment.services" as PaymentBackend
 
-@technology(Java)
 @technology(Spring)
-functional microservice com.instantmobility.BookingService {
+@technology(Protocols)
+@sync(Protocols::_protocols.rest)
+@Spring::_aspects.Application(name="BookingService")
+public functional microservice com.instantmobility.BookingService {
 
-    @sync(Spring::_protocols.rest)
-    @endpoints(Spring::_protocols.rest: "/api/bookings";)
-    interface Bookings {
+    required operations {
+        PaymentBackend::PaymentInterface.processFromBooking,
+        PaymentBackend::PaymentInterface.getStatus,
+        PaymentBackend::PaymentInterface.deletePaymentsByUserId,
+        PaymentBackend::PaymentInterface.deletePaymentsByBookingId,
+        VehicleBackend:VehicleInterface.updateVehicleStatus,
+        VehicleBackend:VehicleInterface.updateVehicleLocation,
+        VehicleBackend:VehicleInterface.getBillingInfo
+    }
 
-        // Create booking
-        @Spring::_aspects.Post
+    @endpoints(Protocols::_protocols.rest: "/api/bookings";)
+    interface BookingInterface {
+
+        @endpoints(Protocols::_protocols.rest: "/createNewBooking";)
+        @Spring::_aspects.PostMapping
         createBooking(
             @Spring::_aspects.RequestBody
-            sync in request : BookingDomain::CreateBookingRequest,
+            sync in request : BookingDomain::BookingContext.CreateBookingRequest,
             @Spring::_aspects.ResponseEntity
-            sync out bookingId : Java::UUID
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
         );
 
-        // Start trip
-        @endpoints(Spring::_protocols.rest: "/{bookingId}/start";)
-        @Spring::_aspects.Post
+        @endpoints(Protocols::_protocols.rest: "/{bookingId}/start";)
+        @Spring::_aspects.PostMapping
         startTrip(
             @Spring::_aspects.PathVariable
-            sync in bookingId : Java::UUID,
+            sync in bookingId : string, //UUID
             @Spring::_aspects.RequestBody
-            sync in request : BookingDomain::StartTripRequest
+            sync in request : BookingDomain::BookingContext.StartTripRequest
         );
 
-        // End trip
-        @endpoints(Spring::_protocols.rest: "/{bookingId}/end";)
-        @Spring::_aspects.Post
+        @endpoints(Protocols::_protocols.rest: "/{bookingId}/end";)
+        @Spring::_aspects.PostMapping
         endTrip(
             @Spring::_aspects.PathVariable
-            sync in bookingId : Java::UUID,
+            sync in bookingId : string, //UUID
             @Spring::_aspects.RequestBody
-            sync in request : BookingDomain::EndTripRequest
+            sync in request : BookingDomain::BookingContext.EndTripRequest,
+            @Spring::_aspects.ResponseEntity
+            sync out response : BookingDomain::BookingContext.TripSummary, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorResponse : string
         );
 
-        // Cancel booking
-        @endpoints(Spring::_protocols.rest: "/{bookingId}/cancel";)
-        @Spring::_aspects.Post
+        @endpoints(Protocols::_protocols.rest: "/{bookingId}/payment";)
+        @Spring::_aspects.PostMapping
+        processPayment(
+            @Spring::_aspects.PathVariable
+            sync in bookingId : string, //UUID
+            @Spring::_aspects.RequestBody
+            sync in request : BookingDomain::BookingContext.PaymentRequest,
+            @Spring::_aspects.ResponseEntity
+            sync out successResponse : string, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorResponse : string
+        );
+
+        @endpoints(Protocols::_protocols.rest: "/{bookingId}/cancel";)
+        @Spring::_aspects.PostMapping
         cancelBooking(
             @Spring::_aspects.PathVariable
-            sync in bookingId : Java::UUID
+            sync in bookingId : string //UUID
         );
 
-        // Get booking details
-        @endpoints(Spring::_protocols.rest: "/{bookingId}";)
-        @Spring::_aspects.Get
+        @endpoints(Protocols::_protocols.rest: "/{bookingId}";)
+        @Spring::_aspects.GetMapping
         getBookingDetails(
             @Spring::_aspects.PathVariable
-            sync in bookingId : Java::UUID,
+            sync in bookingId : string, //UUID
             @Spring::_aspects.ResponseEntity
-            sync out booking : BookingDomain::BookingDTO
+            sync out response : BookingDomain::BookingContext.BookingDTO
         );
 
-        // Delete all bookings by user
-        @endpoints(Spring::_protocols.rest: "/user/{userId}";)
-        @Spring::_aspects.Delete
+        @endpoints(Protocols::_protocols.rest: "/user/{userId}";)
+        @Spring::_aspects.DeleteMapping
         deleteUserBookings(
             @Spring::_aspects.PathVariable
-            sync in userId : long
+            sync in userId : long,
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorResponse : string
         );
 
-        // Get user bookings
-        @endpoints(Spring::_protocols.rest: "/user/{userId}";)
-        @Spring::_aspects.Get
+        @endpoints(Protocols::_protocols.rest: "/deleteAll/byVehicle/{vehicleId}";)
+        @Spring::_aspects.DeleteMapping
+        deleteBookingsByVehicle(
+            @Spring::_aspects.PathVariable
+            sync in vehicleId : long,
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorResponse : string
+        );
+
+        @endpoints(Protocols::_protocols.rest: "/user/{userId}";)
+        @Spring::_aspects.GetMapping
         getUserBookings(
             @Spring::_aspects.PathVariable
             sync in userId : long,
             @Spring::_aspects.ResponseEntity
-            sync out bookings : BookingDomain::BookingDTO[]
+            sync out response : BookingDomain::BookingContext.BookingDTOList
         );
-
-        /*
-        // Get booking history (commented out in code)
-        @endpoints(Spring::_protocols.rest: "/history/{userId}";)
-        @Spring::_aspects.Get
-        getBookingHistory(
-            @Spring::_aspects.PathVariable
-            sync in userId : long,
-            @Spring::_aspects.RequestParam
-            sync in page : int,
-            @Spring::_aspects.RequestParam
-            sync in size : int,
-            @Spring::_aspects.ResponseEntity
-            sync out history : BookingDomain::BookingDTO[]
-        );
-        */
     }
 }

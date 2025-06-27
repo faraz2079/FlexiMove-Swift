@@ -1,91 +1,125 @@
 import technology  from "../technology/JavaSpring.technology" as Spring
 import technology from "../technology/Protocols.technology" as Protocols
-import datatypes from "../domain/vehicle-context.data" as VehicleDomain
+import datatypes from "../domain/user-context.data" as UserDomain
+import microservices from "../microservices/Vehicle.services" as VehicleBackend
+import microservices from "../microservices/Booking.services" as BookingBackend
+import microservices from "../microservices/Rating.services" as RatingBackend
 
 @technology(Spring)
 @technology(Protocols)
 @sync(Protocols::_protocols.rest)
-@Spring::_aspects.Application(name="VehicleService")
+@Spring::_aspects.Application(name="UserService")
 public functional microservice org.example.UserService {
 
-    @sync(Spring::_protocols.rest)
-    @endpoints(Spring::_protocols.rest: "/api/users";)
-    interface Users {
+    required operations {
+        RatingBackend::RatingInterface.deleteCustomerRatingsByUserId,
+        RatingBackend::RatingInterface.deleteProviderRatingsByProviderId,
+        BookingBackend:BookingInterface.deleteUserBookings,
+        VehicleBackend::VehicleInterface.deleteVehiclesByProvider
+    }
 
-//Get all users
-     @Spring::_aspects.Get
-        getAll(
+    @endpoints(Protocols::_protocols.rest: "/api/users";)
+    interface UserInterface {
+
+        @endpoints(Protocols::_protocols.rest: "/{id}";)
+        @Spring::_aspects.GetMapping
+        getUserById(
+            @Spring::_aspects.PathVariable 
+            sync in id : long, 
+            sync out user : UserDomain::UserContext.User
+        );
+
+        @endpoints(Protocols::_protocols.rest: "/deleteAccount/{userId}";)
+        @Spring::_aspects.DeleteMapping
+        deleteUserWithDependencies(
+            @Spring::_aspects.PathVariable 
+            sync in id : long, 
             @Spring::_aspects.ResponseEntity
-            sync out users : UserDomain::User[]
-        );
-
-//Get user by ID
-
-        @endpoints(Spring::_protocols.rest: "/{id}";)
-        @Spring::_aspects.Get
-        getById(
-            @Spring::_aspects.PathVariable
-            sync in id : long,
+            sync out successCode : int, 
             @Spring::_aspects.ResponseEntity
-            sync out user : UserDomain::User
+            sync out fault errorCode : int
         );
 
-//Get user by email
-
-        @endpoints(Spring::_protocols.rest: "/email";)
-        @Spring::_aspects.Get
-        getByEmail(
-            @Spring::_aspects.RequestParam
-            sync in email : UserDomain::Email,
-            @Spring::_aspects.ResponseEntity
-            sync out user : UserDomain::User
-        );
-
-
-//Create user
-
-        @Spring::_aspects.Post
-        create(
-            @Spring::_aspects.RequestBody
-            sync in request : UserDomain::User
-        );
-
-//Delete user by ID with dependencies
-        @endpoints(Spring::_protocols.rest: "/{userId}";)
-        @Spring::_aspects.Delete
-        deleteUser(
-            @Spring::_aspects.PathVariable
-            sync in userId : long
-        );
-
-        ---
-        Update user password
-        ---
-        @endpoints(Spring::_protocols.rest: "/{id}/password";)
-        @Spring::_aspects.Put
+        @endpoints(Protocols::_protocols.rest: "/{id}/password";)
+        @Spring::_aspects.PostMapping //PatchMapping
         updatePassword(
             @Spring::_aspects.PathVariable
             sync in id : long,
             @Spring::_aspects.RequestBody
-            sync in password : UserDomain::Password
+            sync in request : UserDomain::UserContext.PasswordChangeRequest,
+            @Spring::_aspects.ResponseEntity
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
         );
 
+        @endpoints(Protocols::_protocols.rest: "/{id}/email";)
+        @Spring::_aspects.PostMapping //PatchMapping
+        updateEmail(
+            @Spring::_aspects.PathVariable
+            sync in id : long,
+            @Spring::_aspects.RequestBody
+            sync in newEmail : string,
+            @Spring::_aspects.ResponseEntity
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
+        );
 
-//Update address
+        @endpoints(Protocols::_protocols.rest: "/{id}/personal-info";)
+        @Spring::_aspects.PostMapping //PatchMapping
+        updatePersonalInfo(
+            @Spring::_aspects.PathVariable
+            sync in id : long,
+            @Spring::_aspects.RequestBody
+            sync in request : UserDomain::UserContext.PersonalInfoUpdateRequest,
+            @Spring::_aspects.ResponseEntity
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
+        );
 
-        @endpoints(Spring::_protocols.rest: "/{id}/address";)
-        @Spring::_aspects.Put
+        @endpoints(Protocols::_protocols.rest: "/{id}/provider-personal-info";)
+        @Spring::_aspects.PostMapping //PatchMapping
+        updateProviderPersonalInfo(
+            @Spring::_aspects.PathVariable
+            sync in id : long,
+            @Spring::_aspects.RequestBody
+            sync in request : UserDomain::UserContext.ProviderPersonalInfoUpdateRequest,
+            @Spring::_aspects.ResponseEntity
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
+        );
+
+        @endpoints(Protocols::_protocols.rest: "/{id}/address";)
+        @Spring::_aspects.PostMapping //PatchMapping
         updateAddress(
             @Spring::_aspects.PathVariable
             sync in id : long,
             @Spring::_aspects.RequestBody
-            sync in address : UserDomain::Address
+            sync in newAddress : UserDomain::UserContext.Address,
+            @Spring::_aspects.ResponseEntity
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
         );
 
-//Update company name
+        @endpoints(Protocols::_protocols.rest: "/{id}/payment-info";)
+        @Spring::_aspects.PostMapping //PatchMapping
+        updatePaymentInfo(
+            @Spring::_aspects.PathVariable
+            sync in id : long,
+            @Spring::_aspects.RequestBody
+            sync in newPaymentInfo : UserDomain::UserContext.PaymentInfo,
+            @Spring::_aspects.ResponseEntity
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
+        );
 
-        @endpoints(Spring::_protocols.rest: "/provider/{id}/companyname";)
-        @Spring::_aspects.Put
+        @endpoints(Protocols::_protocols.rest: "/provider/{id}/companyname";)
+        @Spring::_aspects.PostMapping //PatchMapping
         updateCompanyName(
             @Spring::_aspects.PathVariable
             sync in id : long,
@@ -93,50 +127,45 @@ public functional microservice org.example.UserService {
             sync in newCompanyName : string
         );
 
-
-//Register customer
-
-        @endpoints(Spring::_protocols.rest: "/registercustomer";)
-        @Spring::_aspects.Post
+        @endpoints(Protocols::_protocols.rest: "/registercustomer";)
+        @Spring::_aspects.PostMapping
         registerCustomer(
             @Spring::_aspects.RequestBody
-            sync in customer : UserDomain::Customer,
+            sync in customer : UserDomain::UserContext.Customer,
             @Spring::_aspects.ResponseEntity
-            sync out result : string
+            sync out response : string
         );
 
-
-//Register provider
-        @endpoints(Spring::_protocols.rest: "/registerprovider";)
-        @Spring::_aspects.Post
+        @endpoints(Protocols::_protocols.rest: "/registerprovider";)
+        @Spring::_aspects.PostMapping
         registerProvider(
             @Spring::_aspects.RequestBody
-            sync in provider : UserDomain::Provider,
+            sync in provider : UserDomain::UserContext.Provider,
             @Spring::_aspects.ResponseEntity
-            sync out result : string
+            sync out response : string
         );
 
-
-//Login user
-
-        @endpoints(Spring::_protocols.rest: "/login";)
-        @Spring::_aspects.Post
-        login(
+        @endpoints(Protocols::_protocols.rest: "/login";)
+        @Spring::_aspects.PostMapping
+        loginUser(
             @Spring::_aspects.RequestBody
-            sync in credentials : UserDomain::LoginRequest,
+            sync in loginRequest : UserDomain::UserContext.LoginRequest,
             @Spring::_aspects.ResponseEntity
-            sync out result : UserDomain::LoginResponse
+            sync out response : UserDomain::UserContext.User,
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorResponse : string
         );
 
-// Get provider company name by ID
-
-        @endpoints(Spring::_protocols.rest: "/provider/{id}/companyName";)
-        @Spring::_aspects.Get
-        getCompanyName(
-            @Spring::_aspects.PathVariable
-            sync in id : long,
+        @endpoints(Protocols::_protocols.rest: "/provider/{id}/companyName";)
+        @Spring::_aspects.GetMapping
+        getProviderCompanyName(
+            @Spring::_aspects.PathVariable 
+            sync in id : long, 
             @Spring::_aspects.ResponseEntity
-            sync out companyName : string
+            sync out companyName : string,
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorResponse : string
         );
+
     }
 }

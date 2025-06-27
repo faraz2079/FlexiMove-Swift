@@ -1,45 +1,72 @@
 import technology  from "../technology/JavaSpring.technology" as Spring
-import technology  from "../technology/Java.technology" as Java
-import technology from "../technology/Protocols.technology" as proctols
-//import datatypes from "../TechnologyModels/Spring.technology" as Spring
-import datatypes from "../domain/Payment.data" as payment
+import technology from "../technology/Protocols.technology" as Protocols
+import datatypes from "../domain/payment-context.data" as PaymentDomain
 
 
-@technology(Java)
 @technology(Spring)
+@technology(Protocols)
+@sync(Protocols::_protocols.rest)
+@Spring::_aspects.Application(name="PaymentService")
 functional microservice com.payment.PaymentService {
 
     @sync(Spring::_protocols.rest)
     @endpoints(Spring::_protocols.rest: "/api/payments")
-    interface Payments {
+    interface PaymentInterface {
 
-        //new payment
-        @Spring::_aspects.Post
+        @endpoints(Protocols::_protocols.rest: "/{paymentId}";)
+        @Spring::_aspects.GetMapping
+        get(
+            @Spring::_aspects.PathVariable 
+            sync in paymentId : string, //UUID
+            sync out payment : PaymentDomain::PaymentContext.Payment
+        );
+
+        @endpoints(Protocols::_protocols.rest: "";)
+        @Spring::_aspects.PostMapping
         create(
             @Spring::_aspects.RequestBody
-            sync in payment : PaymentDomain::Payment,
+            sync in payment : PaymentDomain::PaymentContext.Payment,
             @Spring::_aspects.ResponseEntity
-            sync out savedPayment : PaymentDomain::Payment
+            sync out payment : PaymentDomain::PaymentContext.Payment
         );
 
-        // Get payment by ID
-        @endpoints(Spring::_protocols.rest: "/{paymentId}";)
-        @Spring::_aspects.Get
-        get(
-            @Spring::_aspects.PathVariable
-            sync in paymentId : Java::UUID,
-            @Spring::_aspects.ResponseEntity
-            sync out payment : PaymentDomain::Payment
-        );
-
-        // Process payment (from booking)
-        @endpoints(Spring::_protocols.rest: "/process";)
-        @Spring::_aspects.Post
+        @endpoints(Protocols::_protocols.rest: "/process";)
+        @Spring::_aspects.PostMapping
         processFromBooking(
             @Spring::_aspects.RequestBody
-            sync in request : PaymentDomain::PaymentRequestDTO,
+            sync in request : PaymentDomain::PaymentContext.PaymentRequestDTO,
+            sync out response : PaymentDomain::PaymentContext.PaymentResponseDTO
+        );
+
+        @endpoints(Protocols::_protocols.rest: "/status/{paymentId}";)
+        @Spring::_aspects.GetMapping
+        getStatus(
+            @Spring::_aspects.PathVariable 
+            sync in paymentId : string, //UUID
             @Spring::_aspects.ResponseEntity
-            sync out response : PaymentDomain::PaymentResponseDTO
+            sync out response : PaymentDomain::PaymentContext.PaymentResponseDTO
+        );
+
+        @endpoints(Protocols::_protocols.rest: "/deleteByUser/{userId}";)
+        @Spring::_aspects.DeleteMapping
+        deletePaymentsByUserId(
+            @Spring::_aspects.PathVariable 
+            sync in userId : long, 
+            @Spring::_aspects.ResponseEntity
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
+        );
+
+        @endpoints(Protocols::_protocols.rest: "/deleteAll/forBooking/{bookingId}";)
+        @Spring::_aspects.DeleteMapping
+        deletePaymentsByBookingId(
+            @Spring::_aspects.PathVariable 
+            sync in bookingId : string, //UUID
+            @Spring::_aspects.ResponseEntity
+            sync out successCode : int, 
+            @Spring::_aspects.ResponseEntity
+            sync out fault errorCode : int
         );
     }
 }

@@ -29,20 +29,17 @@ public class BookingController {
         try {
             UUID bookingId = bookingService.createBooking(request);
 
-            // Return success response with booking ID and validation message
             Map<String, Object> response = new HashMap<>();
             response.put("bookingId", bookingId);
             response.put("message", "User is eligible to drive this vehicle. Booking created successfully.");
 
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (ValidationException e) {
-            // Return validation error
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", e.getMessage());
 
             return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
         } catch (Exception e) {
-            // Return other errors
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", e.getMessage());
 
@@ -120,9 +117,6 @@ public class BookingController {
         return ResponseEntity.ok(booking);
     }
 
-    /**
-     * Delete all bookings for a user
-     */
     @DeleteMapping("/user/{userId}")
     public ResponseEntity<?> deleteUserBookings(@PathVariable Long userId) {
         try {

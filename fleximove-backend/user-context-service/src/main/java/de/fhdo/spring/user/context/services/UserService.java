@@ -38,12 +38,6 @@ public class UserService {
 		this.ratingClient = ratingClient;
 	}
 
-	public List<User> getAllUser() {
-		List<User> user = new ArrayList();
-		this.userRepository.findAll().forEach(user::add);
-		return user;
-	}
-
 	public User getUserById(Long id) {
 		 Optional<User> user = this.userRepository.findById(id);
 		 return user.isPresent() ? user.get() : null; 

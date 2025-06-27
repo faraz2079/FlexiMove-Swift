@@ -33,12 +33,6 @@ public class UserController {
         this.registrationService = registrationService;
     }
 
-	@GetMapping
-	public List<User> getAllUser() {
-		return userService.getAllUser();
-	}
-
-	// User nach ID abrufen
 	@GetMapping("/{id}")
 	public User getUserById(@PathVariable Long id) {
 		return userService.getUserById(id);
@@ -60,7 +54,6 @@ public class UserController {
 		}
 	}
 
-	// Change Password
 	@PatchMapping("/{id}/password")
 	public ResponseEntity<?> updatePassword(@PathVariable Long id, @RequestBody PasswordChangeRequest request) {
 		User user = userService.getUserById(id);
@@ -76,7 +69,6 @@ public class UserController {
 		return ResponseEntity.ok().build();
 	}
 
-	//Change Email
 	@PatchMapping("/{id}/email")
 	public ResponseEntity<?> updateEmail(@PathVariable Long id, @RequestBody String newEmail) {
 		User user = userService.getUserById(id);
@@ -122,7 +114,6 @@ public class UserController {
 		return ResponseEntity.ok().build();
 	}
 
-	//Change payment information
 	@PutMapping("/{id}/payment-info")
 	public ResponseEntity<?> updatePaymentInfo(@PathVariable Long id, @RequestBody PaymentInfo newPaymentInfo) {
 		User user = userService.getUserById(id);
@@ -133,8 +124,6 @@ public class UserController {
 		return ResponseEntity.ok().build();
 	}
 
-
-	// Company Name ändern (nur für Provider)
 	@PatchMapping("/provider/{id}/companyname")
 	public void updateCompanyName(@PathVariable Long id, @RequestBody String newCompanyName) {
 		User user = userService.getUserById(id);

@@ -90,19 +90,6 @@ context UserContext {
         immutable string phoneNumber
     }
 
-    structure BookingClient<infrastructureService> {
-        procedure deleteUserBookings(long userId)
-    }
-
-    structure RatingClient<infrastructureService> {
-        procedure deleteCustomerRatingsByUserId(long customerId),
-        procedure deleteAllProviderRatings(long providerId)
-    }
-
-    structure VehicleClient<infrastructureService> {
-        procedure deleteVehicle(long deleteForProviderId)
-    }
-
     structure UserRepository<repository> {
         function User findByEmail(Email email)    
     }
@@ -118,7 +105,6 @@ context UserContext {
     collection UserList {User user}
 
     structure UserService<applicationService> {
-        function UserList getAllUser,
         function User getUserById(long userId),
         procedure deleteUserById(long userId),
         procedure updatepw(User user, string newPassword),

@@ -1,13 +1,23 @@
 import technology  from "../technology/JavaSpring.technology" as Spring
 import technology from "../technology/Protocols.technology" as Protocols
 import datatypes from "../domain/vehicle-context.data" as VehicleDomain
+import microservices from "../microservices/User.services" as UserBackend
+import microservices from "../microservices/Booking.services" as BookingBackend
+import microservices from "../microservices/Rating.services" as RatingBackend
 
 @technology(Spring)
 @technology(Protocols)
 @sync(Protocols::_protocols.rest)
 @Spring::_aspects.Application(name="VehicleService")
 public functional microservice de.fleximove.VehicleService {
-    //required operations BookingServiceClient, RatingServiceClient, UserServiceClient
+
+    required operations {
+        RatingBackend::RatingInterface.getAverageVehicleRating,
+        RatingBackend::RatingInterface.getAverageProviderRating,
+        RatingBackend::RatingInterface.deleteVehicleRatingsByVehicleId,
+        UserBackend::UserInterface.getProviderCompanyName,
+        BookingBackend:BookingInterface.deleteBookingsByVehicle
+    }
 
     @endpoints(Protocols::_protocols.rest: "/vehicles";)
     interface VehicleInterface {
@@ -108,9 +118,9 @@ public functional microservice de.fleximove.VehicleService {
             @Spring::_aspects.PathVariable
             sync in vehicleId : long,
             @Spring::_aspects.ResponseEntity
-            sync out successCode : int, 
+            sync out response : VehicleDomain::VehicleContext.BillingInfo, 
             @Spring::_aspects.ResponseEntity
-            sync out fault errorCode : int
+            sync out fault errorResponse : string
         );
     }
 }

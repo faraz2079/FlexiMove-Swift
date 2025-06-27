@@ -1,0 +1,27 @@
+import technology from "../technology/ConfigServer.technology" as ConfigServer
+import technology from "../technology/Docker.technology" as docker
+import nodes from "../operation/vehicle.operation" as vehicleBackend
+import nodes from "../operation/user.operation" as userBackend
+import nodes from "../operation/booking.operation" as bookingBackend
+
+@technology(ConfigServer)
+@technology(docker)
+configServer is ConfigServer::_infrastructure.ConfigServer
+    used by nodes vehicleBackend::VehicleServiceContainer,
+        userBackend::UserServiceContainer,
+        bookingBackend::BookingServiceContainer {
+            aspects {
+                docker::_aspects.Dockerfile(
+                    '
+                    CMD java ${JAVA_OPTS} -jar config-server-0.0.1-SNAPSHOT.jar
+                    COPY fleximove-backend/config-server/target/config-server-0.0.1-SNAPSHOT.jar .
+                    '
+                );
+            }
+            default values {
+                name="ConfigServer"
+                hostname="configserver"
+                port=8888
+                springCloudConfigServerGitUri="https://github.com/FH-Dortmund-Computer-Science/Config-repo.git"
+            }
+        }
