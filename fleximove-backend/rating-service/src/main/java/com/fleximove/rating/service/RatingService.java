@@ -92,6 +92,7 @@ public class RatingService {
         }
     }
 
+    @Transactional
     public void deleteAllProviderRatings(Long providerId) {
         List<RatingProvider> ratings = ratingProviderRepository.findByProviderId(providerId);
         if (!ratings.isEmpty()) {
@@ -99,6 +100,7 @@ public class RatingService {
         }
     }
 
+    @Transactional
     public void deleteAllVehicleRatings(Long vehicleId) {
         List<RatingVehicle> ratings = ratingVehicleRepository.findByVehicleId(vehicleId);
         if (!ratings.isEmpty()) {

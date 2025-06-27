@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @FeignClient(
-        name = "payment-service",
+        name = "paymentService",
         fallbackFactory = PaymentServiceFallbackFactory.class
 )
 public interface PaymentServiceClient {
