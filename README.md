@@ -64,6 +64,8 @@ If you started services using `mvn spring-boot:run`, you can stop them by:
 - Node.js 18+
 - npm (installed with Node.js)
 
+
+**For running the Frontend:** 
 1. Navigate to the Frontend Folder:
 `cd fleximove-frontend`
 
