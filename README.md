@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/cfa6afd9-67d5-4105-883e-12e0adfd4c09" alt="FlexiMove Logo" width="325" height="175"/>
+  <img src="https://github.com/user-attachments/assets/f8dfb781-973a-49dc-9617-75b25685dcbb" alt="FlexiMove Logo" width="325" height="175"/>
   <img src="https://github.com/user-attachments/assets/f0b695f7-4c5c-4112-9661-5e405d3f9b1c" alt="FlexiMove Banner" width="325" height="175"/>
 </p>
 
