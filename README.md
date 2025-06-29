@@ -38,7 +38,10 @@ Below you can see the Ports which using them you can access those respective Ser
 - Payment Service http://localhost:8082
 - Rating Service http://localhost:8084
 
-All the Services will Automatically register with Eureka and fetch the Configuration from the Config Server(Service Names will be shown in the Eureka Dashboard)
+All the Services will Automatically register with Eureka and fetch the Configuration from the Config Server(Service Names will be shown in the Eureka Dashboard as it is illustrated in the Screenshot below)
+
+![Screenshot 2025-06-29 at 7 48 06 PM](https://github.com/user-attachments/assets/211dfbc2-2ecb-4f73-a21b-5404841bdf29)
+
 
 **How to Stop the Services:**
 
