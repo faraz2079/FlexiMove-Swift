@@ -69,7 +69,8 @@ If you started services using `mvn spring-boot:run`, you can stop them by:
 4. Start the Frontend Service:  `ng serve`
 
 
-- The Frontend then will be available on http://localhost:4200/
+- The Frontend then will be available on http://localhost:4200/login
+- You can log in either as a test provider or a test customer:
 
 **How to Stop the Frontend:**
 
