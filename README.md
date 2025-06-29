@@ -15,7 +15,7 @@ Please make sure you run the Business Logic Part first in order to see the Appli
 - Services fetch their configuration from `http://localhost:8888` and register themselves with Eureka on `http://localhost:8761`.
 - Services use Feign clients to communicate with each other using Eureka service names (e.g., `@FeignClient(name = "booking-service")`).
 
-**Requirements:**
+**Prerequisites:**
 - Java 21
 - Maven 3.8+
 - (Optional) IntelliJ IDEA or any preferred IDE
@@ -55,4 +55,27 @@ If you started services using `mvn spring-boot:run`, you can stop them by:
 - Or closing the running terminal tab/window
 
 
+----------------
+
+### Frontend Startup Instructions
+
+
+**Prerequisites:**
+- Node.js 18+
+- npm (installed with Node.js)
+
+
+**For running the Frontend:** 
+1. Navigate to the Frontend Folder: `cd fleximove-frontend`
+2. Install Dependencies: `npm install`
+3. Start the Frontend Service:  `npm start`
+
+
+- The Frontend then will be available on http://localhost:4200/
+
+**How to Stop the Frontend:**
+
+In the Terminal which the Frontend was ran using `npm start`, you can Stop it by: 
+- Pressing `Ctrl+C` in the Terminal Window
+- Or closing the running Terminal Tab/Window
  
