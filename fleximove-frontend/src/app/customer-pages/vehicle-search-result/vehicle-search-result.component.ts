@@ -232,6 +232,8 @@ export class VehicleSearchResultComponent {
       this.bookingService.createBooking(request).subscribe({
         next: (response: any) => {
           this.snackBar.open('Vehicle is booked successfully! You can find it under "My Bookings".', 'Close', { duration: 4000 });
+          this.filteredVehicles = this.filteredVehicles.filter(v => v.vehicleId !== vehicle.vehicleId);
+          this.vehicles = this.vehicles.filter(v => v.vehicleId !== vehicle.vehicleId);
         },
         error: (err) => {
           if (err.status === 422) {

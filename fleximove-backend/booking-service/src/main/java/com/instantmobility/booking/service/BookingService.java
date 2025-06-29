@@ -8,18 +8,14 @@ import com.instantmobility.booking.repository.BookingRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.logging.ErrorManager;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Service
@@ -139,9 +135,7 @@ public class BookingService {
             );
         }
 
-        PaymentRequest paymentRequest = new PaymentRequest(request.getUserId(), bookingId, request.getAmount(), request.getDescription());
-
-        PaymentResponse response = paymentServiceClient.processPayment(paymentRequest);
+        PaymentResponse response = paymentServiceClient.processPayment(request);
 
         if ("COMPLETED".equals(response.getPaymentStatus())) {
             booking.setStatus(BookingStatus.PAID);
