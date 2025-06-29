@@ -1,8 +1,7 @@
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/f8dfb781-973a-49dc-9617-75b25685dcbb" alt="FlexiMove Logo" width="325" height="175"/>
+  <img src="https://github.com/user-attachments/assets/dcc628cd-e7f1-4d0a-91dd-0a81483e5859" alt="FlexiMove Logo" width="325" height="175"/>
   <img src="https://github.com/user-attachments/assets/f0b695f7-4c5c-4112-9661-5e405d3f9b1c" alt="FlexiMove Banner" width="325" height="175"/>
 </p>
-
 
 **FlexiMove is a modular microservices-based urban mobility application designed for booking and managing shared vehicles like cars, bikes, and scooters. It includes frontend and backend components with proper separation of concerns and scalable service boundaries.**
 
