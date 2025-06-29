@@ -17,6 +17,7 @@
             <p><strong>Vehicle Type:</strong> {{ formatVehicleType(booking.vehicleType) }}</p>
             <p><strong>Vehicle Model:</strong> {{ booking.vehicleModel }}</p>
             <p><strong>Pickup Address:</strong> {{ booking.pickupAddress }}</p>
+            <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Dropoff Address:</strong> {{ booking.dropoffAddress }}</p>
             <p><strong>Booked at:</strong> {{ booking.bookedAt }}</p>
             <p *ngIf="!(booking.status === 'CREATED' || booking.status === 'CANCELLED' || booking.status === 'CONFIRMED')"><strong>Trip started at:</strong> {{ booking.startTime }}</p>
             <p *ngIf="(booking.status === 'COMPLETED' || booking.status === 'PAID')"><strong>Trip ended at:</strong> {{ booking.endTime }}</p>

@@ -3,20 +3,22 @@ context BookingContext {
     //Entity
     //Table(name = "BOOKING")
     structure Booking <entity, aggregate> {
+        //Column(name = "id", columnDefinition = "BINARY(16)")
         BookingId id <identifier, part>,
+        //Column(name = "user_id", nullable = false)
         long userId,
+        //Column(name = "vehicle_id", nullable = false)
         long vehicleId,
+        //Column(name = "status", nullable = false)
         BookingStatus status,
-        TimeFrame timeFrame<part>,
+        //Column(name = "payment_id", columnDefinition = "BINARY(16)")
+        string paymentId, //UUID
+        //Column(name = "booking_time")
+        date bookedAt,
         GeoLocation pickupLocation<part>,
         GeoLocation dropoffLocation<part>,
         double cost,
-        Trip trip<part>,
-        procedure confirm,
-        procedure startTrip(GeoLocation startLocation, date startTime),
-        procedure endTrip(GeoLocation endLocation, date endTime),
-        procedure cancel,
-        function GeoLocation getFinalLocation
+        Trip trip<part>
     }
 
     enum BookingStatus {
@@ -85,8 +87,10 @@ context BookingContext {
         immutable long userId,
         immutable long vehicleId,
         immutable string status,
+        immutable date bookedAt,
         immutable date startTime,
         immutable date endTime,
+        immutable long durationInMinutes,
         immutable double pickupLatitude,
         immutable double pickupLongitude,
         immutable double dropoffLatitude,
@@ -99,7 +103,7 @@ context BookingContext {
     structure CreateBookingRequest<valueObject> {
         immutable long userId,
         immutable long vehicleId,
-        immutable date startTime,
+        immutable date bookedAt,
         immutable double pickupLatitude,
         immutable double pickupLongitude,
         immutable int userAge,
@@ -127,11 +131,11 @@ context BookingContext {
     //DTO
     structure PaymentResponse<valueObject> {
         immutable string paymentId, //UUID
-        immutable string status,
+        immutable string paymentStatus,
+        immutable string message,
         immutable double amount,
-        immutable date timestamp,
-        immutable string transactionId,
-        immutable string message
+        immutable date timeStamp,
+        immutable string transactionId
     }
 
     //DTO
@@ -157,6 +161,7 @@ context BookingContext {
         function string createBooking(CreateBookingRequest request), //Transactional, UUID
         procedure startTrip(string bookingId, StartTripRequest request), //Transactional, UUID
         function TripSummary endTrip(string bookingId, EndTripRequest request), //Transactional, UUID
+        //CircuitBreaker(name = "paymentService", fallbackMethod = "processPaymentFallback")
         function PaymentResponse processPayment(string bookingId, PaymentRequest request), //Transactional, UUID
         procedure cancelBooking(string bookingId), //Transactional, UUID
         procedure deleteBookingsByUserId(long userId), //Transactional

@@ -13,7 +13,6 @@ import com.instantmobility.booking.domain.BookingId;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, BookingId> {
-
     List<Booking> findByUserId(Long userId);
     List<Booking> findByVehicleId(Long vehicleId);
 	void deleteByUserId(Long userId);

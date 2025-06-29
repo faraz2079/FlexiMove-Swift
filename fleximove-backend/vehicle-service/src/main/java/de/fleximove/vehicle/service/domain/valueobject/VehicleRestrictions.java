@@ -13,9 +13,13 @@ import java.util.Objects;
 @NoArgsConstructor
 public class VehicleRestrictions {
     private Integer minAge;
+
     private Integer maxBookingTimeMinutes;
+
     private Double maxDistanceKm;
+
     private Integer maxPassengers;
+
     @Enumerated(EnumType.STRING)
     private DriverLicenseType requiredLicense;
 

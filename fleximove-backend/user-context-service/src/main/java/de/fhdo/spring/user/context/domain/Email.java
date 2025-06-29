@@ -20,7 +20,7 @@ public class Email {
 
 	 public Email(String value) {
 		 if (value == null || !EMAIL_PATTERN.matcher(value).matches()) {
-			 throw new IllegalArgumentException("Ungültige Email-Adresse: " + value);
+			 throw new IllegalArgumentException("Invalid email address: " + value);
 		 }
 		 this.value = value.toLowerCase();
 	 }

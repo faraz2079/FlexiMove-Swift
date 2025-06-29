@@ -1,15 +1,31 @@
 context UserContext {
 
-    // Entity 
-    // Table(name = simpleUser) 
+    //Entity
+    //Table(name = SimpleUser)
+    //Abstract class
     structure User<entity, aggregate> {
         long id<identifier>, //GeneratedValue
         Address address<part>,
+        //AttributeOverride(name = "value", column = @Column(name = "password_value", nullable = false))
         Password password<part>,
+        //AttributeOverride(name = "value", column = @Column(name = "email_value", nullable = false, unique = true))
         Email email<part>, 
         string  phoneNumber, 
         PaymentInfo paymentInfo<part>,
         boolean isRegistered
+    }
+
+    //Entity
+    structure Customer<entity> extends User {
+        string firstName,
+        string lastName,
+        string dateOfBirth,
+        DriverLicenseType driverLicenseType
+    }
+
+    //Entity
+    structure Provider<entity> extends User {
+        string companyName
     }
 
     structure Email<valueObject> {
@@ -43,20 +59,9 @@ context UserContext {
         NONE
     }
 
-    structure Customer<entity> extends User {
-        string firstName,
-        string lastName,
-        string dateOfBirth,
-        DriverLicenseType driverLicenseType
-    }
-
-    structure Provider<entity> extends User {
-        string companyName
-    }
-
     //DTO
     structure BookingDto<valueObject> {
-        immutable long id, //UUID
+        immutable string id, //UUID
         immutable long userId,
         immutable long vehicleId,
         immutable string startDate,

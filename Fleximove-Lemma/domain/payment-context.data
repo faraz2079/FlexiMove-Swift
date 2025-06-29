@@ -10,7 +10,8 @@ context PaymentContext {
         string description,
         PaymentStatus paymentStatus, //Default-value is PaymentStatus.PENDING
         BillingModel billingModel,
-        date timestamp //initialized with current time on creation
+        date timestamp, //initialized with current time on creation
+        string transactionId
     }
 
     structure Amount<valueObject> {
@@ -54,10 +55,9 @@ context PaymentContext {
         immutable string paymentId, //UUID
         immutable string paymentStatus,
         immutable string message,
-        immutable string bookingId, //UUID
         immutable double amount,
-        immutable string currency,
-        immutable string description
+        immutable date timeStamp,
+        immutable string transactionId
     }
 
     structure PaymentEventPublisher<infrastructureService> {
@@ -65,8 +65,9 @@ context PaymentContext {
     }
 
     structure PaymentProcessingService<applicationService> {
+        function PaymentResponseDTO processPayment(PaymentRequestDTO dto),
+        function PaymentResponseDTO getPaymentStatus(string paymentId), //UUID
         procedure deletePaymentsByUserId(long userId),
-        procedure deletePaymentsByBookingId(string bookingId),
-        function PaymentResponseDTO processPayment(PaymentRequestDTO dto)
+        procedure deletePaymentsByBookingId(string bookingId) //UUID
     }
 }

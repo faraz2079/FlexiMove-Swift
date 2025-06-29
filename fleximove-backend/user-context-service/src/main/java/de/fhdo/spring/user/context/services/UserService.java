@@ -1,9 +1,5 @@
 package de.fhdo.spring.user.context.services;
 
-import java.util.ArrayList;
-
-
-import java.util.List;
 import java.util.Optional;
 
 import de.fhdo.spring.user.context.clients.RatingClient;

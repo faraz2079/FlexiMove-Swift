@@ -47,7 +47,6 @@ public class Booking {
     })
     private GeoLocation dropoffLocation;
 
-    @Column(name = "cost")
     private double cost;
 
     @Embedded

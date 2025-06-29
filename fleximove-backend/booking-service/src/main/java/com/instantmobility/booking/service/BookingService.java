@@ -81,6 +81,7 @@ public class BookingService {
         }
     }
 
+    @Transactional
     public void startTrip(UUID bookingId, StartTripRequest request) {
         Booking booking = getBookingById(bookingId);
 
@@ -151,7 +152,6 @@ public class BookingService {
         return response;
     }
 
-
     @Transactional
     public void cancelBooking(UUID bookingId) {
         Booking booking = getBookingById(bookingId);
@@ -160,31 +160,6 @@ public class BookingService {
             vehicleServiceClient.updateVehicleStatus(booking.getVehicleId(), VehicleStatus.AVAILABLE);
         }
         bookingRepository.save(booking);
-    }
-
-    /**
-     * Updates vehicle location when booking ends
-     */
-    private void updateVehicleLocationAndStatus(Long vehicleId, GeoLocation location) {
-        vehicleServiceClient.updateVehicleLocation(vehicleId, location);
-        vehicleServiceClient.updateVehicleStatus(vehicleId, VehicleStatus.AVAILABLE);
-        System.out.println("Vehicle " + vehicleId + " location updated to: " +
-                location.getLatitude() + ", " + location.getLongitude());
-    }
-
-    private void processPaymentForBooking(Booking booking) {
-        PaymentRequest paymentRequest = new PaymentRequest();
-        paymentRequest.setUserId(booking.getUserId());
-        paymentRequest.setBookingId(booking.getId().getValue());
-        paymentRequest.setAmount(booking.getCost());
-        paymentRequest.setDescription("Ride payment for booking " + booking.getId().getValue());
-
-        try {
-            PaymentResponse response = paymentServiceClient.processPayment(paymentRequest);
-            System.out.println("Payment processed: " + response.getPaymentId());
-        } catch (Exception e) {
-            System.err.println("Payment failed: " + e.getMessage());
-        }
     }
 
     @Transactional

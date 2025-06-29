@@ -3,6 +3,11 @@ package com.payment.service.service.DTO;
 import java.util.UUID;
 
 public class PaymentRequestDTO {
+    private Long userId;
+    private UUID bookingId;
+    private double amount;
+    private String currency;
+    private String description;
 
     public Long getUserId() {
         return userId;
@@ -43,10 +48,4 @@ public class PaymentRequestDTO {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    private Long userId;
-    private UUID bookingId;
-    private double amount;
-    private String currency;
-    private String description;
 }

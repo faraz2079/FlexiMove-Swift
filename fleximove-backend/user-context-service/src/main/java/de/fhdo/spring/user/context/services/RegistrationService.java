@@ -23,7 +23,7 @@ public class RegistrationService {
 
 	public void registerUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new IllegalStateException("Benutzer existiert bereits!");
+            throw new IllegalStateException("User already exists!");
         }
 
         String hashed = passwordEncoder.encode(user.getPassword().getValue());

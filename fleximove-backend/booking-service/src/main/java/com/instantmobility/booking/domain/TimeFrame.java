@@ -12,12 +12,6 @@ public class TimeFrame {
     private  LocalDateTime startTime;
     private LocalDateTime endTime;
 
-
-    public TimeFrame(LocalDateTime startTime) {
-        this.startTime = Objects.requireNonNull(startTime, "Start time cannot be null");
-        this.endTime = null;
-    }
-
     public TimeFrame(LocalDateTime startTime, LocalDateTime endTime) {
         this.startTime = Objects.requireNonNull(startTime, "Start time cannot be null");
         this.endTime = endTime;
@@ -40,12 +34,5 @@ public class TimeFrame {
 
     public LocalDateTime getEndTime() {
         return endTime;
-    }
-
-    public Duration getDuration() {
-        if (endTime == null) {
-            return null;
-        }
-        return Duration.between(startTime, endTime);
     }
 }

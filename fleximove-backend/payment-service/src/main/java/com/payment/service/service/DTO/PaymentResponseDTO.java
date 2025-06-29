@@ -11,6 +11,16 @@ public class PaymentResponseDTO {
     private LocalDateTime timeStamp;
     private String transactionId;
 
+    public PaymentResponseDTO(UUID paymentId, String paymentStatus, String message,
+                              double amount, LocalDateTime timeStamp, String transactionId) {
+        this.paymentId = paymentId;
+        this.paymentStatus = paymentStatus;
+        this.message = message;
+        this.amount = amount;
+        this.timeStamp = timeStamp;
+        this.transactionId = transactionId;
+    }
+
     public String getTransactionId() {
         return transactionId;
     }
@@ -28,16 +38,6 @@ public class PaymentResponseDTO {
 
     public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
-    }
-
-    public PaymentResponseDTO(UUID paymentId, String paymentStatus, String message,
-                              double amount, LocalDateTime timeStamp, String transactionId) {
-        this.paymentId = paymentId;
-        this.paymentStatus = paymentStatus;
-        this.message = message;
-        this.amount = amount;
-        this.timeStamp = timeStamp;
-        this.transactionId = transactionId;
     }
 
     public UUID getPaymentId() {

@@ -64,8 +64,8 @@ context VehicleContext {
         SCOOTER,
         MOTORCYCLE,
         CAR,
-        TRUCK,
-        BUS
+        BUS,
+        TRUCK
     }
 
     collection VehicleList {Vehicle vehicle}
@@ -82,7 +82,7 @@ context VehicleContext {
         immutable string identificationNumber,
         immutable string vehicleModel,
         immutable string vehicleType,
-        immutable string vehicleStatus,
+        immutable string status,
         immutable string address,
         immutable double priceAmount,
         immutable string billingModel,

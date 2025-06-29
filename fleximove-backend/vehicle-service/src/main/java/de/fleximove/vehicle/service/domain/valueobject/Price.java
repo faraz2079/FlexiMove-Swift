@@ -13,6 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 public class Price {
     private double amount;
+
     @Enumerated(EnumType.STRING)
     private BillingModel billingModel;
 

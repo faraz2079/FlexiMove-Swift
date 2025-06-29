@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface RatingProviderRepository extends JpaRepository<RatingProvider, Long> {
-
     @Query("SELECT AVG(r.score) FROM RatingProvider r WHERE r.providerId = :providerId")
     Optional<Double> findAverageScoreByProviderId(Long providerId);
 
     void deleteByUserId(Long userId);
+
     List<RatingProvider> findByProviderId(Long providerId);
-    List<RatingProvider> findByUserId(Long userId);
+
+    List<RatingProvider> findByUserId(Long customerId);
+
     Optional<RatingProvider> findByUserIdAndProviderId(Long userId, Long providerId);
 }

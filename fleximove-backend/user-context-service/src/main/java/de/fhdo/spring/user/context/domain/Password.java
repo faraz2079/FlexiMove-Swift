@@ -12,10 +12,10 @@ public class Password {
 
     public Password(String value) {
         if (value == null || value.trim().isEmpty()) {
-            throw new IllegalArgumentException("Passwort darf nicht leer sein");
+            throw new IllegalArgumentException("Password can't be empty");
         }
         if (value.length() < 8) {
-            throw new IllegalArgumentException("Passwort muss mindestens 8 Zeichen lang sein");
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
         }
         this.value = value;
     }

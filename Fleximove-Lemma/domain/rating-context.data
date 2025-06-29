@@ -25,19 +25,21 @@ context RatingContext {
     collection RatingVehicleList {RatingVehicle ratingVehicle}
 
     structure RatingProviderRepository<repository> {
+        //Query("SELECT AVG(r.score) FROM RatingProvider r WHERE r.providerId = :providerId")
         function double findAverageScoreByProviderId(long providerId), //Optional<Double>
         procedure deleteByUserId(long userId),
         function RatingProviderList findByProviderId(long providerId),
-        function RatingProviderList findByUserId(long userId),
+        function RatingProviderList findByUserId(long customerId),
         function RatingProvider findByUserIdAndProviderId(long userId, long providerId) //Optional<RatingProvider>
     }
 
     structure RatingVehicleRepository<repository> {
+        //Query("SELECT AVG(r.score) FROM RatingVehicle r WHERE r.vehicleId = :vehicleId")
         function double findAverageScoreByVehicleId(long vehicleId), //Optional<Double> 
         procedure deleteByUserId(long userId),
         procedure deleteByVehicleId(long vehicleId),
-        function RatingVehicleList findByVehicleId(long vehicleId),
-        function RatingVehicleList findByUserId(long userId),
+        function RatingVehicleList findByVehicleId(long providerId),
+        function RatingVehicleList findByUserId(long customerId),
         function RatingVehicle findByUserIdAndVehicleId(long userId, long vehicleId) //Optional<RatingVehicle>
     }
 
@@ -47,8 +49,8 @@ context RatingContext {
         function double getAverageRatingForVehicle(long vehicleId),
         function double getAverageRatingForProvider(long providerId),
         procedure deleteAllCustomerRatings(long userId), //Transactional
-        procedure deleteAllProviderRatings(long providerId),
-        procedure deleteAllVehicleRatings(long vehicleId)
+        procedure deleteAllProviderRatings(long providerId), //Transactional
+        procedure deleteAllVehicleRatings(long vehicleId) //Transactional
     }
 
 }

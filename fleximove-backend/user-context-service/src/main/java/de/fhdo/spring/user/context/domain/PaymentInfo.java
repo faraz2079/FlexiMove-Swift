@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class PaymentInfo {
     private  String creditCardNumber;
     private  String cardHolderName;
-    private  String expiryDate;  // z.B. "12/25"
+    private  String expiryDate;  //e.g. "12/25"
     private  String cvv;
 
     public PaymentInfo(String creditCardNumber, String cardHolderName, String expiryDate, String cvv) {

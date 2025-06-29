@@ -18,11 +18,17 @@ import java.util.UUID;
 public class Trip {
     @Transient
     private  List<GeoLocation> route;
+
     private double distance;
+
     private String trip_status;
+
     private UUID id = UUID.randomUUID();
+
     private GeoLocation startLocation;
+
     private GeoLocation endLocation;
+
     @Embedded
     private TimeFrame timeFrame;
 

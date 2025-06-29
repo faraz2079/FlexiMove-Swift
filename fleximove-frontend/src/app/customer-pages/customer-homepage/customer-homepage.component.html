@@ -12,7 +12,7 @@
     <div class="search-section">
     <mat-form-field appearance="fill" class="address-input">
         <mat-label>Enter address</mat-label>
-        <input matInput placeholder="Your location" [(ngModel)]="address" name="address" [matAutocomplete]="auto">
+        <input matInput placeholder="Your location, e.g. Kampstraße 1, 44137 Dortmund" [(ngModel)]="address" name="address" [matAutocomplete]="auto">
 
         <mat-autocomplete #auto="matAutocomplete">
             <mat-option (click)="useCurrentLocation()">
