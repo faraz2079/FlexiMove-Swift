@@ -66,14 +66,10 @@ If you started services using `mvn spring-boot:run`, you can stop them by:
 
 
 **For running the Frontend:** 
-1. Navigate to the Frontend Folder:
-`cd fleximove-frontend`
+1. Navigate to the Frontend Folder: `cd fleximove-frontend`
+2. Install Dependencies: `npm install`
+3. Start the Frontend Service:  `npm start`
 
-2. Install Dependencies:
-`npm install`
-
-3.Start the Frontend Service: 
-`npm start`
 
 - The Frontend then will be available on http://localhost:4200/
 
