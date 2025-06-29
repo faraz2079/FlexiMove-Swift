@@ -1,4 +1,6 @@
-![WhatsApp Image 2025-06-29 at 19 52 33](https://github.com/user-attachments/assets/cfa6afd9-67d5-4105-883e-12e0adfd4c09)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/cfa6afd9-67d5-4105-883e-12e0adfd4c09" alt="FlexiMove Logo" width="250"/>
+</p>
 
 
 
