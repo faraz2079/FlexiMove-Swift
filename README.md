@@ -70,7 +70,9 @@ If you started services using `mvn spring-boot:run`, you can stop them by:
 
 
 - The Frontend then will be available on http://localhost:4200/login
-- You can log in either as a test provider or a test customer:
+- You can log in either as a test provider or a test customer (or create a new account):
+  - Customer login data: Login: john.wick@continental.com, Password: sicherespasswort123
+  - Provider login data: Login: kontakt@flowerhub.de, Password: providerpass!2024
 
 **How to Stop the Frontend:**
 
