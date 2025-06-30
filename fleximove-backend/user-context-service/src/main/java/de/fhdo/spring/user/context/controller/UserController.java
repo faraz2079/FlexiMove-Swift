@@ -156,7 +156,6 @@ public class UserController {
 	public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
 	    try {
 	        User loggedUser = loginService.login(loginRequest.getEmail(), loginRequest.getPassword());
-			//TODO: nicht kompletten User mit Password zurueckgeben, sondern LoginResponse
 	        return ResponseEntity.ok(loggedUser);
 	    } catch (IllegalStateException e) {
 	        return ResponseEntity.status(401).body("Invalid credentials");

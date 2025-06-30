@@ -33,54 +33,72 @@ public class DummyDataBootstrap implements ApplicationListener<ContextRefreshedE
         if (count > 0) return;
 
         userRepository.deleteAll();
-    	 // Adresse erstellen
-        Address address = new Address("Musterstraße", "Deutschland", "Berlin", "15", "10115");
 
-        // Passwort erstellen
-        Password password = new Password(passwordEncoder.encode("sicheresPasswort123"));
-
-        // Email erstellen
-        Email email = new Email("kunde1@example.com");
-
-        // Zahlungsinformationen erstellen
-        PaymentInfo paymentInfo = new PaymentInfo("1234567890123456", "Max Mustermann", "12/27", "123");
-
-        // Customer erstellen
+        Address address1 = new Address("Musterstraße", "Deutschland", "Berlin", "15", "10115");
+        Password password1 = new Password(passwordEncoder.encode("sicherespasswort123"));
+        Email email1 = new Email("john.wick@continental.com");
+        PaymentInfo paymentInfo1 = new PaymentInfo("1234567890123456", "John Wick", "12/27", "123");
         User customer1 = new Customer(
                 "John",
                 "Wick",
-                password,
-                email,
+                password1,
+                email1,
                 LocalDate.of(1990, 5, 15),
-                address,
-                DriverLicenseType.NONE,
+                address1,
+                DriverLicenseType.B,
                 "0123456789",
-                paymentInfo
+                paymentInfo1
         );
 
         userRepository.save(customer1);
 
-        // Adresse für Provider
-        Address providerAddress = new Address("Blumenweg", "Deutschland", "München", "22", "80331");
-
-        // Passwort & Email für Provider
-        Password providerPassword = new Password(passwordEncoder.encode("providerPass!2024"));
-        Email providerEmail = new Email("kontakt@flowerhub.de");
-
-        // Zahlungsinformationen für Provider
-        PaymentInfo providerPayment = new PaymentInfo("4111111111111111", "Florian Blume", "11/26", "456");
-
-        // Provider erstellen
-        User provider = new Provider(
-                providerPassword,
-                providerEmail,
-                providerAddress,
-                "0891234567",
-                "AutoHub GmbH",
-                providerPayment
+        Address address2 = new Address("An der Palmweide", "Deutschland", "Dortmund", "15", "10115");
+        Password password2 = new Password(passwordEncoder.encode("wirklichsicherespasswort123"));
+        Email email2 = new Email("real.britney@google.com");
+        PaymentInfo paymentInfo2 = new PaymentInfo("987635612783892", "Britney Spears", "12/27", "123");
+        User customer2 = new Customer(
+                "Britney",
+                "Spears",
+                password2,
+                email2,
+                LocalDate.of(2007, 10, 15),
+                address2,
+                DriverLicenseType.NONE,
+                "0987654321",
+                paymentInfo2
         );
 
-        userRepository.save(provider);
+        userRepository.save(customer2);
+
+        Address providerAddress1 = new Address("Blumenweg", "Deutschland", "München", "22", "80331");
+        Password providerPassword1 = new Password(passwordEncoder.encode("providerpass!2024"));
+        Email providerEmail1 = new Email("kontakt@flowerhub.de");
+        PaymentInfo providerPayment1 = new PaymentInfo("4111111111111111", "Florian Blume", "11/26", "456");
+        User provider1 = new Provider(
+                providerPassword1,
+                providerEmail1,
+                providerAddress1,
+                "0891234567",
+                "AutoHub GmbH",
+                providerPayment1
+        );
+
+        userRepository.save(provider1);
+
+        Address providerAddress2 = new Address("Karolinenstrasse", "Deutschland", "Hamburg", "1", "20357");
+        Password providerPassword2 = new Password(passwordEncoder.encode("europcar2025"));
+        Email providerEmail2 = new Email("business.service@europcar.com");
+        PaymentInfo providerPayment2 = new PaymentInfo("4111111111111111", "Florian Blume", "11/26", "456");
+        User provider2 = new Provider(
+                providerPassword2,
+                providerEmail2,
+                providerAddress2,
+                "035612487665",
+                "Europcar",
+                providerPayment2
+        );
+
+        userRepository.save(provider2);
         
     }
 }
