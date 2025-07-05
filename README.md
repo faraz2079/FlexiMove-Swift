@@ -63,7 +63,7 @@ If you started services using `mvn spring-boot:run`, you can stop them by:
 
 
 **For running the Frontend:** 
-1. Install Angular CLI with: npm install -g @angular/cli@16
+1. Install Angular CLI with: `npm install -g @angular/cli@16`
 2. Navigate to the Frontend Folder: `cd fleximove-frontend`
 3. Install Dependencies: `npm install`
 4. Start the Frontend Service:  `ng serve`
