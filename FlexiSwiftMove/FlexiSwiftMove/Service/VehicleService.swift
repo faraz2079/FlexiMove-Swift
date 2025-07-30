@@ -1,6 +1,6 @@
 import Foundation
 
-class VehicleService {
+class VehicleService: VehicleFetching {
     func fetchNearbyVehicles(address: String, completion: @escaping (Result<[NearbyVehicle], Error>) -> Void) {
         let encodedAddress = address.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? address
         guard let url = URL(string: "http://192.168.178.45:8085/vehicles/nearby?address=\(encodedAddress)&radiusInKm=3.0") else {
