@@ -2,36 +2,31 @@ import SwiftUI
 import MapKit
 
 struct VehicleMapView: View {
-    let vehicles: [NearbyVehicle]
-
-//    @State private var region = MKCoordinateRegion(
-//        center: CLLocationCoordinate2D(latitude: 51.515, longitude: 7.465), // Example center
-//        span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-//    )
+    
+    let vehicle: [NearbyVehicle]
     
     @State private var region: MKCoordinateRegion
-
-    init(vehicles: [NearbyVehicle]) {
-        self.vehicles = vehicles
-        if let first = vehicles.first {
-            _region = State(initialValue: MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: first.latitude, longitude: first.longitude),
-                span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+    
+    init(vehicle: [NearbyVehicle]) {
+        self.vehicle = vehicle
+        if let first = vehicle.first {
+            _region = State(initialValue: MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: first.latitude, longitude: first.longitude), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
             ))
         } else {
-            _region = State(initialValue: MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: 51.515, longitude: 7.465),
-                span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)
-            ))
+            _region = State(initialValue:
+                                MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 51.515, longitude: 7.465),
+                                                   span: MKCoordinateSpan(latitudeDelta: 0.1, longitudeDelta: 0.1)))
         }
     }
-
-    var annotations: [NearbyVehicleAnnotation] {
-        vehicles.map { NearbyVehicleAnnotation(vehicle: $0) }
+    
+    var annotation: [NearbyVehicleAnnotation] {
+        vehicle.map {NearbyVehicleAnnotation(vehicle: $0)}
     }
-
+    
+    
+    
     var body: some View {
-        Map(coordinateRegion: $region, annotationItems: annotations) { annotation in
+        Map(coordinateRegion: $region, annotationItems: annotation) { annotation in
             MapAnnotation(coordinate: annotation.coordinate) {
                 VStack(spacing: 4) {
                     Image(systemName: "car.fill")
@@ -49,4 +44,3 @@ struct VehicleMapView: View {
         .navigationTitle("Map of Vehicles")
     }
 }
-
