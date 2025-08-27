@@ -21,16 +21,18 @@ struct VehicleListView: View {
                             .font(.headline)
                             .padding()
                     }
-                    List(viewModel.vehicles) { vehicle in
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text(vehicle.vehicleModel).font(.headline)
-                            Text("Provider: \(vehicle.providerName)")
-                            Text("Type: \(vehicle.vehicleType)")
-                            Text("Price: €\(vehicle.priceAmount, specifier: "%.2f") / \(vehicle.billingModel)")
-                            Text("Distance: \(vehicle.distanceInKm, specifier: "%.1f") km")
-                            Text("Rating: \(vehicle.averageVehicleRating, specifier: "%.1f") ★")
+                    NavigationLink(destination: VehicleDetailView()) {
+                        List(viewModel.vehicles) { vehicle in
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(vehicle.vehicleModel).font(.headline)
+                                Text("Provider: \(vehicle.providerName)")
+                                Text("Type: \(vehicle.vehicleType)")
+                                Text("Price: €\(vehicle.priceAmount, specifier: "%.2f") / \(vehicle.billingModel)")
+                                Text("Distance: \(vehicle.distanceInKm, specifier: "%.1f") km")
+                                Text("Rating: \(vehicle.averageVehicleRating, specifier: "%.1f") ★")
+                            }
+                            .padding(.vertical, 4)
                         }
-                        .padding(.vertical, 4)
                     }
                 }
             }

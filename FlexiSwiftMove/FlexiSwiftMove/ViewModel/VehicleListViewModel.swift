@@ -18,7 +18,6 @@ class VehicleListViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let vehicles):
-                    print("✅ Received \(vehicles.count) vehicles")
                     self?.vehicles = vehicles
                     self?.error = nil
                 case .failure(let error):
