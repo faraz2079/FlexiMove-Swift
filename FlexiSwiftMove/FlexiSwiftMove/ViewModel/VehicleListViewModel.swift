@@ -5,16 +5,16 @@ class VehicleListViewModel: ObservableObject {
     @Published var isLoading = true
     @Published var error: String?
     
-    private let VehicleFetcher: VehicleFetching
+    private let vehicleFetcher: VehicleFetching
     
-    init(VehicleFetcher: VehicleFetching) {
-        self.VehicleFetcher = VehicleFetcher
+    init(vehicleFetcher: VehicleFetching = VehicleService()) {
+        self.vehicleFetcher = vehicleFetcher
     }
 
     private let service = VehicleService()
 
     func fetchNearbyVehicles(for address: String) {
-        VehicleFetcher.fetchNearbyVehicles(address: address) { [weak self] result in
+        vehicleFetcher.fetchNearbyVehicles(address: address) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let vehicles):

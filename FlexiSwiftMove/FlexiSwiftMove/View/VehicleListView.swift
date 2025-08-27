@@ -2,7 +2,11 @@ import SwiftUI
 import MapKit
 
 struct VehicleListView: View {
-    @StateObject private var viewModel = VehicleListViewModel()
+    @StateObject private var viewModel: VehicleListViewModel
+    
+    init() {
+        _viewModel = StateObject(wrappedValue: VehicleListViewModel(vehicleFetcher: VehicleService()))
+    }
 
     var body: some View {
         NavigationView {
@@ -12,7 +16,7 @@ struct VehicleListView: View {
                 } else if let error = viewModel.error {
                     Text("Error: \(error)")
                 } else {
-                    NavigationLink(destination: VehicleMapView(vehicles: viewModel.vehicles)) {
+                    NavigationLink(destination: VehicleMapView(vehicle: viewModel.vehicles)) {
                         Text("🗺️ Show on Map")
                             .font(.headline)
                             .padding()
@@ -32,7 +36,7 @@ struct VehicleListView: View {
             }
             .navigationTitle("Nearby Vehicles")
             .onAppear {
-                viewModel.loadNearbyVehicles(for: "Dortmund")
+                viewModel.fetchNearbyVehicles(for: "Dortmund")
             }
         }
     }
