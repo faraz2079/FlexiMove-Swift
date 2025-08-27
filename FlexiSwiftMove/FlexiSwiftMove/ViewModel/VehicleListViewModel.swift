@@ -18,12 +18,14 @@ class VehicleListViewModel: ObservableObject {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let vehicles):
+                    print("✅ Received \(vehicles.count) vehicles")
                     self?.vehicles = vehicles
                     self?.error = nil
                 case .failure(let error):
                     self?.vehicles = []
                     self?.error = "failed to load vehicles: \(error.localizedDescription)"
                 }
+                self?.isLoading = false // important, otherwise it keeps on being loading
             }
         }
     }
