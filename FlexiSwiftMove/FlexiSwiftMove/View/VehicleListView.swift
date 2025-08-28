@@ -7,7 +7,7 @@ struct VehicleListView: View {
     init() {
         _viewModel = StateObject(wrappedValue: VehicleListViewModel(vehicleFetcher: MockVehicleService())) // change it later to VehicleService
     }
-
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -21,8 +21,8 @@ struct VehicleListView: View {
                             .font(.headline)
                             .padding()
                     }
-                    NavigationLink(destination: VehicleDetailView()) {
-                        List(viewModel.vehicles) { vehicle in
+                    List(viewModel.vehicles) { vehicle in
+                        NavigationLink(destination: VehicleDetailView(vehicle: vehicle)) {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(vehicle.vehicleModel).font(.headline)
                                 Text("Provider: \(vehicle.providerName)")
