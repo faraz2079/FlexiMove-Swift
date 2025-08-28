@@ -4,14 +4,12 @@ class VehicleListViewModel: ObservableObject {
     @Published var vehicles: [NearbyVehicle] = []
     @Published var isLoading = true
     @Published var error: String?
-    
+        
     private let vehicleFetcher: VehicleFetching
     
-    init(vehicleFetcher: VehicleFetching = VehicleService()) {
+    init(vehicleFetcher: VehicleFetching = MockVehicleService()) { // Change to VehicleService later
         self.vehicleFetcher = vehicleFetcher
     }
-
-    private let service = VehicleService()
 
     func fetchNearbyVehicles(for address: String) {
         vehicleFetcher.fetchNearbyVehicles(address: address) { [weak self] result in

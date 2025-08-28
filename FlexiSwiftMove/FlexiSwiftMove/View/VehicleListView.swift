@@ -2,10 +2,10 @@ import SwiftUI
 import MapKit
 
 struct VehicleListView: View {
-    @StateObject private var viewModel: VehicleListViewModel
+    @StateObject var viewModel: VehicleListViewModel // make this one private later
     
     init() {
-        _viewModel = StateObject(wrappedValue: VehicleListViewModel(vehicleFetcher: VehicleService()))
+        _viewModel = StateObject(wrappedValue: VehicleListViewModel(vehicleFetcher: MockVehicleService())) // change it later to VehicleService
     }
 
     var body: some View {

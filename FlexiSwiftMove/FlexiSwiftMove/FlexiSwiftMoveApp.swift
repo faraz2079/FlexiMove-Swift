@@ -9,9 +9,18 @@ import SwiftUI
 
 @main
 struct FlexiSwiftMoveApp: App {
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+           // ContentView()
+            
+            let useMock = true
+
+                        let fetcher: VehicleFetching = useMock
+                            ? MockVehicleService()
+                            : VehicleService()
+
+                        VehicleListView()
         }
     }
 }
